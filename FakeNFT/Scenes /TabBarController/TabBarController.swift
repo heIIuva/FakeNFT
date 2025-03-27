@@ -20,19 +20,15 @@ final class TabBarController: UITabBarController {
         super.viewDidLoad()
         
         profileTabBarItem.tag = 0
-        let profileController = ProfileViewController(
-            servicesAssembly: servicesAssembly
-        )
-        profileController.tabBarItem = profileTabBarItem
+        
+        let profileViewController = ProfileViewController(servicesAssembly: servicesAssembly)
+        let profileNavController = CustomNavigationController(rootViewController: profileViewController)
+        profileNavController.tabBarItem = profileTabBarItem
 
-        let catalogController = TestCatalogViewController(
-            servicesAssembly: servicesAssembly
-        )
+        let catalogController = TestCatalogViewController(servicesAssembly: servicesAssembly)
         catalogController.tabBarItem = catalogTabBarItem
         
-
-        viewControllers = [profileController, catalogController]
-
+        viewControllers = [profileNavController, catalogController]
         view.backgroundColor = .systemBackground
     }
 }
