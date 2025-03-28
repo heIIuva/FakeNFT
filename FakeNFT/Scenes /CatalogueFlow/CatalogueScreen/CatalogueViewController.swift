@@ -7,21 +7,22 @@
 
 import UIKit
 
-protocol CatalogueViewProtocol: UIViewController {
+protocol CatalogueViewProtocol: UIViewController, LoadingView, ErrorView {
     func reloadData()
-    func showIndicator()
-    func hideIndicator()
+    func isShowIndicator(_ isShow: Bool)
 }
 
-final class CatalogueViewController: UIViewController {
+final class CatalogueViewController: UIViewController, LoadingView, ErrorView {
     
     // MARK: - Properties
     
     private let presenter: CataloguePresenterProtocol
-    private lazy var indicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(style: .large)
-        indicator.color = .init(resource: .nftBlack)
-        return indicator
+    lazy var activityIndicator = UIActivityIndicatorView(style: .medium)
+    private lazy var sortButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(resource: .sortButtonIcon), for: .normal)
+        button.addTarget(self, action: #selector(handleSortButton), for: .touchUpInside)
+        return button
     } ()
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -30,7 +31,6 @@ final class CatalogueViewController: UIViewController {
         tableView.delegate = self
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
-        tableView.contentInset = .init(top: 16, left: 0, bottom: 16, right: 0)
         return tableView
     }()
     
@@ -51,36 +51,55 @@ final class CatalogueViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor(resource: .nftWhite)
         setupUI()
-        setupNavBarAndTabBar()
         presenter.loadCatalogue()
     }
     
     // MARK: - Methods
     
     private func setupUI() {
-        [tableView, indicator].forEach {
+        [sortButton, tableView, activityIndicator].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            sortButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 2),
+            sortButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -9),
+            
+            tableView.topAnchor.constraint(equalTo: sortButton.bottomAnchor, constant: 20),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
-            indicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            indicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
     }
     
-    private func setupNavBarAndTabBar() {
-        tabBarController?.tabBar.isTranslucent = false
-        navigationController?.navigationBar.isTranslucent = false
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage(resource: .sortButtonIcon),
-            style: .plain,
-            target: self,
-            action: nil)
+    @objc private func handleSortButton() {
+        let alertController = UIAlertController(
+            title: NSLocalizedString("SortActionSheet.title", comment: ""),
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+        let actionByName = UIAlertAction(
+            title: NSLocalizedString("SortActionSheet.byName", comment: ""),
+            style: .default,
+            handler: { _ in }
+        )
+        let actionByCount = UIAlertAction(
+            title: NSLocalizedString("SortActionSheet.byCount", comment: ""),
+            style: .default,
+            handler: { _ in }
+        )
+        let actionClose = UIAlertAction(
+            title: NSLocalizedString("SortActionSheet.close", comment: ""),
+            style: .cancel,
+            handler: { _ in }
+        )
+        [actionByName, actionByCount, actionClose].forEach {
+            alertController.addAction($0)
+        }
+        present(alertController, animated: true)
     }
 }
 
@@ -92,22 +111,15 @@ extension CatalogueViewController: CatalogueViewProtocol {
         tableView.reloadData()
     }
     
-    func showIndicator() {
-        tableView.isHidden = true
-        indicator.isHidden = false
-        indicator.startAnimating()
-    }
-    
-    func hideIndicator() {
-        tableView.isHidden = false
-        indicator.isHidden = true
-        indicator.stopAnimating()
+    func isShowIndicator(_ isShow: Bool) {
+        isShow ? showLoading() : hideLoading()
+        view.isUserInteractionEnabled = !isShow
     }
 }
 
 extension CatalogueViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        presenter.collections.count
+        presenter.catalogue.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -121,5 +133,12 @@ extension CatalogueViewController: UITableViewDataSource, UITableViewDelegate {
         guard let catalogueCell = cell as? CatalogueTableViewCell else { return UITableViewCell() }
         let configuredCell = presenter.configure(cell: catalogueCell, for: indexPath)
         return configuredCell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let collectionVC = CollectionViewController()
+        collectionVC.modalPresentationStyle = .fullScreen
+        collectionVC.modalTransitionStyle = .crossDissolve
+        present(collectionVC, animated: true)
     }
 }

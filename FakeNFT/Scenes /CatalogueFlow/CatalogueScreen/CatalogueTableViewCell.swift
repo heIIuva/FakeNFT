@@ -18,7 +18,7 @@ final class CatalogueTableViewCell: UITableViewCell, ReuseIdentifying {
     
     private lazy var collectionImage: UIImageView = {
         let image = UIImageView()
-        image.contentMode = .scaleAspectFill
+        image.contentMode = .top
         image.clipsToBounds = true
         image.layer.cornerRadius = 12
         return image
@@ -47,6 +47,11 @@ final class CatalogueTableViewCell: UITableViewCell, ReuseIdentifying {
     
     // MARK: - Methods
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        collectionImage.kf.cancelDownloadTask()
+    }
+    
     private func setupUI() {
         [collectionImage, collectionTitle].forEach {
             contentView.addSubview($0)
@@ -70,7 +75,20 @@ final class CatalogueTableViewCell: UITableViewCell, ReuseIdentifying {
 extension CatalogueTableViewCell: CatalogueTableViewCellProtocol {
     
     func configure(image: String, title: String, count: Int) {
-        collectionImage.kf.setImage(with: URL(string: image))
         collectionTitle.text = "\(title) (\(count))"
+        collectionImage.kf.indicatorType = .activity
+        collectionImage.kf.setImage(
+            with: URL(string: image),
+            options: [.transition(.fade(1))],
+            completionHandler: { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(let resultImage):
+                    collectionImage.image = resultImage.image.resized(newWidth: collectionImage.bounds.width)
+                case .failure(_):
+                    break
+                }
+            }
+        )
     }
 }

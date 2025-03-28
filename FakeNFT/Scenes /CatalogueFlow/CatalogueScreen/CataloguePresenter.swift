@@ -8,7 +8,7 @@
 import Foundation
 
 protocol CataloguePresenterProtocol: AnyObject {
-    var collections: [NftCollection] { get }
+    var catalogue: [NftCollection] { get }
     func loadCatalogue()
     func setupCatalogueView(_ view: CatalogueViewProtocol)
     func configure(cell: CatalogueTableViewCell, for indexPath: IndexPath) -> CatalogueTableViewCell
@@ -20,7 +20,7 @@ final class CataloguePresenter: CataloguePresenterProtocol {
     
     private weak var view: CatalogueViewProtocol?
     private let catalogueService = CatalogueService(networkClient: DefaultNetworkClient())
-    private(set) var collections: [NftCollection] = [] {
+    private(set) var catalogue: [NftCollection] = [] {
         didSet {
             view?.reloadData()
         }
@@ -33,23 +33,28 @@ final class CataloguePresenter: CataloguePresenterProtocol {
     }
     
     func loadCatalogue() {
-        view?.showIndicator()
+        view?.isShowIndicator(true)
         catalogueService.fetchCatalogue { [weak self] result in
+            guard let self else { return }
             switch result {
             case .success(let collections):
-                self?.collections = collections
-                self?.view?.hideIndicator()
-            case .failure(let error):
-                print(error.localizedDescription)
+                catalogue = collections
+                view?.isShowIndicator(false)
+            case .failure(_):
+                let errorModel = ErrorModel(
+                    message: NSLocalizedString("Error.title", comment: ""),
+                    actionText: NSLocalizedString("Error.repeat", comment: ""),
+                    action: loadCatalogue)
+                view?.showErrorWithCancel(errorModel)
             }
         }
     }
     
     func configure(cell: CatalogueTableViewCell, for indexPath: IndexPath) -> CatalogueTableViewCell {
         cell.configure(
-            image: collections[indexPath.row].cover,
-            title: collections[indexPath.row].name,
-            count: collections[indexPath.row].nfts.count)
+            image: catalogue[indexPath.row].cover,
+            title: catalogue[indexPath.row].name,
+            count: catalogue[indexPath.row].nfts.count)
         return cell
     }
 }
