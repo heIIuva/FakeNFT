@@ -7,11 +7,14 @@
 
 import UIKit
 
-import UIKit
 
-final class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController, ProfileView {
 
     let servicesAssembly: ServicesAssembly
+    
+    private lazy var presenter: ProfilePresenter = {
+        ProfilePresenter(view: self, profileService: servicesAssembly.profileService)
+    }()
 
     private lazy var profileCardView: ProfileCardView = {
         let profileCardView = ProfileCardView()
@@ -47,6 +50,7 @@ final class ProfileViewController: UIViewController {
         view.backgroundColor = .background
         setupNavigationBar()
         setupUI()
+        presenter.viewDidLoad()
     }
 
     private func setupUI() {
@@ -78,6 +82,10 @@ final class ProfileViewController: UIViewController {
 
         let barButton = UIBarButtonItem(customView: button)
         navigationItem.rightBarButtonItem = barButton
+    }
+    
+    func display(profile: Profile) {
+        profileCardView.configure(with: profile)
     }
 
     @objc private func buttonTapped() {
@@ -111,3 +119,5 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
 }
+
+

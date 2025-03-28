@@ -5,6 +5,7 @@
 //  Created by Alexander Bralnin on 27.03.2025.
 //
 import UIKit
+import Kingfisher
 
 final class ProfileCardView: UIView {
 
@@ -81,5 +82,28 @@ final class ProfileCardView: UIView {
             websiteButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: ProfileLayoutConstants.horizontalPadding),
             websiteButton.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
+    }
+}
+
+extension ProfileCardView {
+    func configure(with profile: Profile) {
+        nameLabel.text = profile.name
+        descriptionLabel.text = profile.description
+
+        if let website = profile.website {
+            websiteButton.setTitle(website, for: .normal)
+            websiteButton.isHidden = false
+        } else {
+            websiteButton.setTitle(nil, for: .normal)
+            websiteButton.isHidden = true
+        }
+
+        if let url = URL(string: profile.avatar) {
+            avatarImageView.kf.indicatorType = .activity
+            avatarImageView.kf.setImage(
+                with: url,
+                placeholder: UIImage(named: "no_photo")
+            )
+        }
     }
 }

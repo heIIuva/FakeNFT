@@ -77,6 +77,12 @@ extension UIColor {
         : .yaBlackLight
     }
     
+    static let progressHudColor = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .yaBlackDark
+        : .yaBlackLight
+    }
+    
     static let iconPrimary = UIColor { traits in
         return traits.userInterfaceStyle == .dark
         ? .yaBlackDark
