@@ -6,13 +6,18 @@
 //
 
 import UIKit
+import Kingfisher
+
+protocol CatalogueTableViewCellProtocol: UITableViewCell {
+    func configure(image: String, title: String, count: Int)
+}
 
 final class CatalogueTableViewCell: UITableViewCell, ReuseIdentifying {
     
     // MARK: - Properties
     
     private lazy var collectionImage: UIImageView = {
-        let image = UIImageView(image: UIImage(resource: .mockCollection))
+        let image = UIImageView()
         image.contentMode = .scaleAspectFill
         image.clipsToBounds = true
         image.layer.cornerRadius = 12
@@ -21,7 +26,6 @@ final class CatalogueTableViewCell: UITableViewCell, ReuseIdentifying {
     
     private lazy var collectionTitle: UILabel = {
         let label = UILabel()
-        label.text = "Название коллекции"
         label.font = .bodyBold
         return label
     } ()
@@ -58,5 +62,15 @@ final class CatalogueTableViewCell: UITableViewCell, ReuseIdentifying {
             collectionTitle.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             collectionTitle.topAnchor.constraint(equalTo: collectionImage.bottomAnchor, constant: 4)
         ])
+    }
+}
+
+// MARK: - Extensions
+
+extension CatalogueTableViewCell: CatalogueTableViewCellProtocol {
+    
+    func configure(image: String, title: String, count: Int) {
+        collectionImage.kf.setImage(with: URL(string: image))
+        collectionTitle.text = "\(title) (\(count))"
     }
 }
