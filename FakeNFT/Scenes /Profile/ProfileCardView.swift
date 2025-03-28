@@ -7,15 +7,12 @@
 import UIKit
 
 final class ProfileCardView: UIView {
-    
-    // MARK: - Components
+
     private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "no_photo"))
-        
-        imageView.widthAnchor.constraint(equalToConstant: 70).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 70).isActive = true
-        
-        imageView.layer.cornerRadius = 35
+        imageView.widthAnchor.constraint(equalToConstant: ProfileLayoutConstants.avatarSize).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.avatarSize).isActive = true
+        imageView.layer.cornerRadius = ProfileLayoutConstants.avatarCornerRadius
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -30,12 +27,12 @@ final class ProfileCardView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [avatarImageView, nameLabel])
         stackView.axis = .horizontal
         stackView.alignment = .center
-        stackView.spacing = 16.0
+        stackView.spacing = ProfileLayoutConstants.stackSpacing
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -57,8 +54,7 @@ final class ProfileCardView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
-    // MARK: - Init
+
     override init(frame: CGRect) {
         super.init(frame: .zero)
         setupView()
@@ -68,25 +64,22 @@ final class ProfileCardView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: - Private Methods
+
     private func setupView() {
         [stackView, descriptionLabel, websiteButton].forEach(addSubview)
-        
+
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: ProfileLayoutConstants.horizontalPadding),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -ProfileLayoutConstants.horizontalPadding),
 
-            descriptionLabel.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 20),
-            descriptionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            descriptionLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            
-            websiteButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8),
-            websiteButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            descriptionLabel.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: ProfileLayoutConstants.descriptionTop),
+            descriptionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: ProfileLayoutConstants.horizontalPadding),
+            descriptionLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -ProfileLayoutConstants.horizontalPadding),
+
+            websiteButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: ProfileLayoutConstants.websiteButtonTop),
+            websiteButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: ProfileLayoutConstants.horizontalPadding),
             websiteButton.bottomAnchor.constraint(equalTo: bottomAnchor),
-            
         ])
     }
-        
 }

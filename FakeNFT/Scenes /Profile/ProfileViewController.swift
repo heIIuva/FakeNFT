@@ -7,8 +7,10 @@
 
 import UIKit
 
+import UIKit
+
 final class ProfileViewController: UIViewController {
-    
+
     let servicesAssembly: ServicesAssembly
 
     private lazy var profileCardView: ProfileCardView = {
@@ -16,7 +18,6 @@ final class ProfileViewController: UIViewController {
         profileCardView.translatesAutoresizingMaskIntoConstraints = false
         return profileCardView
     }()
-
 
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
@@ -55,18 +56,19 @@ final class ProfileViewController: UIViewController {
         tableView.delegate = self
 
         NSLayoutConstraint.activate([
-            
-            profileCardView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            profileCardView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,
+                                                 constant: ProfileLayoutConstants.profileCardTop),
             profileCardView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             profileCardView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-            tableView.topAnchor.constraint(equalTo: profileCardView.bottomAnchor, constant: 40),
+            tableView.topAnchor.constraint(equalTo: profileCardView.bottomAnchor,
+                                           constant: ProfileLayoutConstants.tableViewTop),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.heightAnchor.constraint(equalToConstant: CGFloat(items.count) * 54)
+            tableView.heightAnchor.constraint(equalToConstant: CGFloat(items.count) * ProfileLayoutConstants.rowHeight)
         ])
     }
-    
+
     private func setupNavigationBar() {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "edit"), for: .normal)
@@ -85,9 +87,9 @@ final class ProfileViewController: UIViewController {
 
 extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        54
+        ProfileLayoutConstants.rowHeight
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         items.count
     }
@@ -95,13 +97,13 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
         let (title, count) = items[indexPath.row]
-        
+
         let text = count != nil ? "\(title) (\(count!))" : title
-        
+
         cell.textLabel?.text = text
         cell.textLabel?.textColor = .textPrimary
         cell.textLabel?.font = .bodyBold
-        cell.backgroundColor =  .background
+        cell.backgroundColor = .background
         cell.selectionStyle = .none
         let chevron = UIImageView(image: UIImage(systemName: "chevron.right"))
         chevron.tintColor = .iconPrimary
