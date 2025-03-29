@@ -37,7 +37,12 @@ extension UIColor {
     static let background = UIColor.white
 
     // Text Colors
-    static let textPrimary = UIColor.black
+    static let textPrimary = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .yaWhite
+        : .yaBlack
+    }
+
     static let textSecondary = UIColor.gray
     static let textOnPrimary = UIColor.white
     static let textOnSecondary = UIColor.black
@@ -55,6 +60,7 @@ extension UIColor {
     static let yaGreen = UIColor(hexString: "#1C9F00")
     static let yaBlue = UIColor(hexString: "#0A84FF")
     static let yaBlack = UIColor(hexString: "#1A1B22")
+    static let yaBlack60 = UIColor(hexString: "#1A1B22").withAlphaComponent(0.6)
     static let yaWhite = UIColor(hexString: "#FFFFFF")
     static let yaYellow = UIColor(hexString: "#FEEF0D")
 
@@ -70,12 +76,19 @@ extension UIColor {
         ? .yaLightGrayDark
         : .yaLightGrayLight
     }
+    
+    static let textField = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .yaLightGrayDark
+        : .yaLightGrayLight
+    }
 
     static let closeButton = UIColor { traits in
         return traits.userInterfaceStyle == .dark
         ? .yaBlackDark
         : .yaBlackLight
     }
+    
     
     static let progressHudColor = UIColor { traits in
         return traits.userInterfaceStyle == .dark

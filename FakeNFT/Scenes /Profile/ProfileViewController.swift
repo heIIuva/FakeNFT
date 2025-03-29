@@ -36,6 +36,7 @@ final class ProfileViewController: UIViewController, ProfileView {
         ("О разработчике", nil)
     ]
 
+    // MARK: - Init
     init(servicesAssembly: ServicesAssembly) {
         self.servicesAssembly = servicesAssembly
         super.init(nibName: nil, bundle: nil)
@@ -45,15 +46,17 @@ final class ProfileViewController: UIViewController, ProfileView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .background
         setupNavigationBar()
-        setupUI()
+        setupView()
         presenter.viewDidLoad()
     }
 
-    private func setupUI() {
+    // MARK: - Setup
+    private func setupView() {
         [profileCardView, tableView].forEach(view.addSubview)
 
         tableView.dataSource = self
@@ -78,18 +81,26 @@ final class ProfileViewController: UIViewController, ProfileView {
         button.setImage(UIImage(named: "edit"), for: .normal)
         button.tintColor = .iconPrimary
         button.frame = CGRect(x: 0, y: 0, width: 42, height: 42)
-        button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
 
         let barButton = UIBarButtonItem(customView: button)
         navigationItem.rightBarButtonItem = barButton
     }
     
+    //MARK: - ProfileView
     func display(profile: Profile) {
         profileCardView.configure(with: profile)
     }
+    
+    func showEditProfile(with profile: Profile) {
+        let editProfileViewController = EditProfileViewController(profile: profile)
+        let nav = UINavigationController(rootViewController: editProfileViewController)
+        present(nav, animated: true)
+    }
 
-    @objc private func buttonTapped() {
-        print("Button tapped")
+    //MARK: - Actions
+    @objc private func editButtonTapped() {
+        presenter.editButtonTapped()
     }
 }
 

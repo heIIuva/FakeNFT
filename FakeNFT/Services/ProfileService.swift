@@ -52,7 +52,7 @@ final class ProfileServiceImpl: ProfileService {
         }
     }
     
-    // API response sends depriciated link to image - this os workaround
+    // API response sends depriciated link to image - this is workaround to load avatars
     #warning("Remove updatedAvatarURL method when API response for Profile will be updated")
     private func updatedAvatarURL(from url: String) -> String {
         url.replacingOccurrences(

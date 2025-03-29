@@ -17,4 +17,6 @@ enum ProfileLayoutConstants {
     static let avatarCornerRadius: CGFloat = 35
     static let stackSpacing: CGFloat = 16
     static let rowHeight: CGFloat = 54
+    static let textFieldCornerRadius: CGFloat = 12
+    static let textFieldInset = UIEdgeInsets(top: 11, left: 16, bottom: 11, right: 16)
 }
