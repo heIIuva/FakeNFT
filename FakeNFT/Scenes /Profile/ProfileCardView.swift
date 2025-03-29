@@ -22,7 +22,7 @@ final class ProfileCardView: UIView {
 
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Joaquin Phoenix"
+        //label.text = "Joaquin Phoenix"
         label.font = .headline3
         label.textColor = .textPrimary
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -40,7 +40,7 @@ final class ProfileCardView: UIView {
 
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Дизайнер из Казани, люблю цифровое искусство и бейглы. В моей коллекции уже 100+ NFT, и еще больше — на моём сайте. Открыт к коллаборациям."
+        //label.text = "Дизайнер из Казани, люблю цифровое искусство и бейглы. В моей коллекции уже 100+ NFT, и еще больше — на моём сайте. Открыт к коллаборациям."
         label.numberOfLines = 0
         label.font = .caption2
         label.textColor = .textPrimary
@@ -50,7 +50,7 @@ final class ProfileCardView: UIView {
 
     private lazy var websiteButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("JoaquinPhoenix.com", for: .normal)
+        //button.setTitle("JoaquinPhoenix.com", for: .normal)
         button.contentHorizontalAlignment = .leading
         button.translatesAutoresizingMaskIntoConstraints = false
         return button

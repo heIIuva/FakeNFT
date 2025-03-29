@@ -20,7 +20,8 @@ final class ServicesAssembly {
     
     var profileService: ProfileService {
         ProfileServiceImpl(
-            networkClient: networkClient
+            networkClient: networkClient,
+            profileId: "1"
         )
     }
 }
