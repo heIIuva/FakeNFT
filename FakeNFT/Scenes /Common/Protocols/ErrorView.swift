@@ -25,4 +25,20 @@ extension ErrorView where Self: UIViewController {
         alert.addAction(action)
         present(alert, animated: true)
     }
+    
+    func showErrorWithCancel(_ model: ErrorModel) {
+        let alert = UIAlertController(
+            title: model.message,
+            message: nil,
+            preferredStyle: .alert
+        )
+        let action = UIAlertAction(title: model.actionText, style: UIAlertAction.Style.default) {_ in
+            model.action()
+        }
+        let title = NSLocalizedString("Error.cancel", comment: "")
+        let cancelAction = UIAlertAction(title: title, style: UIAlertAction.Style.cancel, handler: nil)
+        alert.addAction(cancelAction)
+        alert.addAction(action)
+        present(alert, animated: true)
+    }
 }
