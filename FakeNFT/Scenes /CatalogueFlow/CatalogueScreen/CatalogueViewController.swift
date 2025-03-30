@@ -9,7 +9,7 @@ import UIKit
 
 protocol CatalogueViewProtocol: UIViewController, LoadingView, ErrorView {
     func reloadData()
-    func isShowIndicator(_ isShow: Bool)
+    func shouldShowIndicator(_ isShow: Bool)
 }
 
 final class CatalogueViewController: UIViewController, LoadingView, ErrorView {
@@ -45,7 +45,7 @@ final class CatalogueViewController: UIViewController, LoadingView, ErrorView {
         super.init(nibName: nil, bundle: nil)
     }
     
-    // MARK: - Methods of lifecircle
+    // MARK: - Methods of lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -111,9 +111,9 @@ extension CatalogueViewController: CatalogueViewProtocol {
         tableView.reloadData()
     }
     
-    func isShowIndicator(_ isShow: Bool) {
-        isShow ? showLoading() : hideLoading()
-        view.isUserInteractionEnabled = !isShow
+    func shouldShowIndicator(_ isShown: Bool) {
+        isShown ? showLoading() : hideLoading()
+        view.isUserInteractionEnabled = !isShown
     }
 }
 

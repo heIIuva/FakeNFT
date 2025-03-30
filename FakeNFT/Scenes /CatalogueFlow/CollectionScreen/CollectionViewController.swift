@@ -18,7 +18,7 @@ final class CollectionViewController: UIViewController {
         return backButton
     } ()
     
-    // MARK: - Methods of lifecircle
+    // MARK: - Methods of lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()

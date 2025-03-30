@@ -50,6 +50,7 @@ final class CatalogueTableViewCell: UITableViewCell, ReuseIdentifying {
     override func prepareForReuse() {
         super.prepareForReuse()
         collectionImage.kf.cancelDownloadTask()
+        collectionImage.image = nil
     }
     
     private func setupUI() {
@@ -85,8 +86,8 @@ extension CatalogueTableViewCell: CatalogueTableViewCellProtocol {
                 switch result {
                 case .success(let resultImage):
                     collectionImage.image = resultImage.image.resized(newWidth: collectionImage.bounds.width)
-                case .failure(_):
-                    break
+                case .failure:
+                    collectionImage.backgroundColor = UIColor(resource: .nftBackgroundUniversal)
                 }
             }
         )

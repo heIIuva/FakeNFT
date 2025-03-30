@@ -28,7 +28,7 @@ final class TabBarController: UITabBarController {
         tag: 3
     )
     
-    // MARK: - Methods of lifecircle
+    // MARK: - Methods of lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,6 +57,7 @@ final class TabBarController: UITabBarController {
         let cataloguePresenter = CataloguePresenter()
         let catalogueViewController = CatalogueViewController(presenter: cataloguePresenter)
         cataloguePresenter.setupCatalogueView(catalogueViewController)
+        cataloguePresenter.setupCatalogueService(CatalogueService())
         catalogueViewController.tabBarItem = catalogTabBarItem
         return catalogueViewController
     }

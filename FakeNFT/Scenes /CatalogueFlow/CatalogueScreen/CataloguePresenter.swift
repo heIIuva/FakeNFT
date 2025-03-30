@@ -11,6 +11,7 @@ protocol CataloguePresenterProtocol: AnyObject {
     var catalogue: [NftCollection] { get }
     func loadCatalogue()
     func setupCatalogueView(_ view: CatalogueViewProtocol)
+    func setupCatalogueService(_ service: CatalogueServiceProtocol)
     func configure(cell: CatalogueTableViewCell, for indexPath: IndexPath) -> CatalogueTableViewCell
 }
 
@@ -19,7 +20,7 @@ final class CataloguePresenter: CataloguePresenterProtocol {
     // MARK: - Properties
     
     private weak var view: CatalogueViewProtocol?
-    private let catalogueService = CatalogueService(networkClient: DefaultNetworkClient())
+    private var catalogueService: CatalogueServiceProtocol?
     private(set) var catalogue: [NftCollection] = [] {
         didSet {
             view?.reloadData()
@@ -32,20 +33,25 @@ final class CataloguePresenter: CataloguePresenterProtocol {
         self.view = view
     }
     
+    func setupCatalogueService(_ service: CatalogueServiceProtocol) {
+        self.catalogueService = service
+    }
+    
     func loadCatalogue() {
-        view?.isShowIndicator(true)
+        guard let view, let catalogueService else { return }
+        view.shouldShowIndicator(true)
         catalogueService.fetchCatalogue { [weak self] result in
+            view.shouldShowIndicator(false)
             guard let self else { return }
             switch result {
             case .success(let collections):
                 catalogue = collections
-                view?.isShowIndicator(false)
             case .failure(_):
                 let errorModel = ErrorModel(
                     message: NSLocalizedString("Error.title", comment: ""),
                     actionText: NSLocalizedString("Error.repeat", comment: ""),
                     action: loadCatalogue)
-                view?.showErrorWithCancel(errorModel)
+                view.showErrorWithCancel(errorModel)
             }
         }
     }

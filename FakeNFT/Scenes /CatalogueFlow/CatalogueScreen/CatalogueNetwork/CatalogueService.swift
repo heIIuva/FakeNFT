@@ -7,10 +7,14 @@
 
 import Foundation
 
-final class CatalogueService {
+protocol CatalogueServiceProtocol {
+    func fetchCatalogue(completion: @escaping (Result<[NftCollection], Error>) -> Void)
+}
+
+final class CatalogueService: CatalogueServiceProtocol {
     private let networkClient: NetworkClient
     
-    init(networkClient: NetworkClient) {
+    init(networkClient: NetworkClient = DefaultNetworkClient()) {
         self.networkClient = networkClient
     }
     
