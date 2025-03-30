@@ -6,9 +6,10 @@
 //
 
 import UIKit
+import Kingfisher
 
 
-final class CartCollectionCell: UITableViewCell {
+final class CartTableViewCell: UITableViewCell {
     
     // MARK: - Reuse Identifier
     
@@ -37,6 +38,8 @@ final class CartCollectionCell: UITableViewCell {
     private lazy var nftPreview: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
+        image.layer.masksToBounds = true
+        image.layer.cornerRadius = 12
         return image
     }()
     
@@ -77,12 +80,22 @@ final class CartCollectionCell: UITableViewCell {
             self,
             action: #selector(deleteButtonTapped),
             for: .touchUpInside)
+        
+        // change image
+        
+        button.setImage(UIImage(resource: .cartDeleteButton), for: .normal)
+        button.tintColor = .label
+        return button
     }()
     
     // MARK: - Public methods
     
-    func configureCell(nftPreview: ) {
-        
+    func configureCell(nft: Nft) {
+        nftPreview.kf.setImage(with: nft.images[0], placeholder: UIImage(systemName: "photo"))
+        nftName.text = nft.name
+        ratingLabel.text = "FIVE"
+        priceLabel.text = NSLocalizedString("Price", comment: "")
+        priceTag.text = "\(nft.price) ETH"
     }
     
     // MARK: - Private methods
@@ -97,21 +110,23 @@ final class CartCollectionCell: UITableViewCell {
             nftPreview.leadingAnchor.constraint(equalTo: leadingAnchor),
             
             nftName.leadingAnchor.constraint(equalTo: nftPreview.trailingAnchor, constant: 20),
-            nftName.topAnchor.constraint(equalTo: topAnchor, constant: -8),
+            nftName.topAnchor.constraint(equalTo: topAnchor, constant: 8),
             
             ratingLabel.leadingAnchor.constraint(equalTo: nftPreview.trailingAnchor, constant: 20),
-            ratingLabel.topAnchor.constraint(equalTo: nftName.bottomAnchor, constant: -4),
+            ratingLabel.topAnchor.constraint(equalTo: nftName.bottomAnchor, constant: 4),
             
             priceLabel.leadingAnchor.constraint(equalTo: nftPreview.trailingAnchor, constant: 20),
-            priceLabel.topAnchor.constraint(equalTo: ratingLabel.bottomAnchor, constant: -12),
+            priceLabel.topAnchor.constraint(equalTo: ratingLabel.bottomAnchor, constant: 12),
             
             priceTag.leadingAnchor.constraint(equalTo: nftPreview.trailingAnchor, constant: 20),
-            priceTag.topAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: -2),
+            priceTag.topAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: 2),
             
-            deleteButton.centerYAnchor.constraint(equalTo: centerYAnchor),
-            deleteButton.leadingAnchor.constraint(equalTo: nftPreview.trailingAnchor, constant: 195)
+            deleteButton.trailingAnchor.constraint(equalTo: trailingAnchor),
+            deleteButton.topAnchor.constraint(equalTo: topAnchor, constant: 34),
+            deleteButton.heightAnchor.constraint(equalToConstant: 40),
+            deleteButton.widthAnchor.constraint(equalToConstant: 40)
         ])
     }
     
-    @objc func deleteButtonTapped() {}
+    @objc private func deleteButtonTapped() {}
 }
