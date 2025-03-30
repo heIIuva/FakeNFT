@@ -39,7 +39,6 @@ final class ProfileCardView: UIView {
 
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
-        //label.text = "Дизайнер из Казани, люблю цифровое искусство и бейглы. В моей коллекции уже 100+ NFT, и еще больше — на моём сайте. Открыт к коллаборациям."
         label.numberOfLines = 0
         label.font = .caption2
         label.textColor = .textPrimary

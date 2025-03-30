@@ -5,7 +5,7 @@
 "Error.unknown" = "Произошла неизвестная ошибка";
 "Error.repeat" = "Повторить";
 "Error.title" = "Ошибка";
-"EditProfile.namePlaceholder" = "Имя";
-"EditProfile.descriptionPlaceholder" = "О себе";
-"EditProfile.websitePlaceholder" = "Сайт";
+"EditProfile.nameTitle" = "Имя";
+"EditProfile.descriptionTitle" = "Описание";
+"EditProfile.websiteTitle" = "Сайт";
 "EditProfile.changePhoto" = "Сменить\nфото";

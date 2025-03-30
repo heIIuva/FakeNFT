@@ -95,6 +95,7 @@ final class ProfileViewController: UIViewController, ProfileView {
     func showEditProfile(with profile: Profile) {
         let editProfileViewController = EditProfileViewController(profile: profile)
         let nav = UINavigationController(rootViewController: editProfileViewController)
+        nav.setNavigationBarHidden(true, animated: false)
         present(nav, animated: true)
     }
 

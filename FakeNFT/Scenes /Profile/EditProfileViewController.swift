@@ -12,6 +12,15 @@ final class EditProfileViewController: UIViewController {
     private let profile: Profile
 
     // MARK: - UI
+    
+    private lazy var closeButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(named: "close"), for: .normal)
+        button.tintColor = .iconPrimary
+        button.addTarget(self, action: #selector(dismissTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
 
     private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
@@ -35,16 +44,34 @@ final class EditProfileViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+    
+    private lazy var avatarContainerView: UIView = {
+        let container = UIView()
+        container.translatesAutoresizingMaskIntoConstraints = false
 
-    private let nameField = EditProfileViewController.createTextField(
-        placeholder: NSLocalizedString("EditProfile.namePlaceholder", comment: "")
-    )
+        container.addSubview(avatarImageView)
+        container.addSubview(changePhotoButton)
+
+        NSLayoutConstraint.activate([
+            avatarImageView.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            avatarImageView.topAnchor.constraint(equalTo: container.topAnchor),
+            avatarImageView.widthAnchor.constraint(equalToConstant: ProfileLayoutConstants.avatarSize),
+            avatarImageView.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.avatarSize),
+
+            changePhotoButton.topAnchor.constraint(equalTo: avatarImageView.topAnchor),
+            changePhotoButton.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor),
+            changePhotoButton.trailingAnchor.constraint(equalTo: avatarImageView.trailingAnchor),
+            changePhotoButton.bottomAnchor.constraint(equalTo: avatarImageView.bottomAnchor),
+        ])
+
+        return container
+    }()
+
+    private let nameField = EditProfileViewController.createTextField()
 
     private let descriptionField = EditProfileViewController.createTextView()
 
-    private let websiteField = EditProfileViewController.createTextField(
-        placeholder: NSLocalizedString("EditProfile.websitePlaceholder", comment: "")
-    )
+    private let websiteField = EditProfileViewController.createTextField()
 
     // MARK: - Init
 
@@ -68,54 +95,48 @@ final class EditProfileViewController: UIViewController {
     }
 
     // MARK: - Setup
-
     private func setupView() {
-        view.backgroundColor = .white
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .close,
-            target: self,
-            action: #selector(dismissTapped)
-        )
+        view.backgroundColor = .background
 
-        let avatarStack = UIView()
-        avatarStack.translatesAutoresizingMaskIntoConstraints = false
-        avatarStack.addSubview(avatarImageView)
-        avatarStack.addSubview(changePhotoButton)
+        // titles
+        let nameTitle = makeTitleLabel(text: NSLocalizedString("EditProfile.nameTitle", comment: "Имя"))
+        let descriptionTitle = makeTitleLabel(text: NSLocalizedString("EditProfile.descriptionTitle", comment: "Описание"))
+        let websiteTitle = makeTitleLabel(text: NSLocalizedString("EditProfile.websiteTitle", comment: "Сайт"))
+        let formStack = UIStackView(arrangedSubviews: [
+            nameTitle, nameField,
+            descriptionTitle, descriptionField,
+            websiteTitle, websiteField
+        ])
+        formStack.axis = .vertical
+        formStack.translatesAutoresizingMaskIntoConstraints = false
 
-        view.addSubview(avatarStack)
-        view.addSubview(nameField)
-        view.addSubview(descriptionField)
-        view.addSubview(websiteField)
+        formStack.setCustomSpacing(ProfileLayoutConstants.formStackSpacingSmall, after: nameTitle)
+        formStack.setCustomSpacing(ProfileLayoutConstants.formStackSpacingLarge, after: nameField)
+        formStack.setCustomSpacing(ProfileLayoutConstants.formStackSpacingSmall, after: descriptionTitle)
+        formStack.setCustomSpacing(ProfileLayoutConstants.formStackSpacingLarge, after: descriptionField)
+        formStack.setCustomSpacing(ProfileLayoutConstants.formStackSpacingSmall, after: websiteTitle)
+
+        view.addSubview(closeButton)
+        view.addSubview(avatarContainerView)
+        view.addSubview(formStack)
 
         NSLayoutConstraint.activate([
-            avatarImageView.centerXAnchor.constraint(equalTo: avatarStack.centerXAnchor),
-            avatarImageView.topAnchor.constraint(equalTo: avatarStack.topAnchor),
-            avatarImageView.widthAnchor.constraint(equalToConstant: ProfileLayoutConstants.avatarSize),
-            avatarImageView.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.avatarSize),
+            closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: ProfileLayoutConstants.horizontalPadding),
+            closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -ProfileLayoutConstants.horizontalPadding),
+            closeButton.widthAnchor.constraint(equalToConstant: ProfileLayoutConstants.closeButtonSize),
+            closeButton.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.closeButtonSize),
+            
+            avatarContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: ProfileLayoutConstants.avatarTopOffset),
+            avatarContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            avatarContainerView.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.avatarSize),
 
-            changePhotoButton.topAnchor.constraint(equalTo: avatarImageView.topAnchor),
-            changePhotoButton.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor),
-            changePhotoButton.trailingAnchor.constraint(equalTo: avatarImageView.trailingAnchor),
-            changePhotoButton.bottomAnchor.constraint(equalTo: avatarImageView.bottomAnchor),
+            formStack.topAnchor.constraint(equalTo: avatarContainerView.bottomAnchor, constant: ProfileLayoutConstants.stackSpacing),
+            formStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: ProfileLayoutConstants.horizontalPadding),
+            formStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -ProfileLayoutConstants.horizontalPadding),
 
-            avatarStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            avatarStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            avatarStack.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.avatarSize),
-
-            nameField.topAnchor.constraint(equalTo: avatarStack.bottomAnchor, constant: 32),
-            nameField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            nameField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            nameField.heightAnchor.constraint(equalToConstant: 44),
-
-            descriptionField.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 24),
-            descriptionField.leadingAnchor.constraint(equalTo: nameField.leadingAnchor),
-            descriptionField.trailingAnchor.constraint(equalTo: nameField.trailingAnchor),
-            descriptionField.heightAnchor.constraint(equalToConstant: 132),
-
-            websiteField.topAnchor.constraint(equalTo: descriptionField.bottomAnchor, constant: 24),
-            websiteField.leadingAnchor.constraint(equalTo: nameField.leadingAnchor),
-            websiteField.trailingAnchor.constraint(equalTo: nameField.trailingAnchor),
-            websiteField.heightAnchor.constraint(equalToConstant: 44),
+            nameField.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.rowHeight),
+            descriptionField.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.descriptionHeight),
+            websiteField.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.rowHeight),
         ])
     }
 
@@ -136,13 +157,21 @@ final class EditProfileViewController: UIViewController {
     }
 
     // MARK: - Helpers
+    private func makeTitleLabel(text: String) -> UILabel {
+        let label = UILabel()
+        label.text = text
+        label.font = .headline3
+        label.textColor = .textPrimary
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }
 
-    private static func createTextField(placeholder: String) -> UITextField {
+    private static func createTextField() -> UITextField {
         let field = InsetTextField(inset: ProfileLayoutConstants.textFieldInset)
-        field.placeholder = placeholder
         field.font = .bodyRegular
         field.layer.cornerRadius = ProfileLayoutConstants.textFieldCornerRadius
         field.borderStyle = .none
+        field.clearButtonMode = .whileEditing
         field.backgroundColor = .textField
         field.textColor = .textPrimary
         field.translatesAutoresizingMaskIntoConstraints = false
