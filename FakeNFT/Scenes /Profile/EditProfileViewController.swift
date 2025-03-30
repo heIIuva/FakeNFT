@@ -8,11 +8,16 @@ import UIKit
 import Kingfisher
 
 final class EditProfileViewController: UIViewController {
-
+    let presenter: ProfilePresenter
     private let profile: Profile
 
+    // MARK: - Change tracking
+    private var initialName: String = ""
+    private var initialDescription: String = ""
+    private var initialWebsite: String = ""
+
     // MARK: - UI
-    
+
     private lazy var closeButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "close"), for: .normal)
@@ -44,7 +49,7 @@ final class EditProfileViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
+
     private lazy var avatarContainerView: UIView = {
         let container = UIView()
         container.translatesAutoresizingMaskIntoConstraints = false
@@ -68,15 +73,14 @@ final class EditProfileViewController: UIViewController {
     }()
 
     private let nameField = EditProfileViewController.createTextField()
-
     private let descriptionField = EditProfileViewController.createTextView()
-
     private let websiteField = EditProfileViewController.createTextField()
 
     // MARK: - Init
 
-    init(profile: Profile) {
+    init(presenter: ProfilePresenter, profile: Profile) {
         self.profile = profile
+        self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .automatic
     }
@@ -95,13 +99,14 @@ final class EditProfileViewController: UIViewController {
     }
 
     // MARK: - Setup
+
     private func setupView() {
         view.backgroundColor = .background
 
-        // titles
         let nameTitle = makeTitleLabel(text: NSLocalizedString("EditProfile.nameTitle", comment: "Имя"))
         let descriptionTitle = makeTitleLabel(text: NSLocalizedString("EditProfile.descriptionTitle", comment: "Описание"))
         let websiteTitle = makeTitleLabel(text: NSLocalizedString("EditProfile.websiteTitle", comment: "Сайт"))
+
         let formStack = UIStackView(arrangedSubviews: [
             nameTitle, nameField,
             descriptionTitle, descriptionField,
@@ -125,7 +130,7 @@ final class EditProfileViewController: UIViewController {
             closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -ProfileLayoutConstants.horizontalPadding),
             closeButton.widthAnchor.constraint(equalToConstant: ProfileLayoutConstants.closeButtonSize),
             closeButton.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.closeButtonSize),
-            
+
             avatarContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: ProfileLayoutConstants.avatarTopOffset),
             avatarContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             avatarContainerView.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.avatarSize),
@@ -145,6 +150,10 @@ final class EditProfileViewController: UIViewController {
         descriptionField.text = profile.description
         websiteField.text = profile.website
 
+        initialName = profile.name
+        initialDescription = profile.description ?? ""
+        initialWebsite = profile.website ?? ""
+
         if let url = URL(string: profile.avatar) {
             avatarImageView.kf.setImage(with: url)
         }
@@ -153,10 +162,30 @@ final class EditProfileViewController: UIViewController {
     // MARK: - Actions
 
     @objc private func dismissTapped() {
-        dismiss(animated: true)
+        let currentName = nameField.text ?? ""
+        let currentDescription = descriptionField.text ?? ""
+        let currentWebsite = websiteField.text ?? ""
+
+        let hasChanges = currentName != initialName ||
+                         currentDescription != initialDescription ||
+                         currentWebsite != initialWebsite
+
+        if hasChanges {
+            presenter.updateProfile(
+                name: currentName,
+                avatar: profile.avatar,
+                description: currentDescription,
+                website: currentWebsite
+            ) { [weak self] in
+                self?.dismiss(animated: true)
+            }
+        } else {
+            dismiss(animated: true)
+        }
     }
 
     // MARK: - Helpers
+
     private func makeTitleLabel(text: String) -> UILabel {
         let label = UILabel()
         label.text = text

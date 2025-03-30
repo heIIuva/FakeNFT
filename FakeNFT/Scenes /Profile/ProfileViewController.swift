@@ -93,12 +93,12 @@ final class ProfileViewController: UIViewController, ProfileView {
     }
     
     func showEditProfile(with profile: Profile) {
-        let editProfileViewController = EditProfileViewController(profile: profile)
+        let editProfileViewController = EditProfileViewController(presenter: presenter, profile: profile)
         let nav = UINavigationController(rootViewController: editProfileViewController)
         nav.setNavigationBarHidden(true, animated: false)
         present(nav, animated: true)
     }
-
+    
     //MARK: - Actions
     @objc private func editButtonTapped() {
         presenter.editButtonTapped()
