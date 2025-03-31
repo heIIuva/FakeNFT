@@ -58,7 +58,7 @@ final class TabBarController: UITabBarController {
         let cataloguePresenter = CataloguePresenter()
         let catalogueViewController = CatalogueViewController(presenter: cataloguePresenter)
         cataloguePresenter.setupCatalogueView(catalogueViewController)
-        cataloguePresenter.setupCatalogueService(CatalogueService())
+        cataloguePresenter.setupCatalogueService(CatalogueService(networkClient: DefaultNetworkClient()))
         catalogueViewController.tabBarItem = catalogTabBarItem
         return catalogueViewController
     }

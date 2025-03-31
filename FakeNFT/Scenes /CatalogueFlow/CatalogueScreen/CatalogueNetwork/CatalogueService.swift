@@ -12,9 +12,10 @@ protocol CatalogueServiceProtocol {
 }
 
 final class CatalogueService: CatalogueServiceProtocol {
+    
     private let networkClient: NetworkClient
     
-    init(networkClient: NetworkClient = DefaultNetworkClient()) {
+    init(networkClient: NetworkClient) {
         self.networkClient = networkClient
     }
     
