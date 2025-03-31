@@ -48,6 +48,7 @@
 		D917B82A2D9837C70011423A /* InsetTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = D917B8292D9837C50011423A /* InsetTextField.swift */; };
 		D957BA1A2D997FF200D39219 /* ProfilePutRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D957BA192D997FE500D39219 /* ProfilePutRequest.swift */; };
 		D96F5A992D95A86400A5C397 /* CustomNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96F5A982D95A85000A5C397 /* CustomNavigationController.swift */; };
+		D975B8132D9AEA8900CB6082 /* PopMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D975B8122D9AEA7400CB6082 /* PopMenuView.swift */; };
 		D9FCCED52D96C115009EF65E /* LayoutConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FCCED42D96C107009EF65E /* LayoutConstants.swift */; };
 		D9FCCEDC2D9708D6009EF65E /* UIBlockingProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FCCEDB2D9708D0009EF65E /* UIBlockingProgressHUD.swift */; };
 		E19CD5AB2A98B56600CA39A5 /* NftImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19CD5AA2A98B56600CA39A5 /* NftImageCollectionViewCell.swift */; };
@@ -116,6 +117,7 @@
 		D917B8292D9837C50011423A /* InsetTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsetTextField.swift; sourceTree = "<group>"; };
 		D957BA192D997FE500D39219 /* ProfilePutRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePutRequest.swift; sourceTree = "<group>"; };
 		D96F5A982D95A85000A5C397 /* CustomNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationController.swift; sourceTree = "<group>"; };
+		D975B8122D9AEA7400CB6082 /* PopMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopMenuView.swift; sourceTree = "<group>"; };
 		D9FCCED42D96C107009EF65E /* LayoutConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutConstants.swift; sourceTree = "<group>"; };
 		D9FCCEDB2D9708D0009EF65E /* UIBlockingProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBlockingProgressHUD.swift; sourceTree = "<group>"; };
 		E19CD5AA2A98B56600CA39A5 /* NftImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NftImageCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -191,6 +193,7 @@
 		0CF2C2DF2A784C5600FDC837 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				D975B8122D9AEA7400CB6082 /* PopMenuView.swift */,
 				D917B8292D9837C50011423A /* InsetTextField.swift */,
 				D917B8272D982BFA0011423A /* UIViewController+KeyboardDismiss.swift */,
 				D9FCCEDB2D9708D0009EF65E /* UIBlockingProgressHUD.swift */,
@@ -545,6 +548,7 @@
 				3F478ED129DB476500F6D39E /* Fonts.swift in Sources */,
 				0C79EE6A2A76DE1000EE90EA /* NftDetailAssembly.swift in Sources */,
 				3FC8C39329D246BA0081F015 /* DateFormatters+Presets.swift in Sources */,
+				D975B8132D9AEA8900CB6082 /* PopMenuView.swift in Sources */,
 				0CFCB7422A78013E0009A829 /* Nft.swift in Sources */,
 				D96F5A992D95A86400A5C397 /* CustomNavigationController.swift in Sources */,
 				0CF2C2DD2A783CE600FDC837 /* ErrorView.swift in Sources */,

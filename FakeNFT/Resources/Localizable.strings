@@ -9,3 +9,4 @@
 "EditProfile.descriptionTitle" = "Описание";
 "EditProfile.websiteTitle" = "Сайт";
 "EditProfile.changePhoto" = "Сменить\nфото";
+"EditProfile.loadPhoto" = "Загрузить изображение";

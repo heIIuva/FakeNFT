@@ -5,19 +5,17 @@
 //  Created by Alexander Bralnin on 29.03.2025.
 //
 import UIKit
-import Kingfisher
 
 final class EditProfileViewController: UIViewController, UIAdaptivePresentationControllerDelegate {
     let presenter: ProfilePresenter
     private let profile: Profile
-
-    // MARK: - Change tracking
+    
     private var initialName: String = ""
     private var initialDescription: String = ""
     private var initialWebsite: String = ""
-
+    
     // MARK: - UI
-
+    
     private lazy var closeButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "close"), for: .normal)
@@ -26,87 +24,49 @@ final class EditProfileViewController: UIViewController, UIAdaptivePresentationC
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-
-    private lazy var avatarImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.layer.cornerRadius = ProfileLayoutConstants.avatarCornerRadius
-        imageView.clipsToBounds = true
-        imageView.contentMode = .scaleAspectFill
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
+    
+    private lazy var avatarView: AvatarView = {
+        let view = AvatarView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
-
-    private lazy var changePhotoButton: UIButton = {
-        let button = UIButton()
-        button.titleLabel?.numberOfLines = 2
-        button.titleLabel?.textAlignment = .center
-        button.setTitle(NSLocalizedString("EditProfile.changePhoto", comment: ""), for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .yaBlack60
-        button.titleLabel?.font = .caption3
-        button.layer.cornerRadius = ProfileLayoutConstants.avatarCornerRadius
-        button.clipsToBounds = true
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-
-    private lazy var avatarContainerView: UIView = {
-        let container = UIView()
-        container.translatesAutoresizingMaskIntoConstraints = false
-
-        container.addSubview(avatarImageView)
-        container.addSubview(changePhotoButton)
-
-        NSLayoutConstraint.activate([
-            avatarImageView.centerXAnchor.constraint(equalTo: container.centerXAnchor),
-            avatarImageView.topAnchor.constraint(equalTo: container.topAnchor),
-            avatarImageView.widthAnchor.constraint(equalToConstant: ProfileLayoutConstants.avatarSize),
-            avatarImageView.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.avatarSize),
-
-            changePhotoButton.topAnchor.constraint(equalTo: avatarImageView.topAnchor),
-            changePhotoButton.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor),
-            changePhotoButton.trailingAnchor.constraint(equalTo: avatarImageView.trailingAnchor),
-            changePhotoButton.bottomAnchor.constraint(equalTo: avatarImageView.bottomAnchor),
-        ])
-
-        return container
-    }()
-
-    private let nameField = EditProfileViewController.createTextField()
-    private let descriptionField = EditProfileViewController.createTextView()
-    private let websiteField = EditProfileViewController.createTextField()
-
+    
+    private let nameField = createTextField()
+    private let descriptionField = createTextView()
+    private let websiteField = createTextField()
+    
     // MARK: - Init
-
+    
     init(presenter: ProfilePresenter, profile: Profile) {
         self.profile = profile
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .automatic
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     // MARK: - Lifecycle
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         enableKeyboardDismissOnTap()
         setupView()
         fillData()
     }
-
+    
+    
     // MARK: - Setup
-
+    
     private func setupView() {
         view.backgroundColor = .background
-
+        
         let nameTitle = makeTitleLabel(text: NSLocalizedString("EditProfile.nameTitle", comment: "Имя"))
         let descriptionTitle = makeTitleLabel(text: NSLocalizedString("EditProfile.descriptionTitle", comment: "Описание"))
         let websiteTitle = makeTitleLabel(text: NSLocalizedString("EditProfile.websiteTitle", comment: "Сайт"))
-
+        
         let formStack = UIStackView(arrangedSubviews: [
             nameTitle, nameField,
             descriptionTitle, descriptionField,
@@ -114,60 +74,60 @@ final class EditProfileViewController: UIViewController, UIAdaptivePresentationC
         ])
         formStack.axis = .vertical
         formStack.translatesAutoresizingMaskIntoConstraints = false
-
+        
         formStack.setCustomSpacing(ProfileLayoutConstants.formStackSpacingSmall, after: nameTitle)
         formStack.setCustomSpacing(ProfileLayoutConstants.formStackSpacingLarge, after: nameField)
         formStack.setCustomSpacing(ProfileLayoutConstants.formStackSpacingSmall, after: descriptionTitle)
         formStack.setCustomSpacing(ProfileLayoutConstants.formStackSpacingLarge, after: descriptionField)
         formStack.setCustomSpacing(ProfileLayoutConstants.formStackSpacingSmall, after: websiteTitle)
-
+        
         view.addSubview(closeButton)
-        view.addSubview(avatarContainerView)
+        view.addSubview(avatarView)
         view.addSubview(formStack)
-
+        
+        
         NSLayoutConstraint.activate([
             closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: ProfileLayoutConstants.horizontalPadding),
             closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -ProfileLayoutConstants.horizontalPadding),
             closeButton.widthAnchor.constraint(equalToConstant: ProfileLayoutConstants.closeButtonSize),
             closeButton.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.closeButtonSize),
-
-            avatarContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: ProfileLayoutConstants.avatarTopOffset),
-            avatarContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            avatarContainerView.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.avatarSize),
-
-            formStack.topAnchor.constraint(equalTo: avatarContainerView.bottomAnchor, constant: ProfileLayoutConstants.stackSpacing),
+            
+            avatarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: ProfileLayoutConstants.avatarTopOffset),
+            avatarView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            avatarView.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.avatarSize),
+            avatarView.widthAnchor.constraint(equalToConstant: ProfileLayoutConstants.avatarSize),
+            
+            formStack.topAnchor.constraint(equalTo: avatarView.bottomAnchor, constant: ProfileLayoutConstants.stackSpacing),
             formStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: ProfileLayoutConstants.horizontalPadding),
             formStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -ProfileLayoutConstants.horizontalPadding),
-
+            
             nameField.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.rowHeight),
             descriptionField.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.descriptionHeight),
             websiteField.heightAnchor.constraint(equalToConstant: ProfileLayoutConstants.rowHeight),
         ])
     }
-
+    
     private func fillData() {
         nameField.text = profile.name
         descriptionField.text = profile.description
         websiteField.text = profile.website
-
+        
         initialName = profile.name
         initialDescription = profile.description ?? ""
         initialWebsite = profile.website ?? ""
-
-        if let url = URL(string: profile.avatar) {
-            avatarImageView.kf.setImage(with: url)
-        }
+        
+        avatarView.setImage(url: profile.avatar)
     }
     
     private func handleDismissIfNeeded() {
         let currentName = nameField.text ?? ""
         let currentDescription = descriptionField.text ?? ""
         let currentWebsite = websiteField.text ?? ""
-
+        
         let hasChanges = currentName != initialName ||
-                         currentDescription != initialDescription ||
-                         currentWebsite != initialWebsite
-
+        currentDescription != initialDescription ||
+        currentWebsite != initialWebsite
+        
         if hasChanges {
             presenter.updateProfile(
                 name: currentName,
@@ -182,15 +142,15 @@ final class EditProfileViewController: UIViewController, UIAdaptivePresentationC
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         handleDismissIfNeeded()
     }
-
+    
     // MARK: - Actions
     @objc private func dismissTapped() {
         handleDismissIfNeeded()
         dismiss(animated: true)
     }
-
+    
     // MARK: - Helpers
-
+    
     private func makeTitleLabel(text: String) -> UILabel {
         let label = UILabel()
         label.text = text
@@ -199,7 +159,7 @@ final class EditProfileViewController: UIViewController, UIAdaptivePresentationC
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }
-
+    
     private static func createTextField() -> UITextField {
         let field = InsetTextField(inset: ProfileLayoutConstants.textFieldInset)
         field.font = .bodyRegular
@@ -211,7 +171,7 @@ final class EditProfileViewController: UIViewController, UIAdaptivePresentationC
         field.translatesAutoresizingMaskIntoConstraints = false
         return field
     }
-
+    
     private static func createTextView() -> UITextView {
         let textView = UITextView()
         textView.font = .bodyRegular
@@ -223,3 +183,6 @@ final class EditProfileViewController: UIViewController, UIAdaptivePresentationC
         return textView
     }
 }
+
+
+
