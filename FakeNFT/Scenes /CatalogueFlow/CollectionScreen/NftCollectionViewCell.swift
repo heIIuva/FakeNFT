@@ -97,9 +97,7 @@ final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
             
             stackView.topAnchor.constraint(equalTo: ratingImageView.bottomAnchor, constant: 4),
             stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-//            stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             stackView.widthAnchor.constraint(equalToConstant: 68),
-//            stackView.heightAnchor.constraint(equalToConstant: 60),
             
             cartButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             cartButton.centerYAnchor.constraint(equalTo: stackView.centerYAnchor),
