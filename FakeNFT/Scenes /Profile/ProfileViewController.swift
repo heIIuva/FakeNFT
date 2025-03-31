@@ -96,6 +96,7 @@ final class ProfileViewController: UIViewController, ProfileView {
         let editProfileViewController = EditProfileViewController(presenter: presenter, profile: profile)
         let nav = UINavigationController(rootViewController: editProfileViewController)
         nav.setNavigationBarHidden(true, animated: false)
+        nav.presentationController?.delegate = editProfileViewController  // <- ВАЖНО
         present(nav, animated: true)
     }
     

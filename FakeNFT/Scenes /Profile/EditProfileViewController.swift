@@ -7,7 +7,7 @@
 import UIKit
 import Kingfisher
 
-final class EditProfileViewController: UIViewController {
+final class EditProfileViewController: UIViewController, UIAdaptivePresentationControllerDelegate {
     let presenter: ProfilePresenter
     private let profile: Profile
 
@@ -158,10 +158,8 @@ final class EditProfileViewController: UIViewController {
             avatarImageView.kf.setImage(with: url)
         }
     }
-
-    // MARK: - Actions
-
-    @objc private func dismissTapped() {
+    
+    private func handleDismissIfNeeded() {
         let currentName = nameField.text ?? ""
         let currentDescription = descriptionField.text ?? ""
         let currentWebsite = websiteField.text ?? ""
@@ -176,12 +174,19 @@ final class EditProfileViewController: UIViewController {
                 avatar: profile.avatar,
                 description: currentDescription,
                 website: currentWebsite
-            ) { [weak self] in
-                self?.dismiss(animated: true)
-            }
-        } else {
-            dismiss(animated: true)
+            )
         }
+    }
+    
+    //MARK: - UIAdaptivePresentationControllerDelegate
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        handleDismissIfNeeded()
+    }
+
+    // MARK: - Actions
+    @objc private func dismissTapped() {
+        handleDismissIfNeeded()
+        dismiss(animated: true)
     }
 
     // MARK: - Helpers
