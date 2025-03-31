@@ -61,10 +61,12 @@ final class CollectionViewController: UIViewController {
         let collectionView = UICollectionView(
             frame: .zero,
             collectionViewLayout: UICollectionViewFlowLayout())
+        collectionView.register(NftCollectionViewCell.self)
         collectionView.contentInset = .init(top: 24, left: 16, bottom: 34, right: 16)
         collectionView.isScrollEnabled = false
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.isScrollEnabled = true
         return collectionView
     } ()
     
@@ -133,9 +135,9 @@ final class CollectionViewController: UIViewController {
             collectionDescriptionLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
             
             collectionView.topAnchor.constraint(equalTo: collectionDescriptionLabel.bottomAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor)
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
     
@@ -157,10 +159,25 @@ extension CollectionViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        UICollectionViewCell()
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: NftCollectionViewCell.defaultReuseIdentifier,
+            for: indexPath) as? NftCollectionViewCell
+        else { return UICollectionViewCell() }
+        return cell
     }
 }
 
-extension CollectionViewController: UICollectionViewDelegate {
+extension CollectionViewController: UICollectionViewDelegateFlowLayout {
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        CGSize(width: 108, height: 192)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        9
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        8
+    }
 }
