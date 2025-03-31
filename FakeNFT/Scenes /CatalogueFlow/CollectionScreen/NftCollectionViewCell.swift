@@ -7,6 +7,11 @@
 
 import UIKit
 
+protocol NftCollectionViewCellProtocol: UICollectionViewCell {
+    func didTapLikeButton()
+    func didTapCartButton()
+}
+
 final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
     
     // MARK: - Properties

@@ -66,9 +66,9 @@ final class NftCollectionSupplementaryView: UICollectionReusableView {
     
     // MARK: - Methods
     
-    func configure(title: String, authorLink: String, description: String) {
+    func configure(title: String, author: String, description: String) {
         collectionTitleLabel.text = title
-        collectionAuthorLinkButton.setTitle(authorLink, for: .normal)
+        collectionAuthorLinkButton.setTitle(author, for: .normal)
         collectionDescriptionLabel.text = description
     }
     

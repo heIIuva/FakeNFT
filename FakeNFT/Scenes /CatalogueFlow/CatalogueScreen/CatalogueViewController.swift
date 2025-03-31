@@ -136,7 +136,8 @@ extension CatalogueViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let collectionVC = CollectionViewController()
+        let collectionPresenter = CollectionPresenter(collection: presenter.catalogue[indexPath.row])
+        let collectionVC = CollectionViewController(presenter: collectionPresenter)
         collectionVC.modalPresentationStyle = .fullScreen
         collectionVC.modalTransitionStyle = .crossDissolve
         present(collectionVC, animated: true)

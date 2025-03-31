@@ -7,10 +7,15 @@
 
 import UIKit
 
+protocol CollectionViewProtocol: UIViewController, LoadingView, ErrorView {
+    
+}
+
 final class CollectionViewController: UIViewController {
     
     // MARK: - Properties
     
+    private let presenter: CollectionPresenterProtocol
     private lazy var backButton: UIButton = {
         let backButton = UIButton(type: .system)
         backButton.setImage(UIImage(resource: .navBackButton).withRenderingMode(.alwaysOriginal), for: .normal)
@@ -31,8 +36,20 @@ final class CollectionViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.contentInsetAdjustmentBehavior = .never
+        collectionView.showsVerticalScrollIndicator = false
         return collectionView
     } ()
+    
+    // MARK: - Init
+    
+    init(presenter: CollectionPresenterProtocol) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Methods of lifecycle
     
@@ -93,10 +110,10 @@ extension CollectionViewController: UICollectionViewDataSource {
             return UICollectionReusableView()
         }
         headerView.configure(
-            title: "singulis epicuri",
-            authorLink: "Lourdes Harper",
-            description: "curabitur feugait a definitiones singulis movet eros aeque mucius evertitur assueverit et eam")
-        headerView.setImage(with: "https://code.s3.yandex.net/Mobile/iOS/NFT/Обложки_коллекций/Brown.png")
+            title: presenter.collection.name,
+            author: presenter.collection.author,
+            description: presenter.collection.description)
+        headerView.setImage(with: presenter.collection.cover)
         return headerView
     }
 }
@@ -122,9 +139,9 @@ extension CollectionViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         let headerView = NftCollectionSupplementaryView()
         headerView.configure(
-            title: "singulis epicuri",
-            authorLink: "Lourdes Harper",
-            description: "curabitur feugait a definitiones singulis movet eros aeque mucius evertitur assueverit et eam")
+            title: presenter.collection.name,
+            author: presenter.collection.author,
+            description: presenter.collection.description)
         let size = headerView.systemLayoutSizeFitting(
             CGSize(
                 width: collectionView.bounds.width,
