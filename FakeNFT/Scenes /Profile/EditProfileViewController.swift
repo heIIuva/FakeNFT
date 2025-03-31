@@ -10,6 +10,8 @@ final class EditProfileViewController: UIViewController, UIAdaptivePresentationC
     let presenter: ProfilePresenter
     private let profile: Profile
     
+    private var initialAvatarURL: String = ""
+    private var currentAvatarURL: String = ""
     private var initialName: String = ""
     private var initialDescription: String = ""
     private var initialWebsite: String = ""
@@ -30,7 +32,7 @@ final class EditProfileViewController: UIViewController, UIAdaptivePresentationC
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    
+
     private let nameField = createTextField()
     private let descriptionField = createTextView()
     private let websiteField = createTextField()
@@ -112,26 +114,33 @@ final class EditProfileViewController: UIViewController, UIAdaptivePresentationC
         descriptionField.text = profile.description
         websiteField.text = profile.website
         
+        initialAvatarURL = profile.avatar
+        currentAvatarURL = profile.avatar
         initialName = profile.name
         initialDescription = profile.description ?? ""
         initialWebsite = profile.website ?? ""
         
         avatarView.setImage(url: profile.avatar)
+        
+        avatarView.onChoosePhoto = { [weak self] newURL in
+            self?.currentAvatarURL = newURL
+        }
     }
     
     private func handleDismissIfNeeded() {
         let currentName = nameField.text ?? ""
         let currentDescription = descriptionField.text ?? ""
         let currentWebsite = websiteField.text ?? ""
-        
+
         let hasChanges = currentName != initialName ||
-        currentDescription != initialDescription ||
-        currentWebsite != initialWebsite
-        
+                         currentDescription != initialDescription ||
+                         currentWebsite != initialWebsite ||
+                         currentAvatarURL != initialAvatarURL
+
         if hasChanges {
             presenter.updateProfile(
                 name: currentName,
-                avatar: profile.avatar,
+                avatar: currentAvatarURL,
                 description: currentDescription,
                 website: currentWebsite
             )
@@ -183,6 +192,3 @@ final class EditProfileViewController: UIViewController, UIAdaptivePresentationC
         return textView
     }
 }
-
-
-

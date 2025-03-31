@@ -10,7 +10,7 @@ import Kingfisher
 
 final class AvatarView: UIView {
 
-    var onChoosePhoto: (() -> Void)?
+    var onChoosePhoto: ((String) -> Void)?
 
     private let imageView: UIImageView = {
         let imageView = UIImageView()
@@ -65,12 +65,7 @@ final class AvatarView: UIView {
     }
 
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        switch action {
-        case #selector(handleChoosePhoto):
-            return true
-        default:
-            return false
-        }
+        return false
     }
 
     private func setupView() {
@@ -96,12 +91,58 @@ final class AvatarView: UIView {
         }
     }
 
+    private func findViewController() -> UIViewController? {
+        var responder: UIResponder? = self
+        while let nextResponder = responder?.next {
+            if let viewController = nextResponder as? UIViewController {
+                return viewController
+            }
+            responder = nextResponder
+        }
+        return nil
+    }
+
+    private func presentTextFieldAlert() {
+        guard let viewController = self.findViewController() else { return }
+
+        let alert = UIAlertController(title: NSLocalizedString("EditProfile.loadPhoto", comment: ""),
+                                      message: nil,
+                                      preferredStyle: .alert)
+
+        alert.addTextField { textField in
+            textField.placeholder = NSLocalizedString("EditProfile.photoUrlPlaceholder", comment: "")
+            textField.keyboardType = .URL
+            textField.autocapitalizationType = .none
+        }
+
+        let cancelAction = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel)
+
+        let okAction = UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default) { [weak self] _ in
+            guard let self = self,
+                  let urlString = alert.textFields?.first?.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+                  let url = URL(string: urlString),
+                  UIApplication.shared.canOpenURL(url)
+            else {
+                return
+            }
+
+            self.setImage(url: urlString)
+            self.onChoosePhoto?(urlString)
+        }
+
+        alert.addAction(cancelAction)
+        alert.addAction(okAction)
+
+        viewController.present(alert, animated: true)
+    }
+
     @objc private func tapped() {
-        
         let title = NSLocalizedString("EditProfile.loadPhoto", comment: "")
-        
+
         let items = [
-            PopupMenuView.MenuItem(title: title, action: { print("upload") }),
+            PopupMenuView.MenuItem(title: title, action: { [weak self] in
+                self?.presentTextFieldAlert()
+            }),
         ]
 
         let style = PopupMenuView.Style(
@@ -119,13 +160,5 @@ final class AvatarView: UIView {
             width: 250,
             style: style
         )
-        
     }
-
-    @objc private func handleChoosePhoto() {
-        onChoosePhoto?()
-    }
-    
-    
-
 }

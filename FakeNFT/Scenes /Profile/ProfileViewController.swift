@@ -30,11 +30,12 @@ final class ProfileViewController: UIViewController, ProfileView {
         return tableView
     }()
     
-    private let items = [
-        ("Мои NFT", 112),
-        ("Избранные NFT", 11),
-        ("О разработчике", nil)
-    ]
+    private var items: [(String, Int?)]  =
+        [
+            ("Мои NFT", nil),
+            ("Избранные NFT", nil),
+            ("О разработчике", nil)
+        ]
     
     // MARK: - Init
     init(servicesAssembly: ServicesAssembly) {
@@ -90,7 +91,15 @@ final class ProfileViewController: UIViewController, ProfileView {
     
     //MARK: - ProfileView
     func display(profile: Profile) {
+        
         profileCardView.configure(with: profile)
+        items = [
+            ("Мои NFT", profile.nfts.count),
+            ("Избранные NFT", profile.likes.count),
+            ("О разработчике", nil)
+        ]
+
+        tableView.reloadData()
     }
     
     func showEditProfile(with profile: Profile) {
