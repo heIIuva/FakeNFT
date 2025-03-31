@@ -12,15 +12,15 @@ Alexander Bralnin
 
 1. Настройка проекта и верстка 2-х экранов  
    **est:** 4 часа; **fact:** 6 часов  
-   [Issue #2](https://github.com/heIIuva/FakeNFT/issues/2)
+   [Profile 1](https://github.com/heIIuva/FakeNFT/issues/2)
 
 2. Реализация логики загрузки профиля из back-end  
    **est:** 8 часов; **fact:** 3 часа  
-   [Issue #1](https://github.com/heIIuva/FakeNFT/issues/1)
+   [Profile 2](https://github.com/heIIuva/FakeNFT/issues/1)
 
 3. Реализация логики сохранения изменений профиля в back-end  
    **est:** 8 часов; **fact:** 8 часов  
-   [Issue #3](https://github.com/heIIuva/FakeNFT/issues/3)
+   [Profile 3](https://github.com/heIIuva/FakeNFT/issues/3)
 
 ---
 
