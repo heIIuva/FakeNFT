@@ -312,7 +312,6 @@
 			isa = PBXGroup;
 			children = (
 				3F6806D829CC979D00B4F915 /* Network */,
-				3F7A62152D9698AE00CDBC7E /* NftCollection.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -343,6 +342,7 @@
 		3F6806D829CC979D00B4F915 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				3F7A62152D9698AE00CDBC7E /* NftCollection.swift */,
 				0CFCB7412A78013E0009A829 /* Nft.swift */,
 			);
 			path = Network;

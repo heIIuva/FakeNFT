@@ -6,8 +6,11 @@
 //
 
 import UIKit
+import Kingfisher
 
 protocol NftCollectionViewCellProtocol: UICollectionViewCell {
+    var nftCellDelegate: NftCollectionViewCellDelegate? { get }
+    func configure(with id: String)
     func didTapLikeButton()
     func didTapCartButton()
 }
@@ -16,17 +19,12 @@ final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
     
     // MARK: - Properties
     
-    private lazy var ratingImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(resource: .rating3))
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    } ()
-    
+    weak var nftCellDelegate: NftCollectionViewCellDelegate?
     private lazy var nftImageView: UIImageView = {
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 108, height: 108))
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 12
-        imageView.backgroundColor = UIColor(resource: .nftGreenUniversal)
+        imageView.backgroundColor = UIColor(resource: .nftBackgroundUniversal)
         return imageView
     } ()
     
@@ -37,13 +35,17 @@ final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
         return button
     } ()
     
+    private lazy var ratingImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(resource: .rating3))
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    } ()
+
     private lazy var stackView: UIStackView = {
-        let stackView = UIStackView()
+        let stackView = UIStackView(arrangedSubviews: [nftNameLabel, nftPriceLabel])
         stackView.axis = .vertical
         stackView.spacing = 4
         stackView.alignment = .leading
-        stackView.addArrangedSubview(nftNameLabel)
-        stackView.addArrangedSubview(nftPriceLabel)
         return stackView
     } ()
     
@@ -51,14 +53,12 @@ final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
         let label = UILabel()
         label.font = .bodyBold
         label.numberOfLines = 2
-        label.text = "NFT name"
         return label
     } ()
     
     private lazy var nftPriceLabel: UILabel = {
         let label = UILabel()
         label.font = .caption3
-        label.text = "1 ETH"
         return label
     } ()
     
@@ -80,7 +80,27 @@ final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Methods of lifecycle
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        nftImageView.kf.cancelDownloadTask()
+        nftImageView.image = nil
+    }
+    
     // MARK: - Methods
+    
+    private func configureDetails(with nft: Nft) {
+        nftNameLabel.text = nft.name
+        nftPriceLabel.text = String(format: "%.2f ETH", nft.price)
+        ratingImageView.image = UIImage(resource: .init(name: "rating\(nft.rating)", bundle: .main))
+        let processor = DownsamplingImageProcessor(size: nftImageView.bounds.size)
+                     |> RoundCornerImageProcessor(cornerRadius: 12)
+        nftImageView.kf.setImage(
+            with: URL(string: nft.images[0]),
+            options: [.transition(.fade(1)), .processor(processor)]
+        )
+    }
     
     private func setupUI() {
         contentView.backgroundColor = .clear
@@ -110,15 +130,32 @@ final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
             cartButton.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
+}
+
+// MARK: - Extensions
+
+extension NftCollectionViewCell: NftCollectionViewCellProtocol {
     
-    @objc private func didTapLikeButton() {
+    func configure(with id: String) {
+        nftCellDelegate?.fetchNftDetails(for: id) { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(let nft):
+                configureDetails(with: nft)
+            case .failure:
+                break
+            }
+        }
+    }
+
+    @objc func didTapLikeButton() {
         likeButton.setImage(
             likeButton.image(for: .normal) == UIImage(resource: .liked) ?
                 UIImage(resource: .notLiked) :
                 UIImage(resource: .liked), for: .normal
         )
     }
-    @objc private func didTapCartButton() {
+    @objc func didTapCartButton() {
         cartButton.setImage(
             cartButton.image(for: .normal) == UIImage(resource: .addToCart) ?
                 UIImage(resource: .deleteFromCart) :

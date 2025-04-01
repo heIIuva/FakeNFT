@@ -11,10 +11,12 @@ protocol CollectionViewProtocol: UIViewController, LoadingView, ErrorView {
     
 }
 
-final class CollectionViewController: UIViewController {
+final class CollectionViewController: UIViewController, CollectionViewProtocol {
+    
     
     // MARK: - Properties
     
+    lazy var activityIndicator = UIActivityIndicatorView(style: .medium)
     private let presenter: CollectionPresenterProtocol
     private lazy var backButton: UIButton = {
         let backButton = UIButton(type: .system)
@@ -90,7 +92,7 @@ final class CollectionViewController: UIViewController {
 extension CollectionViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        5
+        presenter.collection.nfts.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -98,6 +100,8 @@ extension CollectionViewController: UICollectionViewDataSource {
             withReuseIdentifier: NftCollectionViewCell.defaultReuseIdentifier,
             for: indexPath) as? NftCollectionViewCell
         else { return UICollectionViewCell() }
+        cell.nftCellDelegate = presenter
+        cell.configure(with: presenter.collection.nfts[indexPath.item])
         return cell
     }
     

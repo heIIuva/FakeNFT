@@ -9,9 +9,9 @@ import Foundation
 
 protocol CataloguePresenterProtocol: AnyObject {
     var catalogue: [NftCollection] { get }
+    var servicesAssembly: ServicesAssembly { get }
     func loadCatalogue()
     func setupCatalogueView(_ view: CatalogueViewProtocol)
-    func setupCatalogueService(_ service: CatalogueServiceProtocol)
     func configure(cell: CatalogueTableViewCell, for indexPath: IndexPath) -> CatalogueTableViewCell
 }
 
@@ -20,11 +20,15 @@ final class CataloguePresenter: CataloguePresenterProtocol {
     // MARK: - Properties
     
     private weak var view: CatalogueViewProtocol?
-    private var catalogueService: CatalogueServiceProtocol?
+    private(set) var servicesAssembly: ServicesAssembly
     private(set) var catalogue: [NftCollection] = [] {
         didSet {
             view?.reloadData()
         }
+    }
+    
+    init(servicesAssembly: ServicesAssembly) {
+        self.servicesAssembly = servicesAssembly
     }
     
     // MARK: - Methods
@@ -33,14 +37,10 @@ final class CataloguePresenter: CataloguePresenterProtocol {
         self.view = view
     }
     
-    func setupCatalogueService(_ service: CatalogueServiceProtocol) {
-        self.catalogueService = service
-    }
-    
     func loadCatalogue() {
-        guard let view, let catalogueService else { return }
+        guard let view else { return }
         view.shouldShowIndicator(true)
-        catalogueService.fetchCatalogue { [weak self] result in
+        servicesAssembly.catalogueService.fetchCatalogue { [weak self] result in
             view.shouldShowIndicator(false)
             guard let self else { return }
             switch result {
