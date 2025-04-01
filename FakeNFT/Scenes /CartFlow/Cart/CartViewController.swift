@@ -8,13 +8,20 @@
 import UIKit
 
 
-final class CartViewController: UIViewController {
+protocol CartVCProtocol: UIViewController {
+    init(servicesAssembly: ServicesAssembly, presenter: CartPresenterProtocol)
+    var presenter: CartPresenterProtocol { get set }
+}
+
+
+final class CartViewController: UIViewController, CartVCProtocol {
     
     // MARK: - Init
     
     let servicesAssembly: ServicesAssembly
     
-    init(servicesAssembly: ServicesAssembly) {
+    init(servicesAssembly: ServicesAssembly, presenter: CartPresenterProtocol) {
+        self.presenter = presenter
         self.servicesAssembly = servicesAssembly
         super.init(nibName: nil, bundle: nil)
     }
@@ -93,20 +100,14 @@ final class CartViewController: UIViewController {
     }()
     
     private let cellReuseIdentifier = CartTableViewCell.reuseIdentifier
-    private var nfts: [Nft] = [
-        Nft(name: "nigga", id: "1", images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Gray/Piper/1.png")!], rating: 2, price: 1.78),
-        Nft(name: "nigga", id: "1", images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Gray/Piper/1.png")!], rating: 2, price: 1.78)
-    ] {
-        didSet {
-            
-        }
-    }
+    
+    var presenter: CartPresenterProtocol
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        presenter.viewController = self
         setupUI()
     }
     
@@ -147,11 +148,7 @@ final class CartViewController: UIViewController {
             payButton.widthAnchor.constraint(equalToConstant: 240)
         ])
     }
-    
-    private func calculateCart() {
         
-    }
-    
     private func cartIsEmpty() {
         cartTableView.removeFromSuperview()
         navigationItem.rightBarButtonItem?.customView?.removeFromSuperview()
@@ -179,17 +176,19 @@ final class CartViewController: UIViewController {
 
 extension CartViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard !nfts.isEmpty else {
+        guard
+            !presenter.nfts.isEmpty else {
             cartIsEmpty()
+            print("no presenter((")
             return 0
         }
         cartNonEmpty()
-        return nfts.count
+        return presenter.nfts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier, for: indexPath) as! CartTableViewCell
-        let nft = nfts[indexPath.row]
+        let nft = presenter.nfts[indexPath.row]
         cell.configureCell(nft: nft)
         cell.backgroundColor = .clear
         return cell
