@@ -28,6 +28,7 @@ final class CartViewController: UIViewController {
     private lazy var cartTableView: UITableView = {
         let table = UITableView(frame: .zero)
         table.dataSource = self
+        table.delegate = self
         table.translatesAutoresizingMaskIntoConstraints = false
         table.register(CartTableViewCell.self, forCellReuseIdentifier: cellReuseIdentifier)
         table.allowsSelection = false
@@ -37,6 +38,7 @@ final class CartViewController: UIViewController {
     
     private let cellReuseIdentifier = CartTableViewCell.reuseIdentifier
     private let nfts: [Nft] = [
+        Nft(name: "nigga", id: "1", images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Gray/Piper/1.png")!], rating: 2, price: 1.78),
         Nft(name: "nigga", id: "1", images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Gray/Piper/1.png")!], rating: 2, price: 1.78)
     ]
     
@@ -45,10 +47,22 @@ final class CartViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setupNavigationBar()
         setupUI()
     }
     
     // MARK: private methods
+    
+    private func setupNavigationBar() {
+        let sortButton = UIBarButtonItem(
+            image: UIImage(resource: .cartSortButton),
+            style: .plain,
+            target: self,
+            action: #selector(sortButtonTapped)
+        )
+        sortButton.tintColor = .label
+        navigationItem.rightBarButtonItem = sortButton
+    }
     
     private func setupUI() {
         view.addSubviews(cartTableView)
@@ -60,6 +74,8 @@ final class CartViewController: UIViewController {
             cartTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
         ])
     }
+    
+    @objc private func sortButtonTapped() {}
 }
 
 // MARK: - UITableViewDataSource
@@ -75,6 +91,12 @@ extension CartViewController: UITableViewDataSource {
         cell.configureCell(nft: nft)
         cell.backgroundColor = .clear
         return cell
+    }
+}
+
+extension CartViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        140
     }
 }
 
