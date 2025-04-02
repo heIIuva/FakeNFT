@@ -137,7 +137,6 @@ final class CartViewController: UIViewController, CartVCProtocol {
     
     // MARK: private methods
     
-    
     private func setupUI() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: sortButton)
         
