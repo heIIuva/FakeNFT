@@ -22,7 +22,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
     
     init(presenter: CartPresenterProtocol) {
         self.presenter = presenter
-        presenter.fetchOrder()
+//        presenter.fetchOrder()
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -128,11 +128,11 @@ final class CartViewController: UIViewController, CartVCProtocol {
     // MARK: protocol methods
     
     func cartNonEmpty() {
-        updateUI()
         cartTableView.isHidden = false
         backgroundView.isHidden = false
         navigationItem.rightBarButtonItem?.customView?.isHidden = false
         placeholderLabel.isHidden = true
+        updateUI()
     }
     
     // MARK: private methods
@@ -225,6 +225,7 @@ extension CartViewController: UITableViewDataSource {
             !presenter.nfts.isEmpty
         else {
             cartIsEmpty()
+            print("aint got order")
             return 0
         }
         return presenter.nfts.count

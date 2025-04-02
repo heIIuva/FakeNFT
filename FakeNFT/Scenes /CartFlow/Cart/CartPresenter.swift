@@ -58,6 +58,10 @@ final class CartPresenter: CartPresenterProtocol {
                 switch result {
                 case .success(let order):
                     self.fetchNfts(ids: order.nfts)
+                    DispatchQueue.main.async {
+                        self.viewController?.cartNonEmpty()
+                    }
+                    print("got order")
                 case .failure(let error):
                     print(error)
                 }

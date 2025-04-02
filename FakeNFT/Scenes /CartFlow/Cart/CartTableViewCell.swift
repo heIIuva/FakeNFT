@@ -130,6 +130,9 @@ final class CartTableViewCell: UITableViewCell {
     }
     
     private func configureRatingStack(rating: Int) {
+        ratingStack.arrangedSubviews.forEach {
+            $0.removeFromSuperview()
+        }
         for i in 1...5 {
             let starImageView = UIImageView(image: UIImage(systemName: "star.fill")?.applyingSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 12)))
             if i <= rating {
