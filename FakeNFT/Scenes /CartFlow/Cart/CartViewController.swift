@@ -113,6 +113,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         presenter.viewController = self
         setupUI()
     }
@@ -223,7 +224,6 @@ extension CartViewController: UITableViewDataSource {
         guard
             !presenter.nfts.isEmpty
         else {
-            print("cart is empty")
             cartIsEmpty()
             return 0
         }

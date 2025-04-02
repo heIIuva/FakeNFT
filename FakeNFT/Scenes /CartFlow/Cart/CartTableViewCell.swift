@@ -51,10 +51,11 @@ final class CartTableViewCell: UITableViewCell {
         return label
     }()
     
-    private lazy var ratingLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private lazy var ratingStack: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .horizontal
+        return stack
     }()
     
     private lazy var priceLabel: UILabel = {
@@ -93,15 +94,15 @@ final class CartTableViewCell: UITableViewCell {
     func configureCell(nft: Nft) {
         nftPreview.kf.setImage(with: nft.images[0], placeholder: UIImage(systemName: "photo"))
         nftName.text = nft.name
-        ratingLabel.text = "FIVE"
         priceLabel.text = NSLocalizedString("Price", comment: "")
         priceTag.text = "\(nft.price) ETH"
+        configureRatingStack(rating: nft.rating)
     }
     
     // MARK: - Private methods
     
     private func layoutCell() {
-        addSubviews(nftPreview, nftName, ratingLabel, priceLabel, priceTag, deleteButton)
+        addSubviews(nftPreview, nftName, ratingStack, priceLabel, priceTag, deleteButton)
         
         NSLayoutConstraint.activate([
             nftPreview.heightAnchor.constraint(equalToConstant: 108),
@@ -112,11 +113,11 @@ final class CartTableViewCell: UITableViewCell {
             nftName.leadingAnchor.constraint(equalTo: nftPreview.trailingAnchor, constant: 20),
             nftName.topAnchor.constraint(equalTo: topAnchor, constant: 8),
             
-            ratingLabel.leadingAnchor.constraint(equalTo: nftPreview.trailingAnchor, constant: 20),
-            ratingLabel.topAnchor.constraint(equalTo: nftName.bottomAnchor, constant: 4),
+            ratingStack.leadingAnchor.constraint(equalTo: nftPreview.trailingAnchor, constant: 20),
+            ratingStack.topAnchor.constraint(equalTo: nftName.bottomAnchor, constant: 4),
             
             priceLabel.leadingAnchor.constraint(equalTo: nftPreview.trailingAnchor, constant: 20),
-            priceLabel.topAnchor.constraint(equalTo: ratingLabel.bottomAnchor, constant: 12),
+            priceLabel.topAnchor.constraint(equalTo: ratingStack.bottomAnchor, constant: 12),
             
             priceTag.leadingAnchor.constraint(equalTo: nftPreview.trailingAnchor, constant: 20),
             priceTag.topAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: 2),
@@ -126,6 +127,18 @@ final class CartTableViewCell: UITableViewCell {
             deleteButton.heightAnchor.constraint(equalToConstant: 40),
             deleteButton.widthAnchor.constraint(equalToConstant: 40)
         ])
+    }
+    
+    private func configureRatingStack(rating: Int) {
+        for i in 1...5 {
+            let starImageView = UIImageView(image: UIImage(systemName: "star.fill")?.applyingSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 12)))
+            if i <= rating {
+                starImageView.tintColor = .systemYellow
+            } else {
+                starImageView.tintColor = UIColor(resource: .nftLightGray)
+            }
+            ratingStack.addArrangedSubview(starImageView)
+        }
     }
     
     @objc private func deleteButtonTapped() {}
