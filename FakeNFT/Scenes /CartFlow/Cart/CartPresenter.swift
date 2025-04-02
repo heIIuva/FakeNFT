@@ -33,6 +33,7 @@ final class CartPresenter: CartPresenterProtocol {
     func calculateCart() {
         totalAmount = nfts.count
         nfts.forEach { totalPrice += $0.price }
+        viewController?.updateUI()
     }
 
 }

@@ -11,6 +11,8 @@ import UIKit
 protocol CartVCProtocol: UIViewController {
     init(servicesAssembly: ServicesAssembly, presenter: CartPresenterProtocol)
     var presenter: CartPresenterProtocol { get set }
+    
+    func updateUI()
 }
 
 
@@ -109,6 +111,15 @@ final class CartViewController: UIViewController, CartVCProtocol {
         super.viewDidLoad()
         presenter.viewController = self
         setupUI()
+        presenter.calculateCart()
+    }
+    
+    // MARK: protocol methods
+    
+    func updateUI() {
+        cartTableView.reloadData()
+        totalNftsLabel.text = "\(presenter.totalAmount) NFT"
+        totalNftsPriceLabel.text = "\(presenter.totalPrice) ETH"
     }
     
     // MARK: private methods
@@ -129,7 +140,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
         backgroundView.addSubviews(labelsStackView, payButton)
         
         NSLayoutConstraint.activate([
-            cartTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 64),
+            cartTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             cartTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 20),
             cartTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             cartTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -169,7 +180,33 @@ final class CartViewController: UIViewController, CartVCProtocol {
     
     @objc private func payButtonTapped() {}
     
-    @objc private func sortButtonTapped() {}
+    @objc private func sortButtonTapped() {
+        let actionSheet = UIAlertController(
+            title: NSLocalizedString("Sort", comment: ""),
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+        
+        let priceParam = UIAlertAction(title: NSLocalizedString("By price", comment: ""), style: .default) {[weak self] _ in
+            guard let self else { return }
+        }
+        let ratingParam = UIAlertAction(title: NSLocalizedString("By rating", comment: ""), style: .default) {[weak self] _ in
+            guard let self else { return }
+        }
+        let nameParam = UIAlertAction(title: NSLocalizedString("By name", comment: ""), style: .default) {[weak self] _ in
+            guard let self else { return }
+        }
+        let cancel = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) { [weak self] _ in
+            guard let self else { return }
+            self.dismiss(animated: true)
+        }
+        
+        let params = [priceParam, ratingParam, nameParam, cancel]
+        
+        params.forEach { actionSheet.addAction($0)}
+        
+        self.present(actionSheet, animated: true)
+    }
 }
 
 // MARK: - UITableViewDataSource
