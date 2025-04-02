@@ -9,10 +9,10 @@ import UIKit
 
 
 protocol CartVCProtocol: UIViewController {
-    init(servicesAssembly: ServicesAssembly, presenter: CartPresenterProtocol)
+    init(presenter: CartPresenterProtocol)
     var presenter: CartPresenterProtocol { get set }
     
-    func updateUI()
+    func cartNonEmpty()
 }
 
 
@@ -20,11 +20,9 @@ final class CartViewController: UIViewController, CartVCProtocol {
     
     // MARK: - Init
     
-    let servicesAssembly: ServicesAssembly
-    
-    init(servicesAssembly: ServicesAssembly, presenter: CartPresenterProtocol) {
+    init(presenter: CartPresenterProtocol) {
         self.presenter = presenter
-        self.servicesAssembly = servicesAssembly
+        presenter.fetchOrder()
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -33,6 +31,12 @@ final class CartViewController: UIViewController, CartVCProtocol {
     }
     
     // MARK: - Properties
+    
+    private lazy var sortButton: UIButton = {
+        let button = UIButton.systemButton(with: UIImage(resource: .cartSortButton), target: self, action: #selector(sortButtonTapped))
+        button.tintColor = .label
+        return button
+    }()
     
     private lazy var cartTableView: UITableView = {
         let table = UITableView(frame: .zero)
@@ -111,32 +115,32 @@ final class CartViewController: UIViewController, CartVCProtocol {
         super.viewDidLoad()
         presenter.viewController = self
         setupUI()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        presenter.fetchOrder()
         presenter.calculateCart()
     }
     
     // MARK: protocol methods
     
-    func updateUI() {
-        cartTableView.reloadData()
-        totalNftsLabel.text = "\(presenter.totalAmount) NFT"
-        totalNftsPriceLabel.text = "\(presenter.totalPrice) ETH"
+    func cartNonEmpty() {
+        updateUI()
+        cartTableView.isHidden = false
+        backgroundView.isHidden = false
+        navigationItem.rightBarButtonItem?.customView?.isHidden = false
+        placeholderLabel.isHidden = true
     }
     
     // MARK: private methods
     
-    private func setupNavigationBar() {
-        let sortButton = UIBarButtonItem(
-            image: UIImage(resource: .cartSortButton),
-            style: .plain,
-            target: self,
-            action: #selector(sortButtonTapped)
-        )
-        sortButton.tintColor = .label
-        navigationItem.rightBarButtonItem = sortButton
-    }
     
     private func setupUI() {
-        view.addSubviews(cartTableView, backgroundView)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: sortButton)
+        
+        view.addSubviews(cartTableView, backgroundView, placeholderLabel)
         backgroundView.addSubviews(labelsStackView, payButton)
         
         NSLayoutConstraint.activate([
@@ -156,30 +160,33 @@ final class CartViewController: UIViewController, CartVCProtocol {
             payButton.centerYAnchor.constraint(equalTo: backgroundView.centerYAnchor),
             payButton.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor, constant: -16),
             payButton.heightAnchor.constraint(equalToConstant: 44),
-            payButton.widthAnchor.constraint(equalToConstant: 240)
-        ])
-    }
-        
-    private func cartIsEmpty() {
-        cartTableView.removeFromSuperview()
-        navigationItem.rightBarButtonItem?.customView?.removeFromSuperview()
-
-        view.addSubview(placeholderLabel)
-        NSLayoutConstraint.activate([
+            payButton.widthAnchor.constraint(equalToConstant: 240),
+            
             placeholderLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             placeholderLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
+        
+        placeholderLabel.isHidden = true
     }
     
-    private func cartNonEmpty() {
-        setupUI()
-        setupNavigationBar()
+    private func updateUI() {
+        cartTableView.reloadData()
+        totalNftsLabel.text = "\(presenter.totalAmount) NFT"
+        totalNftsPriceLabel.text = "\(presenter.totalPrice) ETH"
+    }
+        
+    private func cartIsEmpty() {
+        cartTableView.isHidden = true
+        backgroundView.isHidden = true
+        navigationItem.rightBarButtonItem?.customView?.isHidden = true
+        placeholderLabel.isHidden = false
     }
     
     // MARK: - OBJ-C methods
     
     @objc private func payButtonTapped() {}
     
+    // TODO: - Sort logic
     @objc private func sortButtonTapped() {
         let actionSheet = UIAlertController(
             title: NSLocalizedString("Sort", comment: ""),
@@ -214,12 +221,12 @@ final class CartViewController: UIViewController, CartVCProtocol {
 extension CartViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard
-            !presenter.nfts.isEmpty else {
+            !presenter.nfts.isEmpty
+        else {
+            print("cart is empty")
             cartIsEmpty()
-            print("no presenter((")
             return 0
         }
-        cartNonEmpty()
         return presenter.nfts.count
     }
     
