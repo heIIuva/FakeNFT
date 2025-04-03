@@ -95,10 +95,11 @@ final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
         ratingImageView.image = UIImage(resource: .init(name: "rating\(nft.rating)", bundle: .main))
         let processor = DownsamplingImageProcessor(size: nftImageView.bounds.size)
                      |> RoundCornerImageProcessor(cornerRadius: 12)
+        let retry = DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(5))
         nftImageView.kf.indicatorType = .activity
         nftImageView.kf.setImage(
             with: URL(string: nft.images[0]),
-            options: [.transition(.fade(1)), .processor(processor)]
+            options: [.transition(.fade(1)), .processor(processor), .retryStrategy(retry)]
         )
     }
     

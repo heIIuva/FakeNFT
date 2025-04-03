@@ -8,7 +8,7 @@
 import UIKit
 
 protocol CollectionViewProtocol: UIViewController, LoadingView, ErrorView {
-    
+    func reloadData()
 }
 
 final class CollectionViewController: UIViewController, CollectionViewProtocol {
@@ -57,10 +57,15 @@ final class CollectionViewController: UIViewController, CollectionViewProtocol {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = UIColor(resource: .nftWhite)
         setupUI()
     }
     
     // MARK: - Methods
+    
+    func reloadData() {
+        collectionView.reloadData()
+    }
     
     private func setupUI() {
         [collectionView, backButton].forEach {
@@ -109,10 +114,8 @@ extension CollectionViewController: UICollectionViewDataSource {
         guard let headerView = collectionView.dequeueReusableSupplementaryView(
             ofKind: kind,
             withReuseIdentifier: NftCollectionSupplementaryView.identifier,
-            for: indexPath)
-        as? NftCollectionSupplementaryView else {
-            return UICollectionReusableView()
-        }
+            for: indexPath) as? NftCollectionSupplementaryView
+        else { return UICollectionReusableView() }
         headerView.configure(
             title: presenter.collection.name,
             author: presenter.collection.author,

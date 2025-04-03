@@ -21,19 +21,19 @@ final class UIProgressHUD {
     
     static func blockingShow() {
         window?.isUserInteractionEnabled = false
-        ProgressHUD.colorHUD = .clear
-        ProgressHUD.colorBackground = .clear
-        ProgressHUD.colorAnimation = UIColor(resource: .nftBlack)
-        ProgressHUD.animationType = .systemActivityIndicator
-        ProgressHUD.show()
+        show()
     }
     
     static func blockingDismiss() {
         window?.isUserInteractionEnabled = true
-        ProgressHUD.dismiss()
+        dismiss()
     }
     
     static func show() {
+        ProgressHUD.colorHUD = .clear
+        ProgressHUD.colorBackground = .clear
+        ProgressHUD.colorAnimation = UIColor(resource: .nftBlack)
+        ProgressHUD.animationType = .systemActivityIndicator
         ProgressHUD.show()
     }
     

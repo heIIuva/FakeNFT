@@ -108,8 +108,8 @@ extension CatalogueViewController: CatalogueViewProtocol {
     }
     
     func shouldShowIndicator(_ isShown: Bool) {
-        isShown ? UIProgressHUD.blockingShow() :
-                  UIProgressHUD.blockingDismiss()
+        isShown ? UIProgressHUD.show() :
+                  UIProgressHUD.dismiss()
     }
 }
 
@@ -127,8 +127,7 @@ extension CatalogueViewController: UITableViewDataSource, UITableViewDelegate {
             withIdentifier: CatalogueTableViewCell.defaultReuseIdentifier,
             for: indexPath)
         guard let catalogueCell = cell as? CatalogueTableViewCell else { return UITableViewCell() }
-        let configuredCell = presenter.configure(cell: catalogueCell, for: indexPath)
-        return configuredCell
+        return presenter.configure(cell: catalogueCell, for: indexPath)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

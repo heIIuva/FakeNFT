@@ -42,6 +42,7 @@ final class CollectionPresenter: CollectionPresenterProtocol {
 // MARK: - Extensions
 
 extension CollectionPresenter: NftCollectionViewCellDelegate {
+    
     func fetchNftDetails(for nftId: String, completion: @escaping NftCompletion) {
         servicesAssembly.nftService.loadNft(id: nftId) { result in
             switch result {

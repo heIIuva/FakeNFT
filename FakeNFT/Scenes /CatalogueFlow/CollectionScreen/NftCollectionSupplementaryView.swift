@@ -16,7 +16,7 @@ final class NftCollectionSupplementaryView: UICollectionReusableView {
 
     private lazy var collectionCoverImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(resource: .mockCollection))
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 12
         imageView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         imageView.layer.masksToBounds = true
@@ -26,7 +26,6 @@ final class NftCollectionSupplementaryView: UICollectionReusableView {
     private lazy var collectionTitleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.headline3
-        label.text = "Peach"
         return label
     } ()
     
@@ -39,7 +38,6 @@ final class NftCollectionSupplementaryView: UICollectionReusableView {
     
     private lazy var collectionAuthorLinkButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("John Doe", for: .normal)
         button.setTitleColor(UIColor(resource: .nftBlueUniversal), for: .normal)
         button.titleLabel?.font = UIFont.caption1
         return button
@@ -49,7 +47,6 @@ final class NftCollectionSupplementaryView: UICollectionReusableView {
         let label = UILabel()
         label.font = UIFont.caption2
         label.numberOfLines = 0
-        label.text = "Персиковый — как облака над закатным солнцем в океане. В этой коллекции совмещены трогательная нежность и живая игривость сказочных зефирных зверей."
         return label
     } ()
 
@@ -73,19 +70,11 @@ final class NftCollectionSupplementaryView: UICollectionReusableView {
     }
     
     func setImage(with image: String) {
+        let retry = DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(5))
         collectionCoverImageView.kf.indicatorType = .activity
         collectionCoverImageView.kf.setImage(
             with: URL(string: image),
-            options: [.transition(.fade(1))],
-            completionHandler: { [weak self] result in
-                guard let self else { return }
-                switch result {
-                case .success(let resultImage):
-                    collectionCoverImageView.image = resultImage.image
-                case .failure:
-                    collectionCoverImageView.backgroundColor = UIColor(resource: .nftBackgroundUniversal)
-                }
-            }
+            options: [.transition(.fade(1)), .retryStrategy(retry)]
         )
     }
     

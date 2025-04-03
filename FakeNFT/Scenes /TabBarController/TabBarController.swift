@@ -43,7 +43,7 @@ final class TabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(resource: .nftWhite)
         viewControllers = [
             setupProfileViewController(),
             setupCatalogueViewController(),
