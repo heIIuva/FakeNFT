@@ -115,7 +115,7 @@ extension CatalogueViewController: CatalogueViewProtocol {
 
 extension CatalogueViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        presenter.catalogue.count
+        presenter.getCollectionsCount()
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -131,9 +131,7 @@ extension CatalogueViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let collectionPresenter = CollectionPresenter(
-            collection: presenter.catalogue[indexPath.row],
-            servicesAssembly: presenter.servicesAssembly)
+        let collectionPresenter = presenter.getCollectionPresenter(for: indexPath)
         let collectionVC = CollectionViewController(presenter: collectionPresenter)
         collectionPresenter.setupCollectionView(collectionVC)
         collectionVC.modalPresentationStyle = .fullScreen

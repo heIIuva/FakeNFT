@@ -8,9 +8,9 @@
 import Foundation
 
 protocol CataloguePresenterProtocol: AnyObject {
-    var catalogue: [NftCollection] { get }
-    var servicesAssembly: ServicesAssembly { get }
     func loadCatalogue()
+    func getCollectionsCount() -> Int
+    func getCollectionPresenter(for indexPath: IndexPath) -> CollectionPresenterProtocol
     func setupCatalogueView(_ view: CatalogueViewProtocol)
     func configure(cell: CatalogueTableViewCell, for indexPath: IndexPath) -> CatalogueTableViewCell
 }
@@ -20,8 +20,8 @@ final class CataloguePresenter: CataloguePresenterProtocol {
     // MARK: - Properties
     
     private weak var view: CatalogueViewProtocol?
-    private(set) var servicesAssembly: ServicesAssembly
-    private(set) var catalogue: [NftCollection] = [] {
+    private let servicesAssembly: ServicesAssembly
+    private var catalogue: [NftCollection] = [] {
         didSet {
             view?.reloadData()
         }
@@ -54,6 +54,14 @@ final class CataloguePresenter: CataloguePresenterProtocol {
                 view.showErrorWithCancel(errorModel)
             }
         }
+    }
+    
+    func getCollectionsCount() -> Int {
+        catalogue.count
+    }
+    
+    func getCollectionPresenter(for indexPath: IndexPath) -> CollectionPresenterProtocol {
+        CollectionPresenter(collection: catalogue[indexPath.row], servicesAssembly: servicesAssembly)
     }
     
     func configure(cell: CatalogueTableViewCell, for indexPath: IndexPath) -> CatalogueTableViewCell {

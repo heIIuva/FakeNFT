@@ -8,9 +8,10 @@
 import Foundation
 
 protocol CollectionPresenterProtocol: AnyObject, NftCollectionViewCellDelegate {
-    var collection: NftCollection { get }
-    var servicesAssembly: ServicesAssembly { get }
     func setupCollectionView(_ view: CollectionViewProtocol)
+    func getNftCount() -> Int
+    func configure(cell: NftCollectionViewCell, for indexPath: IndexPath)
+    func configure(header: NftCollectionSupplementaryView, withImage: Bool)
 }
 
 protocol NftCollectionViewCellDelegate: AnyObject {
@@ -22,8 +23,8 @@ final class CollectionPresenter: CollectionPresenterProtocol {
     // MARK: - Properties
     
     private weak var view: CollectionViewProtocol?
-    private(set) var servicesAssembly: ServicesAssembly
-    private(set) var collection: NftCollection
+    private let servicesAssembly: ServicesAssembly
+    private let collection: NftCollection
     
     // MARK: - Init
     
@@ -36,6 +37,24 @@ final class CollectionPresenter: CollectionPresenterProtocol {
     
     func setupCollectionView(_ view: CollectionViewProtocol) {
         self.view = view
+    }
+    
+    func getNftCount() -> Int {
+        collection.nfts.count
+    }
+    
+    func configure(cell: NftCollectionViewCell, for indexPath: IndexPath) {
+        cell.nftCellDelegate = self
+        cell.configure(with: collection.nfts[indexPath.item])
+    }
+    
+    func configure(header: NftCollectionSupplementaryView, withImage: Bool) {
+        header.configure(
+            title: collection.name,
+            author: collection.author,
+            description: collection.description
+        )
+        if withImage { header.setImage(with: collection.cover) }
     }
 }
 

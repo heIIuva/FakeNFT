@@ -97,7 +97,7 @@ final class CollectionViewController: UIViewController, CollectionViewProtocol {
 extension CollectionViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        presenter.collection.nfts.count
+        presenter.getNftCount()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -105,8 +105,7 @@ extension CollectionViewController: UICollectionViewDataSource {
             withReuseIdentifier: NftCollectionViewCell.defaultReuseIdentifier,
             for: indexPath) as? NftCollectionViewCell
         else { return UICollectionViewCell() }
-        cell.nftCellDelegate = presenter
-        cell.configure(with: presenter.collection.nfts[indexPath.item])
+        presenter.configure(cell: cell, for: indexPath)
         return cell
     }
     
@@ -116,11 +115,7 @@ extension CollectionViewController: UICollectionViewDataSource {
             withReuseIdentifier: NftCollectionSupplementaryView.identifier,
             for: indexPath) as? NftCollectionSupplementaryView
         else { return UICollectionReusableView() }
-        headerView.configure(
-            title: presenter.collection.name,
-            author: presenter.collection.author,
-            description: presenter.collection.description)
-        headerView.setImage(with: presenter.collection.cover)
+        presenter.configure(header: headerView, withImage: true)
         return headerView
     }
 }
@@ -145,10 +140,7 @@ extension CollectionViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         let headerView = NftCollectionSupplementaryView()
-        headerView.configure(
-            title: presenter.collection.name,
-            author: presenter.collection.author,
-            description: presenter.collection.description)
+        presenter.configure(header: headerView, withImage: false)
         let size = headerView.systemLayoutSizeFitting(
             CGSize(
                 width: collectionView.bounds.width,
