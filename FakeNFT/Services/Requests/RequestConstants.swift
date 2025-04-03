@@ -1,5 +1,5 @@
 enum RequestConstants {
     static let baseURL = "https://d5dn3j2ouj72b0ejucbl.apigw.yandexcloud.net"
-    #warning("Instert your token here")
-    static let token = ""
+ 
+    static let token = "b899cba7-6d68-4e17-81d7-03a369ab7a7c"
 }
