@@ -7,17 +7,16 @@
 
 import UIKit
 
-protocol CatalogueViewProtocol: UIViewController, LoadingView, ErrorView {
+protocol CatalogueViewProtocol: UIViewController, ErrorView {
     func reloadData()
     func shouldShowIndicator(_ isShow: Bool)
 }
 
-final class CatalogueViewController: UIViewController, LoadingView, ErrorView {
+final class CatalogueViewController: UIViewController, ErrorView {
     
     // MARK: - Properties
     
     private let presenter: CataloguePresenterProtocol
-    lazy var activityIndicator = UIActivityIndicatorView(style: .medium)
     private lazy var sortButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(resource: .sortButtonIcon), for: .normal)
@@ -57,7 +56,7 @@ final class CatalogueViewController: UIViewController, LoadingView, ErrorView {
     // MARK: - Methods
     
     private func setupUI() {
-        [sortButton, tableView, activityIndicator].forEach {
+        [sortButton, tableView].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -69,9 +68,6 @@ final class CatalogueViewController: UIViewController, LoadingView, ErrorView {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            
-            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
     }
     
@@ -112,8 +108,8 @@ extension CatalogueViewController: CatalogueViewProtocol {
     }
     
     func shouldShowIndicator(_ isShown: Bool) {
-        isShown ? showLoading() : hideLoading()
-        view.isUserInteractionEnabled = !isShown
+        isShown ? UIProgressHUD.blockingShow() :
+                  UIProgressHUD.blockingDismiss()
     }
 }
 

@@ -24,7 +24,6 @@ final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 108, height: 108))
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 12
-        imageView.backgroundColor = UIColor(resource: .nftBackgroundUniversal)
         return imageView
     } ()
     
@@ -36,7 +35,7 @@ final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
     } ()
     
     private lazy var ratingImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(resource: .rating3))
+        let imageView = UIImageView(image: UIImage(resource: .rating0))
         imageView.contentMode = .scaleAspectFit
         return imageView
     } ()
@@ -96,6 +95,7 @@ final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
         ratingImageView.image = UIImage(resource: .init(name: "rating\(nft.rating)", bundle: .main))
         let processor = DownsamplingImageProcessor(size: nftImageView.bounds.size)
                      |> RoundCornerImageProcessor(cornerRadius: 12)
+        nftImageView.kf.indicatorType = .activity
         nftImageView.kf.setImage(
             with: URL(string: nft.images[0]),
             options: [.transition(.fade(1)), .processor(processor)]
@@ -137,7 +137,9 @@ final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
 extension NftCollectionViewCell: NftCollectionViewCellProtocol {
     
     func configure(with id: String) {
+        UIProgressHUD.blockingShow()
         nftCellDelegate?.fetchNftDetails(for: id) { [weak self] result in
+            UIProgressHUD.blockingDismiss()
             guard let self else { return }
             switch result {
             case .success(let nft):

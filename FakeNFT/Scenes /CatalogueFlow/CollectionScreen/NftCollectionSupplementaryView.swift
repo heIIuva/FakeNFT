@@ -73,6 +73,7 @@ final class NftCollectionSupplementaryView: UICollectionReusableView {
     }
     
     func setImage(with image: String) {
+        collectionCoverImageView.kf.indicatorType = .activity
         collectionCoverImageView.kf.setImage(
             with: URL(string: image),
             options: [.transition(.fade(1))],
