@@ -52,10 +52,11 @@ final class AvatarView: UIView {
         super.init(frame: frame)
         isUserInteractionEnabled = true
         setupView()
-        let tap = UITapGestureRecognizer(target: self, action: #selector(tapped))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapAvatarView))
         addGestureRecognizer(tap)
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -136,7 +137,7 @@ final class AvatarView: UIView {
         viewController.present(alert, animated: true)
     }
 
-    @objc private func tapped() {
+    @objc private func didTapAvatarView() {
         let title = NSLocalizedString("EditProfile.loadPhoto", comment: "")
 
         let items = [
