@@ -3,6 +3,7 @@
 "Tab.cart" = "Корзина";
 "Tab.stat" = "Статистика";
 "Catalog.openNft" = "Открыть Nft";
+"Catalog.collectionAuthor" = "Автор коллекции:";
 "Error.network" = "Произошла ошибка сети";
 "Error.unknown" = "Произошла неизвестная ошибка";
 "Error.repeat" = "Повторить";

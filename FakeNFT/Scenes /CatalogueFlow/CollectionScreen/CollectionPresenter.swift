@@ -7,15 +7,11 @@
 
 import Foundation
 
-protocol CollectionPresenterProtocol: AnyObject, NftCollectionViewCellDelegate {
+protocol CollectionPresenterProtocol: AnyObject, NftCollectionCellDelegate, NftCollectionHeaderDelegate {
     func setupCollectionView(_ view: CollectionViewProtocol)
     func getNftCount() -> Int
-    func configure(cell: NftCollectionViewCell, for indexPath: IndexPath)
-    func configure(header: NftCollectionSupplementaryView, withImage: Bool)
-}
-
-protocol NftCollectionViewCellDelegate: AnyObject {
-    func fetchNftDetails(for nftId: String, completion: @escaping NftCompletion)
+    func configure(cell: NftCollectionCellProtocol, for indexPath: IndexPath)
+    func configure(header: NftCollectionHeader, withImage: Bool)
 }
 
 final class CollectionPresenter: CollectionPresenterProtocol {
@@ -23,14 +19,16 @@ final class CollectionPresenter: CollectionPresenterProtocol {
     // MARK: - Properties
     
     private weak var view: CollectionViewProtocol?
-    private let servicesAssembly: ServicesAssembly
     private let collection: NftCollection
+    private let servicesAssembly: ServicesAssembly
+    private let nftService: NftServiceProtocol
     
     // MARK: - Init
     
     init(collection: NftCollection, servicesAssembly: ServicesAssembly) {
         self.collection = collection
         self.servicesAssembly = servicesAssembly
+        self.nftService = servicesAssembly.nftService
     }
     
     // MARK: - Methods
@@ -43,12 +41,22 @@ final class CollectionPresenter: CollectionPresenterProtocol {
         collection.nfts.count
     }
     
-    func configure(cell: NftCollectionViewCell, for indexPath: IndexPath) {
+    func configure(cell: NftCollectionCellProtocol, for indexPath: IndexPath) {
         cell.nftCellDelegate = self
-        cell.configure(with: collection.nfts[indexPath.item])
+        cell.isUserInteractionEnabled(false)
+        nftService.loadNft(id: collection.nfts[indexPath.item]) { result in
+            switch result {
+            case .success(let nft):
+                cell.configure(with: nft)
+                cell.isUserInteractionEnabled(true)
+            case .failure(let error):
+                assertionFailure(error.localizedDescription)
+            }
+        }
     }
     
-    func configure(header: NftCollectionSupplementaryView, withImage: Bool) {
+    func configure(header: NftCollectionHeader, withImage: Bool) {
+        header.nftHeaderViewDelegate = self
         header.configure(
             title: collection.name,
             author: collection.author,
@@ -60,16 +68,20 @@ final class CollectionPresenter: CollectionPresenterProtocol {
 
 // MARK: - Extensions
 
-extension CollectionPresenter: NftCollectionViewCellDelegate {
+extension CollectionPresenter: NftCollectionHeaderDelegate {
     
-    func fetchNftDetails(for nftId: String, completion: @escaping NftCompletion) {
-        servicesAssembly.nftService.loadNft(id: nftId) { result in
-            switch result {
-            case .success(let nft):
-                completion(.success(nft))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+    func handleAuthorLinkButtonTap() {
+        // Epic catalog 3/3 iteration
+    }
+}
+
+extension CollectionPresenter: NftCollectionCellDelegate {
+    
+    func handleLikeButtonTap() {
+        // Epic Catalog 3/3 iteration
+    }
+    
+    func handleCartButtonTap() {
+        // Epic Catalog 3/3 iteration
     }
 }

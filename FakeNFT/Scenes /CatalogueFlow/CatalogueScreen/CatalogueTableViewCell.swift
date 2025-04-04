@@ -42,6 +42,7 @@ final class CatalogueTableViewCell: UITableViewCell, ReuseIdentifying {
         setupUI()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -52,6 +53,7 @@ final class CatalogueTableViewCell: UITableViewCell, ReuseIdentifying {
         super.prepareForReuse()
         collectionImage.kf.cancelDownloadTask()
         collectionImage.image = nil
+        collectionTitle.text = nil
     }
     
     private func setupUI() {
@@ -78,7 +80,7 @@ extension CatalogueTableViewCell: CatalogueTableViewCellProtocol {
     
     func configure(image: String, title: String, count: Int) {
         collectionTitle.text = "\(title) (\(count))"
-        let retry = DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(5))
+        let retry = DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(10))
         collectionImage.kf.indicatorType = .activity
         collectionImage.kf.setImage(
             with: URL(string: image),

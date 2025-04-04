@@ -7,20 +7,25 @@
 
 import UIKit
 
-protocol CatalogueViewProtocol: UIViewController, ErrorView {
+protocol CatalogueViewProtocol: UIViewController, LoadingView, ErrorView {
     func reloadData()
     func shouldShowIndicator(_ isShow: Bool)
 }
 
-final class CatalogueViewController: UIViewController, ErrorView {
+final class CatalogueViewController: UIViewController {
     
     // MARK: - Properties
     
+    var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .medium)
+        indicator.color = UIColor(resource: .nftBlack)
+        return indicator
+    } ()
     private let presenter: CataloguePresenterProtocol
     private lazy var sortButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(resource: .sortButtonIcon), for: .normal)
-        button.addTarget(self, action: #selector(handleSortButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didTapSortButton), for: .touchUpInside)
         return button
     } ()
     private lazy var tableView: UITableView = {
@@ -35,15 +40,16 @@ final class CatalogueViewController: UIViewController, ErrorView {
     
     // MARK: - Init
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     init(presenter: CataloguePresenterProtocol) {
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
     }
     
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     // MARK: - Methods of lifecycle
     
     override func viewDidLoad() {
@@ -56,10 +62,11 @@ final class CatalogueViewController: UIViewController, ErrorView {
     // MARK: - Methods
     
     private func setupUI() {
-        [sortButton, tableView].forEach {
+        [sortButton, tableView, activityIndicator].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
+        activityIndicator.constraintEdges(to: view)
         NSLayoutConstraint.activate([
             sortButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 2),
             sortButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -9),
@@ -67,11 +74,11 @@ final class CatalogueViewController: UIViewController, ErrorView {
             tableView.topAnchor.constraint(equalTo: sortButton.bottomAnchor, constant: 20),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
     
-    @objc private func handleSortButton() {
+    @objc private func didTapSortButton() {
         let alertController = UIAlertController(
             title: NSLocalizedString("SortActionSheet.title", comment: ""),
             message: nil,
@@ -108,8 +115,9 @@ extension CatalogueViewController: CatalogueViewProtocol {
     }
     
     func shouldShowIndicator(_ isShown: Bool) {
-        isShown ? UIProgressHUD.show() :
-                  UIProgressHUD.dismiss()
+        view.isUserInteractionEnabled = !isShown
+        isShown ? showLoading() :
+                  hideLoading()
     }
 }
 

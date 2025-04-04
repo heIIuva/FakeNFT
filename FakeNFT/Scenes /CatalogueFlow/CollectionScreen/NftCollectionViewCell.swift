@@ -8,18 +8,22 @@
 import UIKit
 import Kingfisher
 
-protocol NftCollectionViewCellProtocol: UICollectionViewCell {
-    var nftCellDelegate: NftCollectionViewCellDelegate? { get }
-    func configure(with id: String)
-    func didTapLikeButton()
-    func didTapCartButton()
+protocol NftCollectionCellProtocol: UICollectionViewCell {
+    var nftCellDelegate: NftCollectionCellDelegate? { get set }
+    func configure(with nft: Nft)
+    func isUserInteractionEnabled(_ isEnabled: Bool)
 }
 
-final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
+protocol NftCollectionCellDelegate: AnyObject {
+    func handleLikeButtonTap()
+    func handleCartButtonTap()
+}
+
+final class NftCollectionCell: UICollectionViewCell, ReuseIdentifying {
     
     // MARK: - Properties
     
-    weak var nftCellDelegate: NftCollectionViewCellDelegate?
+    weak var nftCellDelegate: NftCollectionCellDelegate?
     private lazy var nftImageView: UIImageView = {
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 108, height: 108))
         imageView.contentMode = .scaleAspectFill
@@ -29,13 +33,12 @@ final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
     
     private lazy var likeButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(resource: .notLiked), for: .normal)
         button.addTarget(self, action: #selector(didTapLikeButton), for: .touchUpInside)
         return button
     } ()
     
     private lazy var ratingImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(resource: .rating0))
+        let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         return imageView
     } ()
@@ -62,8 +65,7 @@ final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
     } ()
     
     private lazy var cartButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(resource: .addToCart), for: .normal)
+        let button = UIButton()
         button.addTarget(self, action: #selector(didTapCartButton), for: .touchUpInside)
         return button
     } ()
@@ -75,6 +77,7 @@ final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
         setupUI()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -85,20 +88,21 @@ final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
         super.prepareForReuse()
         nftImageView.kf.cancelDownloadTask()
         nftImageView.image = nil
+        nftNameLabel.text = nil
+        nftPriceLabel.text = nil
+        ratingImageView.image = nil
+        cartButton.imageView?.image = nil
     }
     
     // MARK: - Methods
-    
-    private func configureDetails(with nft: Nft) {
-        nftNameLabel.text = nft.name
-        nftPriceLabel.text = String(format: "%.2f ETH", nft.price)
-        ratingImageView.image = UIImage(resource: .init(name: "rating\(nft.rating)", bundle: .main))
+        
+    private func setNftImage(with image: String) {
         let processor = DownsamplingImageProcessor(size: nftImageView.bounds.size)
                      |> RoundCornerImageProcessor(cornerRadius: 12)
-        let retry = DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(5))
+        let retry = DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(10))
         nftImageView.kf.indicatorType = .activity
         nftImageView.kf.setImage(
-            with: URL(string: nft.images[0]),
+            with: URL(string: image),
             options: [.transition(.fade(1)), .processor(processor), .retryStrategy(retry)]
         )
     }
@@ -115,6 +119,7 @@ final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
             nftImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             nftImageView.heightAnchor.constraint(equalToConstant: 108),
             nftImageView.widthAnchor.constraint(equalToConstant: 108),
+            
             likeButton.topAnchor.constraint(equalTo: nftImageView.topAnchor),
             likeButton.trailingAnchor.constraint(equalTo: nftImageView.trailingAnchor),
             
@@ -131,38 +136,37 @@ final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
             cartButton.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
-}
-
-// MARK: - Extensions
-
-extension NftCollectionViewCell: NftCollectionViewCellProtocol {
     
-    func configure(with id: String) {
-        UIProgressHUD.blockingShow()
-        nftCellDelegate?.fetchNftDetails(for: id) { [weak self] result in
-            UIProgressHUD.blockingDismiss()
-            guard let self else { return }
-            switch result {
-            case .success(let nft):
-                configureDetails(with: nft)
-            case .failure:
-                break
-            }
-        }
-    }
-
-    @objc func didTapLikeButton() {
+    @objc private func didTapLikeButton() {
         likeButton.setImage(
             likeButton.image(for: .normal) == UIImage(resource: .liked) ?
                 UIImage(resource: .notLiked) :
                 UIImage(resource: .liked), for: .normal
         )
     }
-    @objc func didTapCartButton() {
+    @objc private func didTapCartButton() {
         cartButton.setImage(
             cartButton.image(for: .normal) == UIImage(resource: .addToCart) ?
                 UIImage(resource: .deleteFromCart) :
                 UIImage(resource: .addToCart), for: .normal
         )
+    }
+}
+
+// MARK: - Extensions
+
+extension NftCollectionCell: NftCollectionCellProtocol {
+    
+    func configure(with nft: Nft) {
+        nftNameLabel.text = nft.name
+        nftPriceLabel.text = String(format: "%.2f ETH", nft.price)
+        ratingImageView.image = UIImage(resource: .init(name: "rating\(nft.rating)", bundle: .main))
+        likeButton.setImage(UIImage(resource: .notLiked), for: .normal)
+        cartButton.setImage(UIImage(resource: .addToCart), for: .normal)
+        setNftImage(with: nft.images.first ?? "")
+    }
+    
+    func isUserInteractionEnabled(_ isEnabled: Bool) {
+        contentView.isUserInteractionEnabled = isEnabled
     }
 }

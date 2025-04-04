@@ -7,16 +7,14 @@
 
 import UIKit
 
-protocol CollectionViewProtocol: UIViewController, LoadingView, ErrorView {
-    func reloadData()
+protocol CollectionViewProtocol: UIViewController, ErrorView {
+    
 }
 
-final class CollectionViewController: UIViewController, CollectionViewProtocol {
-    
+final class CollectionViewController: UIViewController {
     
     // MARK: - Properties
     
-    lazy var activityIndicator = UIActivityIndicatorView(style: .medium)
     private let presenter: CollectionPresenterProtocol
     private lazy var backButton: UIButton = {
         let backButton = UIButton(type: .system)
@@ -29,11 +27,11 @@ final class CollectionViewController: UIViewController, CollectionViewProtocol {
         let collectionView = UICollectionView(
             frame: .zero,
             collectionViewLayout: UICollectionViewFlowLayout())
-        collectionView.register(NftCollectionViewCell.self)
+        collectionView.register(NftCollectionCell.self)
         collectionView.register(
-            NftCollectionSupplementaryView .self,
+            NftCollectionHeader .self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: NftCollectionSupplementaryView.identifier)
+            withReuseIdentifier: NftCollectionHeader.identifier)
         collectionView.isScrollEnabled = true
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -49,6 +47,7 @@ final class CollectionViewController: UIViewController, CollectionViewProtocol {
         super.init(nibName: nil, bundle: nil)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -63,15 +62,12 @@ final class CollectionViewController: UIViewController, CollectionViewProtocol {
     
     // MARK: - Methods
     
-    func reloadData() {
-        collectionView.reloadData()
-    }
-    
     private func setupUI() {
         [collectionView, backButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
+//        activityIndicator.constraintEdges(to: view)
         NSLayoutConstraint.activate([
             backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 11),
             backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 9),
@@ -94,6 +90,15 @@ final class CollectionViewController: UIViewController, CollectionViewProtocol {
 
 // MARK: - Extensions
 
+extension CollectionViewController: CollectionViewProtocol {
+    
+//    func shouldShowIndicator(_ isShown: Bool) {
+//        collectionView.isHidden = isShown
+//        isShown ? showLoading() :
+//                  hideLoading()
+//    }
+}
+
 extension CollectionViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -102,8 +107,8 @@ extension CollectionViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: NftCollectionViewCell.defaultReuseIdentifier,
-            for: indexPath) as? NftCollectionViewCell
+            withReuseIdentifier: NftCollectionCell.defaultReuseIdentifier,
+            for: indexPath) as? NftCollectionCell
         else { return UICollectionViewCell() }
         presenter.configure(cell: cell, for: indexPath)
         return cell
@@ -112,8 +117,8 @@ extension CollectionViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let headerView = collectionView.dequeueReusableSupplementaryView(
             ofKind: kind,
-            withReuseIdentifier: NftCollectionSupplementaryView.identifier,
-            for: indexPath) as? NftCollectionSupplementaryView
+            withReuseIdentifier: NftCollectionHeader.identifier,
+            for: indexPath) as? NftCollectionHeader
         else { return UICollectionReusableView() }
         presenter.configure(header: headerView, withImage: true)
         return headerView
@@ -139,7 +144,7 @@ extension CollectionViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        let headerView = NftCollectionSupplementaryView()
+        let headerView = NftCollectionHeader()
         presenter.configure(header: headerView, withImage: false)
         let size = headerView.systemLayoutSizeFitting(
             CGSize(

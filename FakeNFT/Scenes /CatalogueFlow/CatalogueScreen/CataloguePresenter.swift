@@ -38,11 +38,10 @@ final class CataloguePresenter: CataloguePresenterProtocol {
     }
     
     func loadCatalogue() {
-        guard let view else { return }
-        view.shouldShowIndicator(true)
+        view?.shouldShowIndicator(true)
         servicesAssembly.catalogueService.fetchCatalogue { [weak self] result in
-            view.shouldShowIndicator(false)
             guard let self else { return }
+            view?.shouldShowIndicator(false)
             switch result {
             case .success(let collections):
                 catalogue = collections
@@ -51,7 +50,7 @@ final class CataloguePresenter: CataloguePresenterProtocol {
                     message: NSLocalizedString("Error.title", comment: ""),
                     actionText: NSLocalizedString("Error.repeat", comment: ""),
                     action: loadCatalogue)
-                view.showErrorWithCancel(errorModel)
+                view?.showErrorWithCancel(errorModel)
             }
         }
     }

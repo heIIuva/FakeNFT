@@ -8,15 +8,25 @@
 import UIKit
 import Kingfisher
 
-final class NftCollectionSupplementaryView: UICollectionReusableView {
+protocol NftCollectionHeaderProtocol: UICollectionReusableView {
+    var nftHeaderViewDelegate: NftCollectionHeaderDelegate? { get set }
+    func configure(title: String, author: String, description: String)
+    func setImage(with image: String)
+}
+
+protocol NftCollectionHeaderDelegate: AnyObject {
+    func handleAuthorLinkButtonTap()
+}
+
+final class NftCollectionHeader: UICollectionReusableView {
     
     // MARK: - Properties
     
     static let identifier: String = "header"
-
+    weak var nftHeaderViewDelegate: NftCollectionHeaderDelegate?
     private lazy var collectionCoverImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(resource: .mockCollection))
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 12
         imageView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         imageView.layer.masksToBounds = true
@@ -32,7 +42,7 @@ final class NftCollectionSupplementaryView: UICollectionReusableView {
     private lazy var collectionAuthorLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.caption2
-        label.text = "Автор коллекции:"
+        label.text = NSLocalizedString("Catalog.collectionAuthor", comment: "")
         return label
     } ()
     
@@ -57,26 +67,12 @@ final class NftCollectionSupplementaryView: UICollectionReusableView {
         setupUI()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Methods
-    
-    func configure(title: String, author: String, description: String) {
-        collectionTitleLabel.text = title
-        collectionAuthorLinkButton.setTitle(author, for: .normal)
-        collectionDescriptionLabel.text = description
-    }
-    
-    func setImage(with image: String) {
-        let retry = DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(5))
-        collectionCoverImageView.kf.indicatorType = .activity
-        collectionCoverImageView.kf.setImage(
-            with: URL(string: image),
-            options: [.transition(.fade(1)), .retryStrategy(retry)]
-        )
-    }
     
     private func setupUI() {
         backgroundColor = .clear
@@ -111,5 +107,25 @@ final class NftCollectionSupplementaryView: UICollectionReusableView {
             collectionDescriptionLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             collectionDescriptionLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24)
         ])
+    }
+}
+
+// MARK: - Extensions
+
+extension NftCollectionHeader: NftCollectionHeaderProtocol {
+    
+    func configure(title: String, author: String, description: String) {
+        collectionTitleLabel.text = title
+        collectionAuthorLinkButton.setTitle(author, for: .normal)
+        collectionDescriptionLabel.text = description
+    }
+    
+    func setImage(with image: String) {
+        let retry = DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(10))
+        collectionCoverImageView.kf.indicatorType = .activity
+        collectionCoverImageView.kf.setImage(
+            with: URL(string: image),
+            options: [.transition(.fade(1)), .retryStrategy(retry)]
+        )
     }
 }
