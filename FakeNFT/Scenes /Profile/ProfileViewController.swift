@@ -10,7 +10,7 @@ import UIKit
 
 final class ProfileViewController: UIViewController, ProfileView {
     
-    let servicesAssembly: ServicesAssembly
+    private let servicesAssembly: ServicesAssembly
     
     private lazy var presenter: ProfilePresenter = {
         ProfilePresenter(view: self, profileService: servicesAssembly.profileService)
@@ -144,6 +144,23 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
         cell.accessoryView = chevron
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+
+        let selectedItem = items[indexPath.row].0
+
+        switch selectedItem {
+        case "Мои NFT":
+            let nftViewController = MyNftViewController(servicesAssembly: servicesAssembly)
+            let nav = UINavigationController(rootViewController: nftViewController)
+            nav.modalPresentationStyle = .fullScreen
+            present(nav, animated: true)
+        default:
+            break
+        }
+    }
+    
 }
 
 
