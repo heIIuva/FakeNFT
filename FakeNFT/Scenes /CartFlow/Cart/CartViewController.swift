@@ -212,7 +212,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
         
         params.forEach { actionSheet.addAction($0)}
         
-        self.present(actionSheet, animated: true)
+        present(actionSheet, animated: true)
     }
 }
 

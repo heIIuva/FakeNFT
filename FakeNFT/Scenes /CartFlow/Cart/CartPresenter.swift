@@ -42,12 +42,12 @@ final class CartPresenter: CartPresenterProtocol {
     // MARK: - protocol methods
     
     func calculateCart() {
-        if !nfts.isEmpty {
-            totalAmount = nfts.count
-            totalPrice = 0
-            nfts.forEach { totalPrice += $0.price }
-            viewController?.cartNonEmpty()
-        }
+        guard !nfts.isEmpty else { return }
+        
+        totalAmount = nfts.count
+        totalPrice = 0
+        nfts.forEach { totalPrice += $0.price }
+        viewController?.cartNonEmpty()
     }
     
     func fetchOrder() {
