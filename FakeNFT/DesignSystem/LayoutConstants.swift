@@ -26,3 +26,19 @@ enum ProfileLayoutConstants {
     static let formStackSpacingSmall: CGFloat = 8
     static let formStackSpacingLarge: CGFloat = 24
 }
+
+enum NftCellLayoutConstants {
+    static let horizontalPadding: CGFloat = 16
+    static let imageSize: CGFloat = 108
+    static let imageCornerRadius: CGFloat = 12
+    
+    static let ratingViewSpacing: CGFloat = 2
+
+    static let textStackSpacing: CGFloat = 4
+    static let textStackWidth: CGFloat = 78
+    static let textStackToImageSpacing: CGFloat = 20
+
+    static let priceStackSpacing: CGFloat = 4
+    static let priceStackTrailing: CGFloat = 39
+    static let priceStackToTextSpacing: CGFloat = 39
+}

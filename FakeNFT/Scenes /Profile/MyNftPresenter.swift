@@ -30,16 +30,10 @@ final class MyNftPresenter {
     }
     
     func viewDidLoad() {
-        if nftIDs.isEmpty {
-            // TODO: remove when test user will have nfts
-            self.nfts = Nft.mockData
-            view?.display(nfts: nfts)
-            return
+        if !nftIDs.isEmpty {
+            UIBlockingProgressHUD.show()
+            loadNextNft(at: 0)
         }
-        
-        UIBlockingProgressHUD.show()
-        loadNextNft(at: 0)
-        
     }
     
     private func loadNextNft(at index: Int) {

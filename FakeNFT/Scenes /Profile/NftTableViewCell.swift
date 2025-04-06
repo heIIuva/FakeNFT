@@ -14,7 +14,7 @@ final class NftTableViewCell: UITableViewCell {
     // MARK: - UI Elements
     private lazy var nftImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.layer.cornerRadius = 12
+        imageView.layer.cornerRadius = NftCellLayoutConstants.imageCornerRadius
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -54,14 +54,15 @@ final class NftTableViewCell: UITableViewCell {
     private lazy var ratingView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
-        stack.spacing = 2
+        stack.spacing = NftCellLayoutConstants.ratingViewSpacing
+        
         return stack
     }()
 
     private lazy var textStack: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [nameLabel, ratingView, authorLabel])
         stack.axis = .vertical
-        stack.spacing = 4
+        stack.spacing = NftCellLayoutConstants.priceStackSpacing
         stack.alignment = .leading
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
@@ -70,7 +71,7 @@ final class NftTableViewCell: UITableViewCell {
     private lazy var priceStack: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [priceLabel, price])
         stack.axis = .vertical
-        stack.spacing = 4
+        stack.spacing = NftCellLayoutConstants.textStackSpacing
         stack.alignment = .leading
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
@@ -98,18 +99,18 @@ final class NftTableViewCell: UITableViewCell {
         contentView.addSubview(priceStack)
 
         NSLayoutConstraint.activate([
-            nftImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            nftImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: NftCellLayoutConstants.horizontalPadding),
             nftImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            nftImageView.widthAnchor.constraint(equalToConstant: 108),
-            nftImageView.heightAnchor.constraint(equalToConstant: 108),
+            nftImageView.widthAnchor.constraint(equalToConstant: NftCellLayoutConstants.imageSize),
+            nftImageView.heightAnchor.constraint(equalToConstant: NftCellLayoutConstants.imageSize),
 
-            textStack.leadingAnchor.constraint(equalTo: nftImageView.trailingAnchor, constant: 20),
+            textStack.leadingAnchor.constraint(equalTo: nftImageView.trailingAnchor, constant: NftCellLayoutConstants.textStackToImageSpacing),
             textStack.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            textStack.widthAnchor.constraint(equalToConstant: 78),
+            textStack.widthAnchor.constraint(equalToConstant: NftCellLayoutConstants.textStackWidth),
 
-            priceStack.leadingAnchor.constraint(equalTo: textStack.trailingAnchor, constant: 39),
+            priceStack.leadingAnchor.constraint(equalTo: textStack.trailingAnchor, constant: NftCellLayoutConstants.priceStackToTextSpacing),
             priceStack.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            priceStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -39)
+            priceStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -NftCellLayoutConstants.priceStackTrailing)
         ])
     }
 
