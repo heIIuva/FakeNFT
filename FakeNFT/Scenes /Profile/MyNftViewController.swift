@@ -14,15 +14,21 @@ final class MyNftViewController: UIViewController, MyNftView {
     // MARK: - Properties
 
     private let tableView = UITableView(frame: .zero, style: .plain)
+    private let nftIDs: [String]
     private var nftItems: [Nft] = []
 
     private lazy var presenter: MyNftPresenter = {
-        MyNftPresenter(view: self)
+        MyNftPresenter(
+            view: self,
+            nftService: servicesAssembly.nftService,
+            nftIDs: nftIDs
+        )
     }()
     
     // MARK: - Init
-    init(servicesAssembly: ServicesAssembly) {
+    init(servicesAssembly: ServicesAssembly, nftIDs: [String]) {
         self.servicesAssembly = servicesAssembly
+        self.nftIDs = nftIDs
         super.init(nibName: nil, bundle: nil)
     }
     

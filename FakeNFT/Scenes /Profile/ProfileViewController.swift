@@ -4,13 +4,12 @@
 //
 //  Created by Alexander Bralnin on 25.03.2025.
 //
-
 import UIKit
-
 
 final class ProfileViewController: UIViewController, ProfileView {
     
     private let servicesAssembly: ServicesAssembly
+    private var profile: Profile?
     
     private lazy var presenter: ProfilePresenter = {
         ProfilePresenter(view: self, profileService: servicesAssembly.profileService)
@@ -32,9 +31,9 @@ final class ProfileViewController: UIViewController, ProfileView {
     
     private var items: [(String, Int?)]  =
         [
-            ("Мои NFT", nil),
-            ("Избранные NFT", nil),
-            ("О разработчике", nil)
+            (NSLocalizedString("ViewProfile.MyNFT", comment: ""), nil),
+            (NSLocalizedString("ViewProfile.Favorites", comment: ""), nil),
+            (NSLocalizedString("ViewProfile.AboutDeveloper", comment: ""), nil)
         ]
     
     // MARK: - Init
@@ -92,14 +91,13 @@ final class ProfileViewController: UIViewController, ProfileView {
     
     //MARK: - ProfileView
     func display(profile: Profile) {
-        
+        self.profile = profile
         profileCardView.configure(with: profile)
         items = [
-            ("Мои NFT", profile.nfts.count),
-            ("Избранные NFT", profile.likes.count),
-            ("О разработчике", nil)
+            (NSLocalizedString("ViewProfile.MyNFT", comment: ""), profile.nfts.count),
+            (NSLocalizedString("ViewProfile.Favorites", comment: ""), profile.likes.count),
+            (NSLocalizedString("ViewProfile.AboutDeveloper", comment: ""), nil)
         ]
-
         tableView.reloadData()
     }
     
@@ -151,16 +149,21 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
         let selectedItem = items[indexPath.row].0
 
         switch selectedItem {
-        case "Мои NFT":
-            let nftViewController = MyNftViewController(servicesAssembly: servicesAssembly)
-            let nav = UINavigationController(rootViewController: nftViewController)
+        case NSLocalizedString("ViewProfile.MyNFT", comment: ""):
+            guard let profile = profile else { return }
+
+            let nftVC = MyNftViewController(
+                servicesAssembly: servicesAssembly,
+                nftIDs: profile.nfts
+            )
+
+            let nav = UINavigationController(rootViewController: nftVC)
             nav.modalPresentationStyle = .fullScreen
             present(nav, animated: true)
+
         default:
             break
         }
     }
     
 }
-
-

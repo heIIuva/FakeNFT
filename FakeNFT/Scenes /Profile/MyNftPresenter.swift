@@ -4,6 +4,7 @@
 //
 //  Created by Alexander Bralnin on 04.04.2025.
 //
+import Foundation
 
 protocol MyNftView: AnyObject {
     func display(nfts: [Nft])
@@ -17,18 +18,56 @@ enum NftSortOption {
 
 
 final class MyNftPresenter {
-    weak var view: MyNftView?
+    private weak var view: MyNftView?
+    private let nftService: NftService
+    private let nftIDs: [String]
     private var nfts: [Nft] = []
-
-    init(view: MyNftView) {
+    
+    init(view: MyNftView, nftService: NftService, nftIDs: [String]) {
         self.view = view
+        self.nftService = nftService
+        self.nftIDs = nftIDs
     }
-
+    
     func viewDidLoad() {
-        nfts = Nft.mockData
-        view?.display(nfts: nfts)
+        if nftIDs.isEmpty {
+            // TODO: remove when test user will have nfts
+            self.nfts = Nft.mockData
+            view?.display(nfts: nfts)
+            return
+        }
+        
+        UIBlockingProgressHUD.show()
+        loadNextNft(at: 0)
+        
     }
-
+    
+    private func loadNextNft(at index: Int) {
+        guard index < nftIDs.count else {
+            DispatchQueue.main.async {
+                UIBlockingProgressHUD.dismiss()
+                self.view?.display(nfts: self.nfts)
+            }
+            return
+        }
+        
+        let id = nftIDs[index]
+        nftService.loadNft(id: id) { [weak self] result in
+            guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let nft):
+                    self.nfts.append(nft)
+                case .failure(let error):
+                    print("Failed to load NFT with id \(id):", error)
+                }
+                
+                self.loadNextNft(at: index + 1)
+            }
+        }
+    }
+    
     func sort(by option: NftSortOption) {
         switch option {
         case .name:

@@ -79,17 +79,21 @@ final class ProfileServiceImpl: ProfileService {
     }
 
     private func normalizedProfile(_ profile: Profile) -> Profile {
-        guard profile.avatar.contains("cloudflare-ipfs.com") else {
-            return profile
-        }
+        let updatedAvatar = profile.avatar.contains("cloudflare-ipfs.com")
+            ? updatedAvatarURL(from: profile.avatar)
+            : profile.avatar
+
+        let updatedNfts: [String] = profile.nfts.isEmpty
+            ? Nft.mockData.map { $0.id } // TODO: удалить использование mockData после подключения настоящих NFT
+            : profile.nfts
 
         return Profile(
             id: profile.id,
             name: profile.name,
-            avatar: updatedAvatarURL(from: profile.avatar),
+            avatar: updatedAvatar,
             description: profile.description,
             website: profile.website,
-            nfts: profile.nfts,
+            nfts: updatedNfts,
             likes: profile.likes
         )
     }
