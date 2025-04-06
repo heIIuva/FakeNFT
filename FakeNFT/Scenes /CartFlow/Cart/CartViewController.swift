@@ -13,6 +13,8 @@ protocol CartVCProtocol: UIViewController {
     var presenter: CartPresenterProtocol { get set }
     
     func cartNonEmpty()
+    func updateUI()
+    func endRefreshing()
 }
 
 
@@ -33,8 +35,10 @@ final class CartViewController: UIViewController, CartVCProtocol {
     
     // MARK: - Properties
     
+    private let refreshControl = UIRefreshControl()
+    
     private lazy var sortButton: UIButton = {
-        let button = UIButton.systemButton(with: UIImage(resource: .cartSortButton), target: self, action: #selector(sortButtonTapped))
+        let button = UIButton.systemButton(with: UIImage(resource: .cartSortButton), target: self, action: #selector(didTapSortButton))
         button.tintColor = .label
         return button
     }()
@@ -66,7 +70,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
         button.layer.cornerRadius = 16
         button.backgroundColor = .label
         button.setTitle(NSLocalizedString("Proceed to payment", comment: ""), for: .normal)
-        button.addTarget(self, action: #selector(payButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didTapPayButton), for: .touchUpInside)
         button.titleLabel?.textColor = .systemBackground
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
         return button
@@ -127,8 +131,17 @@ final class CartViewController: UIViewController, CartVCProtocol {
     
     // MARK: protocol methods
     
+    func endRefreshing() {
+        refreshControl.endRefreshing()
+    }
+    
+    func updateUI() {
+        cartTableView.reloadData()
+        totalNftsLabel.text = "\(presenter.totalAmount) NFT"
+        totalNftsPriceLabel.text = "\(presenter.totalPrice) ETH"
+    }
+    
     func cartNonEmpty() {
-        updateUI()
         cartTableView.isHidden = false
         backgroundView.isHidden = false
         navigationItem.rightBarButtonItem?.customView?.isHidden = false
@@ -139,6 +152,9 @@ final class CartViewController: UIViewController, CartVCProtocol {
     
     private func setupUI() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: sortButton)
+        
+        refreshControl.addTarget(self, action: #selector(didPullRefresh), for: .valueChanged)
+        cartTableView.refreshControl = refreshControl
         
         view.addSubviews(cartTableView, backgroundView, placeholderLabel)
         backgroundView.addSubviews(labelsStackView, payButton)
@@ -168,15 +184,8 @@ final class CartViewController: UIViewController, CartVCProtocol {
         
         placeholderLabel.isHidden = true
     }
-    
-    private func updateUI() {
-        cartTableView.reloadData()
-        totalNftsLabel.text = "\(presenter.totalAmount) NFT"
-        totalNftsPriceLabel.text = "\(presenter.totalPrice) ETH"
-    }
         
     private func cartIsEmpty() {
-        cartTableView.isHidden = true
         backgroundView.isHidden = true
         navigationItem.rightBarButtonItem?.customView?.isHidden = true
         placeholderLabel.isHidden = false
@@ -184,33 +193,40 @@ final class CartViewController: UIViewController, CartVCProtocol {
     
     // MARK: - OBJ-C methods
     
-    @objc private func payButtonTapped() {}
+    @objc private func didPullRefresh() {
+        presenter.fetchOrder()
+    }
+    
+    @objc private func didTapPayButton() {}
     
     // TODO: - Sort logic
-    @objc private func sortButtonTapped() {
+    @objc private func didTapSortButton() {
         let actionSheet = UIAlertController(
             title: NSLocalizedString("Sort", comment: ""),
             message: nil,
             preferredStyle: .actionSheet
         )
         
-        let priceParam = UIAlertAction(title: NSLocalizedString("By price", comment: ""), style: .default) {[weak self] _ in
+        let byPrice = UIAlertAction(title: NSLocalizedString("By price", comment: ""), style: .default) {[weak self] _ in
             guard let self else { return }
+            self.presenter.sortCart(with: .byPrice)
         }
-        let ratingParam = UIAlertAction(title: NSLocalizedString("By rating", comment: ""), style: .default) {[weak self] _ in
+        let byRating = UIAlertAction(title: NSLocalizedString("By rating", comment: ""), style: .default) {[weak self] _ in
             guard let self else { return }
+            self.presenter.sortCart(with: .byRating)
         }
-        let nameParam = UIAlertAction(title: NSLocalizedString("By name", comment: ""), style: .default) {[weak self] _ in
+        let byName = UIAlertAction(title: NSLocalizedString("By name", comment: ""), style: .default) {[weak self] _ in
             guard let self else { return }
+            self.presenter.sortCart(with: .byName)
         }
         let cancel = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) { [weak self] _ in
             guard let self else { return }
             self.dismiss(animated: true)
         }
         
-        let params = [priceParam, ratingParam, nameParam, cancel]
+        let options = [byPrice, byRating, byName, cancel]
         
-        params.forEach { actionSheet.addAction($0)}
+        options.forEach { actionSheet.addAction($0)}
         
         present(actionSheet, animated: true)
     }

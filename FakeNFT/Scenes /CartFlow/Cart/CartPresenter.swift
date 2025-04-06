@@ -14,8 +14,10 @@ protocol CartPresenterProtocol: AnyObject {
     var nfts: [Nft] { get }
     var totalPrice: Float { get }
     var totalAmount: Int { get }
+    
     func calculateCart()
     func fetchOrder()
+    func sortCart(with option: CartSortOption)
 }
 
 
@@ -41,6 +43,18 @@ final class CartPresenter: CartPresenterProtocol {
     
     // MARK: - protocol methods
     
+    func sortCart(with option: CartSortOption) {
+        switch option {
+        case .byPrice:
+            nfts.sort(by: { $0.price > $1.price })
+        case .byRating:
+            nfts.sort(by: { $0.rating > $1.rating })
+        case .byName:
+            nfts.sort(by: { $0.name > $1.name })
+        }
+        viewController?.updateUI()
+    }
+    
     func calculateCart() {
         guard !nfts.isEmpty else { return }
         
@@ -48,6 +62,7 @@ final class CartPresenter: CartPresenterProtocol {
         totalPrice = 0
         nfts.forEach { totalPrice += $0.price }
         viewController?.cartNonEmpty()
+        viewController?.updateUI()
     }
     
     func fetchOrder() {
@@ -62,6 +77,8 @@ final class CartPresenter: CartPresenterProtocol {
                     print(error)
                 }
                 viewController?.cartNonEmpty()
+                viewController?.updateUI()
+                viewController?.endRefreshing()
                 isLoading = false
             }
         }
