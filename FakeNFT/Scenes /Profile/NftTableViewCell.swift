@@ -31,6 +31,8 @@ final class NftTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = .caption2
         label.textColor = .textPrimary
+        label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
         return label
     }()
 
@@ -103,10 +105,11 @@ final class NftTableViewCell: UITableViewCell {
 
             textStack.leadingAnchor.constraint(equalTo: nftImageView.trailingAnchor, constant: 20),
             textStack.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            textStack.widthAnchor.constraint(equalToConstant: 78),
 
             priceStack.leadingAnchor.constraint(equalTo: textStack.trailingAnchor, constant: 39),
             priceStack.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            priceStack.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -16)
+            priceStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -39)
         ])
     }
 
@@ -114,7 +117,9 @@ final class NftTableViewCell: UITableViewCell {
 
     func configure(with nft: Nft) {
         nameLabel.text = nft.nftTitle
-        authorLabel.text = "\(NSLocalizedString("NftViewCell.from", comment: "")) \(nft.name)"
+        let authrorText = "\(NSLocalizedString("NftViewCell.from", comment: "")) \(nft.name)"
+        authorLabel.attributedText = .caption2WithLetterSpacing(authrorText)
+        
         price.text = String(format: "%.2f ETH", nft.price)
 
         if let firstImageURL = nft.images.first {

@@ -39,6 +39,7 @@ final class MyNftViewController: UIViewController, MyNftView {
 
         setupTableView()
         setupBackButton()
+        setupSortButton()
         presenter.viewDidLoad()
     }
 
@@ -77,6 +78,18 @@ final class MyNftViewController: UIViewController, MyNftView {
         backButton.tintColor = .label
         navigationItem.leftBarButtonItem = backButton
     }
+    
+    private func setupSortButton() {
+        guard let sortImage = UIImage(named: "sort") else { return }
+        let sortButton = UIBarButtonItem(
+            image: sortImage,
+            style: .plain,
+            target: self,
+            action: #selector(showSortMenu)
+        )
+        sortButton.tintColor = .label
+        navigationItem.rightBarButtonItem = sortButton
+    }
 
     @objc private func backButtonTapped() {
         if navigationController?.viewControllers.first == self {
@@ -84,6 +97,26 @@ final class MyNftViewController: UIViewController, MyNftView {
         } else {
             navigationController?.popViewController(animated: true)
         }
+    }
+    
+    @objc private func showSortMenu() {
+        let alert = UIAlertController(title: "Сортировка", message: nil, preferredStyle: .actionSheet)
+
+        alert.addAction(UIAlertAction(title: "По имени", style: .default) { _ in
+            self.presenter.sort(by: .name)
+        })
+
+        alert.addAction(UIAlertAction(title: "По цене", style: .default) { _ in
+            self.presenter.sort(by: .price)
+        })
+
+        alert.addAction(UIAlertAction(title: "По рейтингу", style: .default) { _ in
+            self.presenter.sort(by: .rating)
+        })
+
+        alert.addAction(UIAlertAction(title: "Закрыть", style: .cancel))
+
+        present(alert, animated: true)
     }
 }
 
