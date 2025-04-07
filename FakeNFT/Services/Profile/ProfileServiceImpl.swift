@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class ProfileServiceImpl: ProfileService {
+final class ProfileServiceImpl: ProfileService {    
     private let networkClient: NetworkClient
     private let profileId: String
     private var lastFetchedProfile: Profile?
@@ -41,17 +41,19 @@ final class ProfileServiceImpl: ProfileService {
     }
 
     func updateProfile(
-        name: String,
-        avatar: String,
-        description: String,
-        website: String,
+        name: String?,
+        avatar: String?,
+        description: String?,
+        website: String?,
+        likes: [String]?,
         completion: @escaping (Result<Profile, Error>) -> Void
     ) {
         let dto = ProfilePutDto(
             name: name,
             avatar: avatar,
             description: description,
-            website: website
+            website: website,
+            likes: likes
         )
         let request = ProfilePutRequest(profileId: profileId, profile: dto)
 

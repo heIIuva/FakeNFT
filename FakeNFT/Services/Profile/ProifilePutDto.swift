@@ -5,27 +5,24 @@
 //  Created by Alexander Bralnin on 30.03.2025.
 //
 
-import Foundation
-
-struct ProfilePutDto: Dto {
-    let name: String
-    let avatar: String
-    let description: String
-    let website: String
-
-    enum CodingKeys: String, CodingKey {
-        case name
-        case avatar
-        case description
-        case website
-    }
+struct ProfilePutDto: Dto, MultiValueFormDataDto {
+    let name: String?
+    let avatar: String?
+    let description: String?
+    let website: String?
+    let likes: [String]?
 
     func asDictionary() -> [String: String] {
-        return [
-            CodingKeys.name.rawValue: name,
-            CodingKeys.avatar.rawValue: avatar,
-            CodingKeys.description.rawValue: description,
-            CodingKeys.website.rawValue: website
-        ]
+        var dict: [String: String] = [:]
+        if let name, !name.isEmpty { dict["name"] = name }
+        if let avatar, !avatar.isEmpty { dict["avatar"] = avatar }
+        if let description, !description.isEmpty { dict["description"] = description }
+        if let website, !website.isEmpty { dict["website"] = website }
+        return dict
+    }
+
+    func asFormURLEncodedPairs() -> [(String, String)] {
+        guard let likes else { return [] }
+        return likes.map { ("likes", $0) }
     }
 }

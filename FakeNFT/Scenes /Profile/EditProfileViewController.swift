@@ -143,7 +143,8 @@ final class EditProfileViewController: UIViewController, UIAdaptivePresentationC
                 name: currentName,
                 avatar: currentAvatarURL,
                 description: currentDescription,
-                website: currentWebsite
+                website: currentWebsite,
+                likes: nil
             )
         }
     }

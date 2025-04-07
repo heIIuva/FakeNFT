@@ -50,6 +50,7 @@ final class ProfilePresenter {
         avatar: String,
         description: String,
         website: String,
+        likes: [String]?,
         completion: (() -> Void)? = nil
     ) {
         UIBlockingProgressHUD.show()
@@ -58,7 +59,8 @@ final class ProfilePresenter {
             name: name,
             avatar: avatar,
             description: description,
-            website: website
+            website: website,
+            likes: likes
         ) { [weak self] result in
             DispatchQueue.main.async {
                 UIBlockingProgressHUD.dismiss()
