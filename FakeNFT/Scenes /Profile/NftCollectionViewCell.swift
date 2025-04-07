@@ -8,15 +8,15 @@
 import UIKit
 import Kingfisher
 
+
 final class NftCollectionViewCell: UICollectionViewCell {
-    
+
     static let identifier = "NftCollectionViewCell"
 
     // MARK: - UI Elements
-
     private lazy var nftImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.layer.cornerRadius = 12
+        imageView.layer.cornerRadius = NftLayoutConstants.imageCornerRadius
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -35,8 +35,8 @@ final class NftCollectionViewCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             imageView.centerXAnchor.constraint(equalTo: button.centerXAnchor),
             imageView.centerYAnchor.constraint(equalTo: button.centerYAnchor),
-            imageView.widthAnchor.constraint(equalToConstant: 21),
-            imageView.heightAnchor.constraint(equalToConstant: 18)
+            imageView.widthAnchor.constraint(equalToConstant: NftLayoutConstants.likeImageSize.width),
+            imageView.heightAnchor.constraint(equalToConstant: NftLayoutConstants.likeImageSize.height)
         ])
 
         return button
@@ -52,14 +52,13 @@ final class NftCollectionViewCell: UICollectionViewCell {
     private lazy var ratingStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
-        stack.spacing = 2
+        stack.spacing = NftLayoutConstants.ratingStarSpacing
         stack.alignment = .center
         return stack
     }()
 
     private lazy var priceLabel: UILabel = {
         let label = UILabel()
-        //label.font = .caption1
         label.textColor = .textPrimary
         return label
     }()
@@ -68,10 +67,8 @@ final class NftCollectionViewCell: UICollectionViewCell {
         let stack = UIStackView(arrangedSubviews: [nameLabel, ratingStackView, priceLabel])
         stack.axis = .vertical
         stack.translatesAutoresizingMaskIntoConstraints = false
-
-        stack.setCustomSpacing(4, after: nameLabel)
-        stack.setCustomSpacing(8, after: ratingStackView)
-
+        stack.setCustomSpacing(NftLayoutConstants.nameToRatingSpacing, after: nameLabel)
+        stack.setCustomSpacing(NftLayoutConstants.ratingToPriceSpacing, after: ratingStackView)
         return stack
     }()
 
@@ -98,19 +95,19 @@ final class NftCollectionViewCell: UICollectionViewCell {
 
         NSLayoutConstraint.activate([
             nftImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            nftImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             nftImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            nftImageView.widthAnchor.constraint(equalToConstant: 80),
+            nftImageView.widthAnchor.constraint(equalToConstant: NftLayoutConstants.imageSize),
+            nftImageView.heightAnchor.constraint(equalToConstant: NftLayoutConstants.imageSize),
 
             likeButton.topAnchor.constraint(equalTo: nftImageView.topAnchor),
             likeButton.trailingAnchor.constraint(equalTo: nftImageView.trailingAnchor),
-            likeButton.widthAnchor.constraint(equalToConstant: 30),
-            likeButton.heightAnchor.constraint(equalToConstant: 30),
+            likeButton.widthAnchor.constraint(equalToConstant: NftLayoutConstants.likeButtonSize),
+            likeButton.heightAnchor.constraint(equalToConstant: NftLayoutConstants.likeButtonSize),
 
-            infoStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 7),
-            infoStack.leadingAnchor.constraint(equalTo: nftImageView.trailingAnchor, constant: 12),
+            infoStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: NftLayoutConstants.contentPadding),
+            infoStack.leadingAnchor.constraint(equalTo: nftImageView.trailingAnchor, constant: NftLayoutConstants.spacingBetweenImageAndText),
             infoStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            infoStack.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -7)
+            infoStack.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -NftLayoutConstants.contentPadding)
         ])
     }
 
@@ -119,20 +116,21 @@ final class NftCollectionViewCell: UICollectionViewCell {
     func configure(with nft: Nft) {
         nameLabel.text = nft.nftTitle
         let priceLabelText = String(format: "%.2f ETH", nft.price)
-        priceLabel.attributedText = NSAttributedString.withLetterSpacing(priceLabelText,font: .caption1, spacing: -0.24)
+        priceLabel.attributedText = NSAttributedString.withLetterSpacing(priceLabelText, font: .caption1, spacing: -0.24)
 
         if let firstImageURL = nft.images.first {
             nftImageView.kf.setImage(with: firstImageURL)
         }
 
         ratingStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+
         for index in 1...5 {
             let imageName = index <= nft.rating ? "stars_active" : "stars_no_active"
             let image = UIImage(named: imageName)
             let imageView = UIImageView(image: image)
             imageView.contentMode = .scaleAspectFit
-            imageView.heightAnchor.constraint(equalToConstant: 16).isActive = true
-            imageView.widthAnchor.constraint(equalToConstant: 16).isActive = true
+            imageView.heightAnchor.constraint(equalToConstant: NftLayoutConstants.ratingStarSize).isActive = true
+            imageView.widthAnchor.constraint(equalToConstant: NftLayoutConstants.ratingStarSize).isActive = true
             ratingStackView.addArrangedSubview(imageView)
         }
     }

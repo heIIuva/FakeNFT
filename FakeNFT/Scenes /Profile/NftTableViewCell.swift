@@ -78,7 +78,6 @@ final class NftTableViewCell: UITableViewCell {
     }()
 
     // MARK: - Init
-
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupCell()
@@ -90,7 +89,6 @@ final class NftTableViewCell: UITableViewCell {
     }
 
     // MARK: - Setup
-
     private func setupCell() {
         selectionStyle = .none
 

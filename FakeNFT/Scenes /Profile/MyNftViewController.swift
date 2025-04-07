@@ -95,8 +95,9 @@ final class MyNftViewController: UIViewController, MyNftView {
 
         NSLayoutConstraint.activate([
             emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            emptyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            emptyLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+            emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: NftLayoutConstants.emptyLabelHorizontalInset),
+            emptyLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -NftLayoutConstants.emptyLabelHorizontalInset)
         ])
     }
 

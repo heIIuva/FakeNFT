@@ -22,9 +22,10 @@ final class FavoritesNftViewController: UIViewController {
 
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.minimumInteritemSpacing = 12
-        layout.minimumLineSpacing = 16
-        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        layout.minimumInteritemSpacing = FavoritesLayoutConstants.collectionInterItemSpacing
+        layout.minimumLineSpacing = FavoritesLayoutConstants.collectionLineSpacing
+        layout.estimatedItemSize = .zero
+        layout.sectionInset = FavoritesLayoutConstants.collectionSectionInset
 
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.register(NftCollectionViewCell.self, forCellWithReuseIdentifier: NftCollectionViewCell.identifier)
@@ -88,8 +89,8 @@ final class FavoritesNftViewController: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
             emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            emptyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            emptyLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+            emptyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: FavoritesLayoutConstants.emptyLabelHorizontalInset),
+            emptyLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -FavoritesLayoutConstants.emptyLabelHorizontalInset)
         ])
     }
 
@@ -140,17 +141,20 @@ extension FavoritesNftViewController: UICollectionViewDataSource {
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
-
 extension FavoritesNftViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let horizontalSpacing: CGFloat = 12
-        let sideInset: CGFloat = 16
-        let availableWidth = collectionView.bounds.width - sideInset * 2 - horizontalSpacing
-        let itemWidth = floor(availableWidth / 2)
-        
-        let itemHeight: CGFloat = 80
+
+        let spacing = FavoritesLayoutConstants.collectionInterItemSpacing
+        let inset = FavoritesLayoutConstants.collectionSectionInset.left
+        let numberOfColumns = FavoritesLayoutConstants.numberOfColumns
+
+        let totalSpacing = (numberOfColumns - 1) * spacing
+        let totalInsets = inset * 2
+        let availableWidth = collectionView.bounds.width - totalInsets - totalSpacing
+        let itemWidth = floor(availableWidth / numberOfColumns)
+        let itemHeight = FavoritesLayoutConstants.cellHeight
 
         return CGSize(width: itemWidth, height: itemHeight)
     }
