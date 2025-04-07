@@ -119,7 +119,7 @@ final class NftTableViewCell: UITableViewCell {
     func configure(with nft: Nft) {
         nameLabel.text = nft.nftTitle
         let authrorText = "\(NSLocalizedString("NftViewCell.from", comment: "")) \(nft.name)"
-        authorLabel.attributedText = .caption2WithLetterSpacing(authrorText)
+        authorLabel.attributedText = .withLetterSpacing(authrorText)
         
         price.text = String(format: "%.2f ETH", nft.price)
 

@@ -160,7 +160,17 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
             let nav = UINavigationController(rootViewController: nftVC)
             nav.modalPresentationStyle = .fullScreen
             present(nav, animated: true)
+        case NSLocalizedString("ViewProfile.Favorites", comment: ""):
+            guard let profile = profile else { return }
 
+            let nftVC = FavoritesNftViewController(
+                servicesAssembly: servicesAssembly,
+                nftIDs: profile.likes
+            )
+
+            let nav = UINavigationController(rootViewController: nftVC)
+            nav.modalPresentationStyle = .fullScreen
+            present(nav, animated: true)
         default:
             break
         }
