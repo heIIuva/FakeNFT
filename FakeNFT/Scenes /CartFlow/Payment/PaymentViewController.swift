@@ -1,0 +1,127 @@
+//
+//  PaymentViewController.swift
+//  FakeNFT
+//
+//  Created by Malyshev Roman on 06.04.2025.
+//
+
+import UIKit
+
+
+protocol PaymentVCProtocol: UIViewController {
+    init(presenter: PaymentPresenterProtocol)
+    var presenter: PaymentPresenterProtocol { get set }
+}
+
+
+final class PaymentViewController: UIViewController, PaymentVCProtocol {
+    
+    //MARK: - Init
+    
+    init(presenter: PaymentPresenterProtocol) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
+        presenter.viewController = self
+        presenter.fetchCurrencies() {}
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    // MARK: - Properties
+    
+    private lazy var currencyCollection: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.translatesAutoresizingMaskIntoConstraints = false
+        collection.dataSource = self
+        collection.delegate = self
+        collection.register(CurrencyCell.self, forCellWithReuseIdentifier: reuseID)
+        collection.backgroundColor = .white
+        return collection
+    }()
+    
+    private let reuseID = CurrencyCell.reuseIdentifier
+    
+    var presenter: PaymentPresenterProtocol
+    
+    // MARK: - Lifecycle methods
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        setupUI()
+        
+        presenter.fetchCurrencies() { [weak self] in
+            guard let self else { return }
+            self.currencyCollection.reloadData()
+        }
+    }
+        
+    // MARK: - private methods
+    
+    private func setupUI() {
+        title = NSLocalizedString("Choose payment method", comment: "")
+        view.backgroundColor = .systemBackground
+        
+        view.addSubview(currencyCollection)
+        
+        NSLayoutConstraint.activate([
+            currencyCollection.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            currencyCollection.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            currencyCollection.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            currencyCollection.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
+            currencyCollection.heightAnchor.constraint(greaterThanOrEqualToConstant: 250)
+        ])
+    }
+}
+
+// MARK: collection data source
+
+extension PaymentViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        presenter.currencies.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseID, for: indexPath) as? CurrencyCell
+        else { return UICollectionViewCell() }
+        
+        let currency = presenter.currencies[indexPath.row]
+        cell.configureCell(currency: currency)
+        cell.setSelected(presenter.selectedCurrencyIndex == indexPath)
+
+        return cell
+    }
+}
+// MARK: collection delegate
+extension PaymentViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        presenter.selectedCurrencyIndex = indexPath
+        presenter.selectedCurrency = presenter.currencies[indexPath.row]
+        collectionView.reloadData()
+    }
+}
+
+extension PaymentViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        CGSize(width: 178, height: 46)
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        7
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        7
+    }
+}

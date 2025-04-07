@@ -10,12 +10,10 @@ import Foundation
 
 protocol CartPresenterProtocol: AnyObject {
     var viewController: CartVCProtocol? { get set }
+    var servicesAssembly: ServicesAssembly { get }
     
     var nfts: [Nft] { get }
-    var totalPrice: Float { get }
-    var totalAmount: Int { get }
-    
-    func calculateCart()
+        
     func fetchOrder()
     func sortCart(with option: CartSortOption)
 }
@@ -32,12 +30,14 @@ final class CartPresenter: CartPresenterProtocol {
     // MARK: - properties
     
     weak var viewController: CartVCProtocol?
-    private let servicesAssembly: ServicesAssembly
+    private(set) var servicesAssembly: ServicesAssembly
         
     private(set) var nfts: [Nft] = []
+        
+    private var order: Order?
     
-    private(set) var totalPrice: Float = 0.0
-    private(set) var totalAmount: Int = 0
+    private var totalPrice: Float = 0.0
+    private var totalAmount: Int = 0
     
     private var isLoading: Bool = false
     
@@ -52,17 +52,7 @@ final class CartPresenter: CartPresenterProtocol {
         case .byName:
             nfts.sort(by: { $0.name > $1.name })
         }
-        viewController?.updateUI()
-    }
-    
-    func calculateCart() {
-        guard !nfts.isEmpty else { return }
-        
-        totalAmount = nfts.count
-        totalPrice = 0
-        nfts.forEach { totalPrice += $0.price }
-        viewController?.cartNonEmpty()
-        viewController?.updateUI()
+        viewController?.updateUI(price: totalPrice, amount: totalAmount)
     }
     
     func fetchOrder() {
@@ -72,12 +62,14 @@ final class CartPresenter: CartPresenterProtocol {
                 guard let self else { return }
                 switch result {
                 case .success(let order):
-                    fetchNfts(ids: order.nfts)
+                    self.order = order
+                    fetchNfts(ids: order.nfts) {
+                        self.viewController?.updateUI(price: self.totalPrice, amount: self.totalAmount)
+                        self.viewController?.cartNonEmpty()
+                    }
                 case .failure(let error):
                     print(error)
                 }
-                viewController?.cartNonEmpty()
-                viewController?.updateUI()
                 viewController?.endRefreshing()
                 isLoading = false
             }
@@ -85,8 +77,16 @@ final class CartPresenter: CartPresenterProtocol {
     }
     
     // MARK: - private methods
+    
+    private func calculateCart() {
+        guard !nfts.isEmpty else { return }
         
-    private func fetchNfts(ids: [String]) {
+        totalAmount = nfts.count
+        totalPrice = 0
+        nfts.forEach { totalPrice += $0.price }
+    }
+        
+    private func fetchNfts(ids: [String], completion: @escaping () -> Void) {
         for id in ids {
             servicesAssembly.nftService.loadNft(id: id) { [weak self] (result: Result<Nft, Error>) in
                 guard let self else { return }
@@ -95,6 +95,8 @@ final class CartPresenter: CartPresenterProtocol {
                     if !self.nfts.contains(where: { $0.id == nft.id }) {
                         self.nfts.append(nft)
                     }
+                    calculateCart()
+                    completion()
                 case .failure(let error):
                     print(error)
                 }

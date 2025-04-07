@@ -12,8 +12,8 @@ protocol CartVCProtocol: UIViewController {
     init(presenter: CartPresenterProtocol)
     var presenter: CartPresenterProtocol { get set }
     
+    func updateUI(price: Float, amount: Int)
     func cartNonEmpty()
-    func updateUI()
     func endRefreshing()
 }
 
@@ -126,19 +126,18 @@ final class CartViewController: UIViewController, CartVCProtocol {
         super.viewWillAppear(animated)
         
         presenter.fetchOrder()
-        presenter.calculateCart()
     }
     
     // MARK: protocol methods
     
-    func endRefreshing() {
-        refreshControl.endRefreshing()
+    func updateUI(price: Float, amount: Int) {
+        cartTableView.reloadData()
+        totalNftsLabel.text = "\(amount) NFT"
+        totalNftsPriceLabel.text = "\(price) ETH"
     }
     
-    func updateUI() {
-        cartTableView.reloadData()
-        totalNftsLabel.text = "\(presenter.totalAmount) NFT"
-        totalNftsPriceLabel.text = "\(presenter.totalPrice) ETH"
+    func endRefreshing() {
+        refreshControl.endRefreshing()
     }
     
     func cartNonEmpty() {
@@ -146,6 +145,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
         backgroundView.isHidden = false
         navigationItem.rightBarButtonItem?.customView?.isHidden = false
         placeholderLabel.isHidden = true
+        
     }
     
     // MARK: private methods
@@ -184,7 +184,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
         
         placeholderLabel.isHidden = true
     }
-        
+    
     private func cartIsEmpty() {
         backgroundView.isHidden = true
         navigationItem.rightBarButtonItem?.customView?.isHidden = true
@@ -197,9 +197,14 @@ final class CartViewController: UIViewController, CartVCProtocol {
         presenter.fetchOrder()
     }
     
-    @objc private func didTapPayButton() {}
+    @objc private func didTapPayButton() {
+        let presenter = PaymentPresenter(servicesAssembly: presenter.servicesAssembly)
+        let paymentVC = PaymentViewController(presenter: presenter)
+        let paymentNC = UINavigationController(rootViewController: paymentVC)
+        paymentNC.modalPresentationStyle = .overFullScreen
+        present(paymentNC, animated: true)
+    }
     
-    // TODO: - Sort logic
     @objc private func didTapSortButton() {
         let actionSheet = UIAlertController(
             title: NSLocalizedString("Sort", comment: ""),
@@ -246,7 +251,10 @@ extension CartViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier, for: indexPath) as! CartTableViewCell
+        guard
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier, for: indexPath) as? CartTableViewCell
+        else { return UITableViewCell() }
+        
         let nft = presenter.nfts[indexPath.row]
         cell.configureCell(nft: nft)
         cell.backgroundColor = .clear
