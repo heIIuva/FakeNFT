@@ -86,7 +86,7 @@ final class ProfileServiceImpl: ProfileService {
         let updatedNfts: [String] = profile.nfts.isEmpty
             ? Nft.mockData.map { $0.id } // TODO: удалить использование mockData после подключения настоящих NFT
             : profile.nfts
-
+        
         return Profile(
             id: profile.id,
             name: profile.name,

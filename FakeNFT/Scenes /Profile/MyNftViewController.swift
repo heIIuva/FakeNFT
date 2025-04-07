@@ -8,14 +8,13 @@
 import UIKit
 
 final class MyNftViewController: UIViewController, MyNftView {
-    
+
     private let servicesAssembly: ServicesAssembly
-    
+
     // MARK: - Properties
 
     private let tableView = UITableView(frame: .zero, style: .plain)
     private let nftIDs: [String]
-    private var nftItems: [Nft] = []
 
     private lazy var presenter: MyNftPresenter = {
         MyNftPresenter(
@@ -24,14 +23,26 @@ final class MyNftViewController: UIViewController, MyNftView {
             nftIDs: nftIDs
         )
     }()
-    
+
+    private let emptyLabel: UILabel = {
+        let label = UILabel()
+        label.text = "У Вас ещё нет NFT"
+        label.textAlignment = .center
+        label.textColor = .textPrimary
+        label.font = .bodyBold
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.isHidden = true
+        return label
+    }()
+
     // MARK: - Init
     init(servicesAssembly: ServicesAssembly, nftIDs: [String]) {
         self.servicesAssembly = servicesAssembly
         self.nftIDs = nftIDs
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -46,13 +57,17 @@ final class MyNftViewController: UIViewController, MyNftView {
         setupTableView()
         setupBackButton()
         setupSortButton()
-        presenter.viewDidLoad()
+        setupEmptyLabel()
+
+        if nftIDs.isEmpty {
+            showEmptyLabel()
+        } else {
+            presenter.viewDidLoad()
+        }
     }
 
     // MARK: - MyNFTView
-
-    func display(nfts: [Nft]) {
-        self.nftItems = nfts
+    func reloadData() {
         tableView.reloadData()
     }
 
@@ -75,6 +90,22 @@ final class MyNftViewController: UIViewController, MyNftView {
         ])
     }
 
+    private func setupEmptyLabel() {
+        view.addSubview(emptyLabel)
+
+        NSLayoutConstraint.activate([
+            emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            emptyLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+        ])
+    }
+
+    private func showEmptyLabel() {
+        emptyLabel.isHidden = false
+        tableView.isHidden = true
+        navigationItem.rightBarButtonItem = nil // скрываем sort
+    }
+
     private func setupBackButton() {
         guard let backImage = UIImage(named: "backward") else { return }
         let backButton = UIBarButtonItem(image: backImage,
@@ -84,7 +115,7 @@ final class MyNftViewController: UIViewController, MyNftView {
         backButton.tintColor = .label
         navigationItem.leftBarButtonItem = backButton
     }
-    
+
     private func setupSortButton() {
         guard let sortImage = UIImage(named: "sort") else { return }
         let sortButton = UIBarButtonItem(
@@ -104,7 +135,7 @@ final class MyNftViewController: UIViewController, MyNftView {
             navigationController?.popViewController(animated: true)
         }
     }
-    
+
     @objc private func showSortMenu() {
         let alert = UIAlertController(title: "Сортировка", message: nil, preferredStyle: .actionSheet)
 
@@ -127,10 +158,9 @@ final class MyNftViewController: UIViewController, MyNftView {
 }
 
 // MARK: - UITableViewDataSource
-
 extension MyNftViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        nftItems.count
+        presenter.numberOfItems
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -138,9 +168,8 @@ extension MyNftViewController: UITableViewDataSource {
             return UITableViewCell()
         }
 
-        let nft = nftItems[indexPath.row]
+        let nft = presenter.item(at: indexPath.row)
         cell.configure(with: nft)
-
         return cell
     }
 }
