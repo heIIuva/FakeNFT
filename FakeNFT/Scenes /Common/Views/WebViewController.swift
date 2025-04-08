@@ -24,6 +24,8 @@ class WebViewController: UIViewController {
         self.webView = WKWebView(frame: .zero, configuration: config)
 
         super.init(nibName: nil, bundle: nil)
+
+        webView.navigationDelegate = self
     }
 
     @available(*, unavailable)
@@ -76,5 +78,25 @@ class WebViewController: UIViewController {
     private func loadURL() {
         let request = URLRequest(url: url)
         webView.load(request)
+    }
+}
+
+// MARK: - WKNavigationDelegate
+
+extension WebViewController: WKNavigationDelegate {
+    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        UIBlockingProgressHUD.show()
+    }
+
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        UIBlockingProgressHUD.dismiss()
+    }
+
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+        UIBlockingProgressHUD.dismiss()
+    }
+
+    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        UIBlockingProgressHUD.dismiss()
     }
 }
