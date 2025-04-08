@@ -13,7 +13,7 @@ protocol CartPresenterProtocol: AnyObject {
     var servicesAssembly: ServicesAssembly { get }
     
     var nfts: [Nft] { get }
-        
+    
     func fetchOrder()
     func sortCart(with option: CartSortOption)
 }
@@ -31,9 +31,9 @@ final class CartPresenter: CartPresenterProtocol {
     
     weak var viewController: CartVCProtocol?
     private(set) var servicesAssembly: ServicesAssembly
-        
+    
     private(set) var nfts: [Nft] = []
-        
+    
     private var order: Order?
     
     private var totalPrice: Float = 0.0
@@ -56,23 +56,25 @@ final class CartPresenter: CartPresenterProtocol {
     }
     
     func fetchOrder() {
-        if !isLoading {
-            isLoading = true
-            servicesAssembly.nftService.loadOrder { [weak self] (result: Result<Order, Error>) in
-                guard let self else { return }
-                switch result {
-                case .success(let order):
-                    self.order = order
+        UIBlockingProgressHUD.show()
+        servicesAssembly.nftService.loadOrder { [weak self] (result: Result<Order, Error>) in
+            guard let self else { return }
+            switch result {
+            case .success(let order):
+                self.order = order
+                if !order.nfts.isEmpty {
                     fetchNfts(ids: order.nfts) {
                         self.viewController?.updateUI(price: self.totalPrice, amount: self.totalAmount)
                         self.viewController?.cartNonEmpty()
                     }
-                case .failure(let error):
-                    print(error)
+                } else {
+                    self.viewController?.cartIsEmpty()
                 }
-                viewController?.endRefreshing()
-                isLoading = false
+            case .failure:
+                self.viewController?.cartIsEmpty()
             }
+            viewController?.endRefreshing()
+            UIBlockingProgressHUD.dismiss()
         }
     }
     

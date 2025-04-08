@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import ProgressHUD
 
 
 protocol PaymentVCProtocol: UIViewController {
@@ -22,12 +23,12 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
         presenter.viewController = self
-        presenter.fetchCurrencies() {}
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
     // MARK: - Properties
     
     private lazy var currencyCollection: UICollectionView = {
@@ -39,6 +40,18 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
         collection.register(CurrencyCell.self, forCellWithReuseIdentifier: reuseID)
         collection.backgroundColor = .white
         return collection
+    }()
+    
+    private lazy var backButton: UIButton = {
+        guard let image = UIImage(systemName: "chevron.left") else { return UIButton() }
+        let button = UIButton.systemButton(
+            with: image,
+            target: self,
+            action: #selector(popVC)
+        )
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tintColor = .label
+        return button
     }()
     
     private let reuseID = CurrencyCell.reuseIdentifier
@@ -62,6 +75,7 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
     
     private func setupUI() {
         title = NSLocalizedString("Choose payment method", comment: "")
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
         view.backgroundColor = .systemBackground
         
         view.addSubview(currencyCollection)
@@ -74,6 +88,13 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
             
             currencyCollection.heightAnchor.constraint(greaterThanOrEqualToConstant: 250)
         ])
+        
+    }
+    
+    // MARK: - OBJ-C methods
+    
+    @objc private func popVC() {
+        dismiss(animated: true)
     }
 }
 

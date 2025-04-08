@@ -14,6 +14,7 @@ protocol CartVCProtocol: UIViewController {
     
     func updateUI(price: Float, amount: Int)
     func cartNonEmpty()
+    func cartIsEmpty()
     func endRefreshing()
 }
 
@@ -26,7 +27,6 @@ final class CartViewController: UIViewController, CartVCProtocol {
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
         presenter.viewController = self
-        presenter.fetchOrder()
     }
     
     required init?(coder: NSCoder) {
@@ -120,6 +120,8 @@ final class CartViewController: UIViewController, CartVCProtocol {
         super.viewDidLoad()
         
         setupUI()
+        
+        presenter.fetchOrder()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -146,6 +148,12 @@ final class CartViewController: UIViewController, CartVCProtocol {
         navigationItem.rightBarButtonItem?.customView?.isHidden = false
         placeholderLabel.isHidden = true
         
+    }
+    
+    func cartIsEmpty() {
+        backgroundView.isHidden = true
+        navigationItem.rightBarButtonItem?.customView?.isHidden = true
+        placeholderLabel.isHidden = false
     }
     
     // MARK: private methods
@@ -183,12 +191,6 @@ final class CartViewController: UIViewController, CartVCProtocol {
         ])
         
         placeholderLabel.isHidden = true
-    }
-    
-    private func cartIsEmpty() {
-        backgroundView.isHidden = true
-        navigationItem.rightBarButtonItem?.customView?.isHidden = true
-        placeholderLabel.isHidden = false
     }
     
     // MARK: - OBJ-C methods
@@ -241,13 +243,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
 
 extension CartViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard
-            !presenter.nfts.isEmpty
-        else {
-            cartIsEmpty()
-            return 0
-        }
-        return presenter.nfts.count
+        presenter.nfts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

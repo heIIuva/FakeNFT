@@ -40,6 +40,7 @@ final class PaymentPresenter: PaymentPresenterProtocol {
     // MARK: - protocol methods
     
     func fetchCurrencies(completion: @escaping () -> Void) {
+        UIBlockingProgressHUD.show()
         servicesAssembly.nftService.loadCurrencies { [weak self] (result: Result<[Currency], Error>) in
             guard let self else { return }
             switch result {
@@ -49,6 +50,7 @@ final class PaymentPresenter: PaymentPresenterProtocol {
             case .failure(let error):
                 print(error)
             }
+            UIBlockingProgressHUD.dismiss()
         }
     }
 }
