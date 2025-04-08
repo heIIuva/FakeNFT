@@ -8,7 +8,6 @@
 import UIKit
 
 final class MyNftViewController: UIViewController, NftView {
-
     private let servicesAssembly: ServicesAssembly
 
     // MARK: - Properties
@@ -104,7 +103,7 @@ final class MyNftViewController: UIViewController, NftView {
     private func showEmptyLabel() {
         emptyLabel.isHidden = false
         tableView.isHidden = true
-        navigationItem.rightBarButtonItem = nil // скрываем sort
+        navigationItem.rightBarButtonItem = nil
     }
 
     private func setupBackButton() {

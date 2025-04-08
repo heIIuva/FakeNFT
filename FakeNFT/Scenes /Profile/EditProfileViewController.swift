@@ -38,7 +38,6 @@ final class EditProfileViewController: UIViewController, UIAdaptivePresentationC
     private let websiteField = createTextField()
     
     // MARK: - Init
-    
     init(profile: Profile) {
         self.profile = profile
         super.init(nibName: nil, bundle: nil)
@@ -147,7 +146,7 @@ final class EditProfileViewController: UIViewController, UIAdaptivePresentationC
                 nfts: profile.nfts,
                 likes: profile.likes
             )
-            delegate?.didUpdateProfile(updatedProfile)
+            delegate?.didUpdateProfile(updatedProfile, completion: nil)
         }
     }
     

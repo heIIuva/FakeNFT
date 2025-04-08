@@ -19,7 +19,7 @@ enum NftSortOption {
 final class NftPresenter {
     private weak var view: NftView?
     private let nftService: NftService
-    private var nftIDs: [String]
+    private(set) var nftIDs: [String]
     private var nfts: [Nft] = []
 
     init(view: NftView, services: ServicesAssembly, nftIDs: [String]) {

@@ -10,8 +10,9 @@ import Kingfisher
 
 
 final class NftCollectionViewCell: UICollectionViewCell {
-
     static let identifier = "NftCollectionViewCell"
+    
+    var onLikeTapped: (() -> Void)?
 
     // MARK: - UI Elements
     private lazy var nftImageView: UIImageView = {
@@ -30,6 +31,9 @@ final class NftCollectionViewCell: UICollectionViewCell {
         let imageView = UIImageView(image: UIImage(named: "heart_pressed"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .center
+        
+        button.addTarget(self, action: #selector(likeTapped), for: .touchUpInside)
+        
         button.addSubview(imageView)
 
         NSLayoutConstraint.activate([
@@ -133,5 +137,9 @@ final class NftCollectionViewCell: UICollectionViewCell {
             imageView.widthAnchor.constraint(equalToConstant: NftLayoutConstants.ratingStarSize).isActive = true
             ratingStackView.addArrangedSubview(imageView)
         }
+    }
+    
+    @objc private func likeTapped() {
+        onLikeTapped?()
     }
 }

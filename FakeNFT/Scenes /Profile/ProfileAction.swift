@@ -27,12 +27,14 @@ enum ProfileAction: String, CaseIterable {
         }
     }
 
-    func makeViewController(profile: Profile, servicesAssembly: ServicesAssembly) -> UIViewController? {
+    func makeViewController(profile: Profile, servicesAssembly: ServicesAssembly,  delegate: EditProfileViewControllerDelegate?) -> UIViewController? {
         switch self {
         case .myNFT:
             return MyNftViewController(servicesAssembly: servicesAssembly, nftIDs: profile.nfts)
         case .favorites:
-            return FavoritesNftViewController(servicesAssembly: servicesAssembly, nftIDs: profile.likes)
+            let vc = FavoritesNftViewController(servicesAssembly: servicesAssembly, nftIDs: profile.likes)
+            vc.delegate = delegate
+            return vc
         case .aboutDeveloper:
             guard let urlString = profile.website else { return nil }
             return WebViewController(urlString: urlString)

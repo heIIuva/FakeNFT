@@ -46,12 +46,12 @@ final class ProfilePresenter {
     }
 
     func updateProfile(
-        name: String?,
-        avatar: String?,
-        description: String?,
-        website: String?,
-        likes: [String]?,
-        completion: (() -> Void)? = nil
+        name: String? = nil,
+        avatar: String? = nil,
+        description: String? = nil,
+        website: String? = nil,
+        likes: [String]? = nil,
+        completion: ((Profile?) -> Void)? = nil
     ) {
         UIBlockingProgressHUD.show()
 
@@ -73,7 +73,7 @@ final class ProfilePresenter {
                     print("Failed to update profile:", error)
                 }
 
-                completion?()
+                completion?(self?.profile)
             }
         }
     }

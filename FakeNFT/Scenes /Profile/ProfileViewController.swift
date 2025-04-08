@@ -7,7 +7,8 @@
 import UIKit
 
 protocol EditProfileViewControllerDelegate: AnyObject {
-    func didUpdateProfile(_ profile: Profile)
+    func didUpdateProfile(_ profile: Profile, completion: ((Profile?) -> Void)?)
+    func didUpdateLikes(_ likes: [String], completion: ((Profile?) -> Void)?)
 }
 
 final class ProfileViewController: UIViewController, ProfileView {
@@ -157,7 +158,10 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
         let selectedTitle = items[indexPath.row].0
 
         guard let action = ProfileAction.fromLocalizedTitle(selectedTitle),
-              let controller = action.makeViewController(profile: profile, servicesAssembly: servicesAssembly) else {
+              let controller = action.makeViewController(profile: profile,
+                                                         servicesAssembly: servicesAssembly,
+                                                         delegate: self)
+        else {
             return
         }
 
@@ -168,13 +172,21 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
 }
 
 extension ProfileViewController: EditProfileViewControllerDelegate {
-    func didUpdateProfile(_ profile: Profile) {
+    func didUpdateProfile(_ profile: Profile, completion: ((Profile?) -> Void)? = nil) {
         presenter.updateProfile(
             name: profile.name,
             avatar: profile.avatar,
             description: profile.description,
             website: profile.website,
-            likes: profile.likes
+            completion: completion
+        )
+        
+    }
+    
+    func didUpdateLikes(_ likes: [String], completion: ((Profile?) -> Void)? = nil) {
+        presenter.updateProfile(
+            likes: likes,
+            completion: completion
         )
     }
 }

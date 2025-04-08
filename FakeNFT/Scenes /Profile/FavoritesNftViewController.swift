@@ -8,7 +8,8 @@
 import UIKit
 
 final class FavoritesNftViewController: UIViewController {
-
+    weak var delegate: EditProfileViewControllerDelegate?
+    
     private let servicesAssembly: ServicesAssembly
     private let nftIDs: [String]
 
@@ -108,6 +109,23 @@ final class FavoritesNftViewController: UIViewController {
         backButton.tintColor = .label
         navigationItem.leftBarButtonItem = backButton
     }
+    
+    private func removeLike(withID id: String) {
+        var updatedLikes = presenter.nftIDs
+        guard let index = updatedLikes.firstIndex(of: id) else { return }
+        updatedLikes.remove(at: index)
+
+        delegate?.didUpdateLikes(updatedLikes) { [weak self] updatedProfile in
+            guard let self = self else { return }
+
+            let newLikes = updatedProfile?.likes ?? updatedLikes
+            self.presenter.updateNftIDs(newLikes)
+
+            if newLikes.isEmpty {
+                self.showEmptyLabel()
+            }
+        }
+    }
 
     @objc private func backButtonTapped() {
         if navigationController?.viewControllers.first == self {
@@ -136,6 +154,11 @@ extension FavoritesNftViewController: UICollectionViewDataSource {
 
         let nft = presenter.item(at: indexPath.row)
         cell.configure(with: nft)
+        
+        cell.onLikeTapped = { [weak self] in
+            self?.removeLike(withID: nft.id)
+        }
+        
         return cell
     }
 }
@@ -161,7 +184,6 @@ extension FavoritesNftViewController: UICollectionViewDelegateFlowLayout {
 }
 
 // MARK: - MyNftView
-
 extension FavoritesNftViewController: NftView {
     func reloadData() {
         collectionView.reloadData()
