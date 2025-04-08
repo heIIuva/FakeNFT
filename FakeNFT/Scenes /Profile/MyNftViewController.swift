@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class MyNftViewController: UIViewController, MyNftView {
+final class MyNftViewController: UIViewController, NftView {
 
     private let servicesAssembly: ServicesAssembly
 
@@ -16,10 +16,10 @@ final class MyNftViewController: UIViewController, MyNftView {
     private let tableView = UITableView(frame: .zero, style: .plain)
     private let nftIDs: [String]
 
-    private lazy var presenter: MyNftPresenter = {
-        MyNftPresenter(
+    private lazy var presenter: NftPresenter = {
+        NftPresenter(
             view: self,
-            nftService: servicesAssembly.nftService,
+            services: servicesAssembly,
             nftIDs: nftIDs
         )
     }()

@@ -6,13 +6,17 @@
 //
 import UIKit
 
+protocol EditProfileViewControllerDelegate: AnyObject {
+    func didUpdateProfile(_ profile: Profile)
+}
+
 final class ProfileViewController: UIViewController, ProfileView {
 
     private let servicesAssembly: ServicesAssembly
     private var profile: Profile?
 
     private lazy var presenter: ProfilePresenter = {
-        ProfilePresenter(view: self, profileService: servicesAssembly.profileService)
+        ProfilePresenter(view: self, services: servicesAssembly)
     }()
 
     private lazy var profileCardView: ProfileCardView = {
@@ -101,7 +105,8 @@ final class ProfileViewController: UIViewController, ProfileView {
     }
 
     func showEditProfile(with profile: Profile) {
-        let editVC = EditProfileViewController(presenter: presenter, profile: profile)
+        let editVC = EditProfileViewController(profile: profile)
+        editVC.delegate = self
         let nav = UINavigationController(rootViewController: editVC)
         nav.setNavigationBarHidden(true, animated: false)
         nav.presentationController?.delegate = editVC
@@ -159,5 +164,17 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
         let nav = UINavigationController(rootViewController: controller)
         nav.modalPresentationStyle = .fullScreen
         present(nav, animated: true)
+    }
+}
+
+extension ProfileViewController: EditProfileViewControllerDelegate {
+    func didUpdateProfile(_ profile: Profile) {
+        presenter.updateProfile(
+            name: profile.name,
+            avatar: profile.avatar,
+            description: profile.description,
+            website: profile.website,
+            likes: profile.likes
+        )
     }
 }

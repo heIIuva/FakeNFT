@@ -16,9 +16,9 @@ final class ProfilePresenter {
     private let profileService: ProfileService
     private var profile: Profile?
 
-    init(view: ProfileView, profileService: ProfileService) {
+    init(view: ProfileView, services: ServicesAssembly) {
         self.view = view
-        self.profileService = profileService
+        self.profileService = services.profileService
     }
 
     func viewDidLoad() {
@@ -46,10 +46,10 @@ final class ProfilePresenter {
     }
 
     func updateProfile(
-        name: String,
-        avatar: String,
-        description: String,
-        website: String,
+        name: String?,
+        avatar: String?,
+        description: String?,
+        website: String?,
         likes: [String]?,
         completion: (() -> Void)? = nil
     ) {

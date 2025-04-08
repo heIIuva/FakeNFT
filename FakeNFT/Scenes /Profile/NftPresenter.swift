@@ -6,7 +6,7 @@
 //
 import Foundation
 
-protocol MyNftView: AnyObject {
+protocol NftView: AnyObject {
     func reloadData()
 }
 
@@ -16,20 +16,32 @@ enum NftSortOption {
     case rating
 }
 
-final class MyNftPresenter {
-    private weak var view: MyNftView?
+final class NftPresenter {
+    private weak var view: NftView?
     private let nftService: NftService
-    private let nftIDs: [String]
+    private var nftIDs: [String]
     private var nfts: [Nft] = []
 
-    init(view: MyNftView, nftService: NftService, nftIDs: [String]) {
+    init(view: NftView, services: ServicesAssembly, nftIDs: [String]) {
         self.view = view
-        self.nftService = nftService
+        self.nftService = services.nftService
         self.nftIDs = nftIDs
     }
 
     func viewDidLoad() {
+        reloadNfts()
+    }
+
+    func updateNftIDs(_ newIDs: [String]) {
+        guard newIDs != nftIDs else { return }
+        nftIDs = newIDs
+        reloadNfts()
+    }
+
+    private func reloadNfts() {
         guard !nftIDs.isEmpty else { return }
+        nfts.removeAll()
+        view?.reloadData()
         UIBlockingProgressHUD.show()
         loadNextNft(at: 0)
     }

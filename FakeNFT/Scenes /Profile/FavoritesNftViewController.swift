@@ -12,10 +12,10 @@ final class FavoritesNftViewController: UIViewController {
     private let servicesAssembly: ServicesAssembly
     private let nftIDs: [String]
 
-    private lazy var presenter: MyNftPresenter = {
-        MyNftPresenter(
+    private lazy var presenter: NftPresenter = {
+        NftPresenter(
             view: self,
-            nftService: servicesAssembly.nftService,
+            services: servicesAssembly,
             nftIDs: nftIDs
         )
     }()
@@ -162,7 +162,7 @@ extension FavoritesNftViewController: UICollectionViewDelegateFlowLayout {
 
 // MARK: - MyNftView
 
-extension FavoritesNftViewController: MyNftView {
+extension FavoritesNftViewController: NftView {
     func reloadData() {
         collectionView.reloadData()
     }
