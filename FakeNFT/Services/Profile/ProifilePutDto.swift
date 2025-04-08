@@ -23,6 +23,11 @@ struct ProfilePutDto: Dto, MultiValueFormDataDto {
 
     func asFormURLEncodedPairs() -> [(String, String)] {
         guard let likes else { return [] }
+
+        if likes.isEmpty {
+            return [("likes", "null")]
+        }
+
         return likes.map { ("likes", $0) }
     }
 }
