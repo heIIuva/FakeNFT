@@ -54,6 +54,63 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
         return button
     }()
     
+    private lazy var backgroundView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.masksToBounds = true
+        view.layer.cornerRadius = 12
+        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        view.backgroundColor = UIColor(resource: .nftLightGray)
+        return view
+    }()
+    
+    private lazy var payButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.masksToBounds = true
+        button.layer.cornerRadius = 16
+        button.backgroundColor = .label
+        button.setTitle(NSLocalizedString("Purchase", comment: ""), for: .normal)
+        button.addTarget(self, action: #selector(didTapPayButton), for: .touchUpInside)
+        button.titleLabel?.textColor = .systemBackground
+        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
+        return button
+    }()
+    
+    private lazy var termsLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = NSLocalizedString("By making a purchase, you agree to the terms and conditions of the", comment: "")
+        label.font = .systemFont(ofSize: 13, weight: .regular)
+        label.textColor = .label
+        label.textAlignment = .left
+        label.numberOfLines = 2
+        return label
+    }()
+    
+    private lazy var termsButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(
+            self,
+            action: #selector(didTapTermsButton),
+            for: .touchUpInside
+        )
+        button.setTitleColor(.link, for: .normal)
+        button.setTitle("User Agreement", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 13, weight: .regular)
+        return button
+    }()
+    
+    private lazy var termsStack: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [termsLabel, termsButton])
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .vertical
+        stack.alignment = .leading
+        stack.spacing = 0
+        return stack
+    }()
+    
     private let reuseID = CurrencyCell.reuseIdentifier
     
     var presenter: PaymentPresenterProtocol
@@ -78,23 +135,45 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
         view.backgroundColor = .systemBackground
         
-        view.addSubview(currencyCollection)
+        view.addSubviews(currencyCollection, backgroundView, payButton, termsStack)
         
         NSLayoutConstraint.activate([
             currencyCollection.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             currencyCollection.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             currencyCollection.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             currencyCollection.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor),
+            currencyCollection.heightAnchor.constraint(greaterThanOrEqualToConstant: 250),
             
-            currencyCollection.heightAnchor.constraint(greaterThanOrEqualToConstant: 250)
+            backgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            backgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            backgroundView.heightAnchor.constraint(equalToConstant: 200),
+            
+            termsStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            termsStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            termsStack.bottomAnchor.constraint(equalTo: payButton.topAnchor, constant: -16),
+            
+            payButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            payButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            payButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            payButton.heightAnchor.constraint(equalToConstant: 60)
         ])
-        
+    
     }
     
     // MARK: - OBJ-C methods
     
     @objc private func popVC() {
         dismiss(animated: true)
+    }
+    
+    // TODO: - navigate to further steps
+    @objc private func didTapPayButton() {
+        
+    }
+    
+    @objc private func didTapTermsButton() {
+        present(TermsWebViewController(), animated: true)
     }
 }
 

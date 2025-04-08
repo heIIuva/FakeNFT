@@ -190,7 +190,8 @@ final class CartViewController: UIViewController, CartVCProtocol {
             placeholderLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
         
-        placeholderLabel.isHidden = true
+        view.subviews.forEach { $0.isHidden = true }
+        navigationItem.rightBarButtonItem?.customView?.isHidden = true
     }
     
     // MARK: - OBJ-C methods
