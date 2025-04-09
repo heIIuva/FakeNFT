@@ -6,9 +6,10 @@
 //
 import UIKit
 
-protocol EditProfileViewControllerDelegate: AnyObject {
+protocol ProfileInteractionDelegate: AnyObject {
     func didUpdateProfile(_ profile: Profile, completion: ((Profile?) -> Void)?)
     func didUpdateLikes(_ likes: [String], completion: ((Profile?) -> Void)?)
+    func isNftLiked(_ nftID: String) -> Bool
 }
 
 final class ProfileViewController: UIViewController, ProfileView {
@@ -171,7 +172,7 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-extension ProfileViewController: EditProfileViewControllerDelegate {
+extension ProfileViewController: ProfileInteractionDelegate {
     func didUpdateProfile(_ profile: Profile, completion: ((Profile?) -> Void)? = nil) {
         presenter.updateProfile(
             name: profile.name,
@@ -188,5 +189,9 @@ extension ProfileViewController: EditProfileViewControllerDelegate {
             likes: likes,
             completion: completion
         )
+    }
+    
+    func isNftLiked(_ nftID: String) -> Bool {
+        presenter.isLiked(nftID)
     }
 }

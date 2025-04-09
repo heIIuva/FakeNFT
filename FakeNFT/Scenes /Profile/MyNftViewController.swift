@@ -8,6 +8,8 @@
 import UIKit
 
 final class MyNftViewController: UIViewController, NftView {
+    weak var delegate: ProfileInteractionDelegate?
+    
     private let servicesAssembly: ServicesAssembly
 
     // MARK: - Properties
@@ -169,7 +171,7 @@ extension MyNftViewController: UITableViewDataSource {
         }
 
         let nft = presenter.item(at: indexPath.row)
-        cell.configure(with: nft)
+        cell.configure(with: nft, delegate: delegate)
         return cell
     }
 }

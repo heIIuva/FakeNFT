@@ -27,10 +27,14 @@ enum ProfileAction: String, CaseIterable {
         }
     }
 
-    func makeViewController(profile: Profile, servicesAssembly: ServicesAssembly,  delegate: EditProfileViewControllerDelegate?) -> UIViewController? {
+    func makeViewController(profile: Profile,
+                            servicesAssembly: ServicesAssembly,
+                            delegate: ProfileInteractionDelegate?) -> UIViewController? {
         switch self {
         case .myNFT:
-            return MyNftViewController(servicesAssembly: servicesAssembly, nftIDs: profile.nfts)
+            let vc =  MyNftViewController(servicesAssembly: servicesAssembly, nftIDs: profile.nfts)
+            vc.delegate = delegate
+            return vc
         case .favorites:
             let vc = FavoritesNftViewController(servicesAssembly: servicesAssembly, nftIDs: profile.likes)
             vc.delegate = delegate

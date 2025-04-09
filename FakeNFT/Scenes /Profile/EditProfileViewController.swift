@@ -7,7 +7,7 @@
 import UIKit
 
 final class EditProfileViewController: UIViewController, UIAdaptivePresentationControllerDelegate {
-    weak var delegate: EditProfileViewControllerDelegate?
+    weak var delegate: ProfileInteractionDelegate?
     private let profile: Profile
     
     private var initialAvatarURL: String = ""
