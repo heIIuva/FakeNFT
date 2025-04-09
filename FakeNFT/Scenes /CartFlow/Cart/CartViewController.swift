@@ -151,6 +151,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
     }
     
     func cartIsEmpty() {
+        cartTableView.isHidden = false
         backgroundView.isHidden = true
         navigationItem.rightBarButtonItem?.customView?.isHidden = true
         placeholderLabel.isHidden = false
@@ -257,8 +258,8 @@ extension CartViewController: UITableViewDataSource {
             guard let self else { return }
             
             let deletetionVC = DeletionViewController(image: nft.images[1], action: { self.presenter.deleteNft(id: nft.id) } )
-            deletetionVC.modalPresentationStyle = .fullScreen
-            self.present(deletetionVC, animated: true)
+            deletetionVC.modalPresentationStyle = .overFullScreen
+            self.present(deletetionVC, animated: false)
         }
         
         cell.configureCell(nft: nft, action: action)
