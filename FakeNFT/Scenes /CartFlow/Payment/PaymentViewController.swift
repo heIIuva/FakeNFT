@@ -72,7 +72,7 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
         button.backgroundColor = .label
         button.setTitle(NSLocalizedString("Purchase", comment: ""), for: .normal)
         button.addTarget(self, action: #selector(didTapPayButton), for: .touchUpInside)
-        button.titleLabel?.textColor = .systemBackground
+        button.setTitleColor(.systemBackground, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
         return button
     }()

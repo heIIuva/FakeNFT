@@ -14,8 +14,9 @@ protocol CartPresenterProtocol: AnyObject {
     
     var nfts: [Nft] { get }
     
-    func fetchOrder()
     func sortCart(with option: CartSortOption)
+    func fetchOrder()
+    func deleteNft(id: String)
 }
 
 
@@ -39,7 +40,7 @@ final class CartPresenter: CartPresenterProtocol {
     private var totalPrice: Float = 0.0
     private var totalAmount: Int = 0
     
-    private var isLoading: Bool = false
+    private var isUpdating: Bool = false
     
     // MARK: - protocol methods
     
@@ -56,8 +57,43 @@ final class CartPresenter: CartPresenterProtocol {
     }
     
     func fetchOrder() {
-        UIBlockingProgressHUD.show()
-        servicesAssembly.nftService.loadOrder { [weak self] (result: Result<Order, Error>) in
+        if !isUpdating {
+            UIBlockingProgressHUD.show()
+            servicesAssembly.nftService.loadOrder { [weak self] (result: Result<Order, Error>) in
+                guard let self else { return }
+                switch result {
+                case .success(let order):
+                    self.order = order
+                    if !order.nfts.isEmpty {
+                        fetchNfts(ids: order.nfts) {
+                            self.viewController?.updateUI(price: self.totalPrice, amount: self.totalAmount)
+                            self.viewController?.cartNonEmpty()
+                        }
+                    } else {
+                        self.viewController?.cartIsEmpty()
+                    }
+                case .failure:
+                    self.viewController?.cartIsEmpty()
+                }
+                viewController?.endRefreshing()
+                UIBlockingProgressHUD.dismiss()
+            }
+        }
+    }
+    
+    func deleteNft(id: String) {
+        isUpdating = true
+        nfts.removeAll(where: { $0.id == id })
+        let newOrder = Order(id: order?.id ?? "", nfts: nfts.map { $0.id })
+        order = newOrder
+        updateOrder()
+    }
+    
+    // MARK: - private methods
+    
+    private func updateOrder() {
+        guard let nfts = order?.nfts else { return }
+        servicesAssembly.nftService.updateOrder(nfts: nfts) { [weak self] (result: Result<Order, Error>) in
             guard let self else { return }
             switch result {
             case .success(let order):
@@ -68,17 +104,16 @@ final class CartPresenter: CartPresenterProtocol {
                         self.viewController?.cartNonEmpty()
                     }
                 } else {
+                    self.viewController?.updateUI(price: self.totalPrice, amount: self.totalAmount)
                     self.viewController?.cartIsEmpty()
                 }
-            case .failure:
+            case .failure(let error):
                 self.viewController?.cartIsEmpty()
+                print(error)
             }
-            viewController?.endRefreshing()
-            UIBlockingProgressHUD.dismiss()
+            isUpdating = false
         }
     }
-    
-    // MARK: - private methods
     
     private func calculateCart() {
         guard !nfts.isEmpty else { return }

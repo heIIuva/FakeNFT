@@ -253,10 +253,18 @@ extension CartViewController: UITableViewDataSource {
         else { return UITableViewCell() }
         
         let nft = presenter.nfts[indexPath.row]
-        cell.configureCell(nft: nft)
+        let action = { [weak self] in
+            guard let self else { return }
+            
+            let deletetionVC = DeletionViewController(image: nft.images[1], action: { self.presenter.deleteNft(id: nft.id) } )
+            deletetionVC.modalPresentationStyle = .fullScreen
+            self.present(deletetionVC, animated: true)
+        }
+        
+        cell.configureCell(nft: nft, action: action)
         cell.backgroundColor = .clear
         return cell
-    }
+    } 
 }
 
 extension CartViewController: UITableViewDelegate {
