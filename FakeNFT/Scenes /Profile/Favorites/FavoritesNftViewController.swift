@@ -102,10 +102,12 @@ final class FavoritesNftViewController: UIViewController {
     
     private func setupBackButton() {
         guard let backImage = UIImage(named: "backward") else { return }
-        let backButton = UIBarButtonItem(image: backImage,
-                                         style: .plain,
-                                         target: self,
-                                         action: #selector(backButtonTapped))
+        let backButton = UIBarButtonItem(
+            image: backImage,
+            style: .plain,
+            target: self,
+            action: #selector(backButtonTapped))
+        
         backButton.tintColor = .label
         navigationItem.leftBarButtonItem = backButton
     }

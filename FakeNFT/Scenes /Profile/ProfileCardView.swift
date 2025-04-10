@@ -111,13 +111,8 @@ final class ProfileCardView: UIView {
               let webVC = WebViewController(urlString: urlString)
         else { return }
 
-        let navVC = UINavigationController(rootViewController: webVC)
-        navVC.modalPresentationStyle = .fullScreen
-        
         if let parentVC = self.parentViewController() {
-            parentVC.present(navVC, animated: true)
-        } else {
-            print("could not find parent view controller")
+            parentVC.navigationController?.pushViewController(webVC, animated: true)
         }
     }
 }
