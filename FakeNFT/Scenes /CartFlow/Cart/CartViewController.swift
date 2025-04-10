@@ -218,19 +218,19 @@ final class CartViewController: UIViewController, CartVCProtocol {
         
         let byPrice = UIAlertAction(title: NSLocalizedString("By price", comment: ""), style: .default) {[weak self] _ in
             guard let self else { return }
-            self.presenter.sortCart(with: .byPrice)
+            presenter.sortCart(with: .byPrice)
         }
         let byRating = UIAlertAction(title: NSLocalizedString("By rating", comment: ""), style: .default) {[weak self] _ in
             guard let self else { return }
-            self.presenter.sortCart(with: .byRating)
+            presenter.sortCart(with: .byRating)
         }
         let byName = UIAlertAction(title: NSLocalizedString("By name", comment: ""), style: .default) {[weak self] _ in
             guard let self else { return }
-            self.presenter.sortCart(with: .byName)
+            presenter.sortCart(with: .byName)
         }
         let cancel = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) { [weak self] _ in
             guard let self else { return }
-            self.dismiss(animated: true)
+            dismiss(animated: true)
         }
         
         let options = [byPrice, byRating, byName, cancel]
