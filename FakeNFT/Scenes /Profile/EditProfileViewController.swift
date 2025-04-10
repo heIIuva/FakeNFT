@@ -7,7 +7,7 @@
 import UIKit
 
 final class EditProfileViewController: UIViewController, UIAdaptivePresentationControllerDelegate {
-    let presenter: ProfilePresenter
+    weak var delegate: ProfileInteractionDelegate?
     private let profile: Profile
     
     private var initialAvatarURL: String = ""
@@ -38,10 +38,8 @@ final class EditProfileViewController: UIViewController, UIAdaptivePresentationC
     private let websiteField = createTextField()
     
     // MARK: - Init
-    
-    init(presenter: ProfilePresenter, profile: Profile) {
+    init(profile: Profile) {
         self.profile = profile
-        self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .automatic
     }
@@ -139,12 +137,16 @@ final class EditProfileViewController: UIViewController, UIAdaptivePresentationC
                          currentAvatarURL != initialAvatarURL
 
         if hasChanges {
-            presenter.updateProfile(
+            let updatedProfile = Profile(
+                id: profile.id,
                 name: currentName,
                 avatar: currentAvatarURL,
-                description: currentDescription,
-                website: currentWebsite
+                description: currentDescription.isEmpty ? nil : currentDescription,
+                website: currentWebsite.isEmpty ? nil : currentWebsite,
+                nfts: profile.nfts,
+                likes: profile.likes
             )
+            delegate?.didUpdateProfile(updatedProfile, completion: nil)
         }
     }
     

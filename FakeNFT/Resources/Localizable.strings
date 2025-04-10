@@ -5,9 +5,14 @@
 "Error.unknown" = "Произошла неизвестная ошибка";
 "Error.repeat" = "Повторить";
 "Error.title" = "Ошибка";
+"ViewProfile.MyNFT" = "Мои NFT";
+"ViewProfile.Favorites" = "Избранные NFT";
+"ViewProfile.AboutDeveloper" = "О разработчике";
 "EditProfile.nameTitle" = "Имя";
 "EditProfile.descriptionTitle" = "Описание";
 "EditProfile.websiteTitle" = "Сайт";
 "EditProfile.changePhoto" = "Сменить\nфото";
 "EditProfile.loadPhoto" = "Загрузить изображение";
 "EditProfile.photoUrlPlaceholder" = "https://examle.com/avatar.jpg";
+"NftViewCell.price" = "Цена";
+"NftViewCell.from" = "от";

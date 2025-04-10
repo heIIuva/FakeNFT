@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class ProfileServiceImpl: ProfileService {
+final class ProfileServiceImpl: ProfileService {    
     private let networkClient: NetworkClient
     private let profileId: String
     private var lastFetchedProfile: Profile?
@@ -41,17 +41,19 @@ final class ProfileServiceImpl: ProfileService {
     }
 
     func updateProfile(
-        name: String,
-        avatar: String,
-        description: String,
-        website: String,
+        name: String?,
+        avatar: String?,
+        description: String?,
+        website: String?,
+        likes: [String]?,
         completion: @escaping (Result<Profile, Error>) -> Void
     ) {
         let dto = ProfilePutDto(
             name: name,
             avatar: avatar,
             description: description,
-            website: website
+            website: website,
+            likes: likes
         )
         let request = ProfilePutRequest(profileId: profileId, profile: dto)
 
@@ -79,17 +81,21 @@ final class ProfileServiceImpl: ProfileService {
     }
 
     private func normalizedProfile(_ profile: Profile) -> Profile {
-        guard profile.avatar.contains("cloudflare-ipfs.com") else {
-            return profile
-        }
+        let updatedAvatar = profile.avatar.contains("cloudflare-ipfs.com")
+            ? updatedAvatarURL(from: profile.avatar)
+            : profile.avatar
 
+        let updatedNfts: [String] = profile.nfts.isEmpty
+            ? Nft.mockData.map { $0.id } // TODO: удалить использование mockData после подключения настоящих NFT
+            : profile.nfts
+        
         return Profile(
             id: profile.id,
             name: profile.name,
-            avatar: updatedAvatarURL(from: profile.avatar),
+            avatar: updatedAvatar,
             description: profile.description,
             website: profile.website,
-            nfts: profile.nfts,
+            nfts: updatedNfts,
             likes: profile.likes
         )
     }
