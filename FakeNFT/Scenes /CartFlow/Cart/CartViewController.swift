@@ -12,7 +12,10 @@ protocol CartVCProtocol: UIViewController {
     init(presenter: CartPresenterProtocol)
     var presenter: CartPresenterProtocol { get set }
     
+    func updateUI(price: Float, amount: Int)
     func cartNonEmpty()
+    func cartIsEmpty()
+    func endRefreshing()
 }
 
 
@@ -24,17 +27,19 @@ final class CartViewController: UIViewController, CartVCProtocol {
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
         presenter.viewController = self
-        presenter.fetchOrder()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Properties
     
+    private let refreshControl = UIRefreshControl()
+    
     private lazy var sortButton: UIButton = {
-        let button = UIButton.systemButton(with: UIImage(resource: .cartSortButton), target: self, action: #selector(sortButtonTapped))
+        let button = UIButton.systemButton(with: UIImage(resource: .cartSortButton), target: self, action: #selector(didTapSortButton))
         button.tintColor = .label
         return button
     }()
@@ -66,7 +71,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
         button.layer.cornerRadius = 16
         button.backgroundColor = .label
         button.setTitle(NSLocalizedString("Proceed to payment", comment: ""), for: .normal)
-        button.addTarget(self, action: #selector(payButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didTapPayButton), for: .touchUpInside)
         button.titleLabel?.textColor = .systemBackground
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
         return button
@@ -116,29 +121,50 @@ final class CartViewController: UIViewController, CartVCProtocol {
         super.viewDidLoad()
         
         setupUI()
+        
+        presenter.fetchOrder()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         presenter.fetchOrder()
-        presenter.calculateCart()
     }
     
     // MARK: protocol methods
     
+    func updateUI(price: Float, amount: Int) {
+        cartTableView.reloadData()
+        totalNftsLabel.text = "\(amount) NFT"
+        totalNftsPriceLabel.text = "\(price) ETH"
+    }
+    
+    func endRefreshing() {
+        refreshControl.endRefreshing()
+    }
+    
     func cartNonEmpty() {
-        updateUI()
         cartTableView.isHidden = false
         backgroundView.isHidden = false
         navigationItem.rightBarButtonItem?.customView?.isHidden = false
         placeholderLabel.isHidden = true
+        
+    }
+    
+    func cartIsEmpty() {
+        cartTableView.isHidden = false
+        backgroundView.isHidden = true
+        navigationItem.rightBarButtonItem?.customView?.isHidden = true
+        placeholderLabel.isHidden = false
     }
     
     // MARK: private methods
     
     private func setupUI() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: sortButton)
+        
+        refreshControl.addTarget(self, action: #selector(didPullRefresh), for: .valueChanged)
+        cartTableView.refreshControl = refreshControl
         
         view.addSubviews(cartTableView, backgroundView, placeholderLabel)
         backgroundView.addSubviews(labelsStackView, payButton)
@@ -166,51 +192,51 @@ final class CartViewController: UIViewController, CartVCProtocol {
             placeholderLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
         
-        placeholderLabel.isHidden = true
-    }
-    
-    private func updateUI() {
-        cartTableView.reloadData()
-        totalNftsLabel.text = "\(presenter.totalAmount) NFT"
-        totalNftsPriceLabel.text = "\(presenter.totalPrice) ETH"
-    }
-        
-    private func cartIsEmpty() {
-        cartTableView.isHidden = true
-        backgroundView.isHidden = true
+        view.subviews.forEach { $0.isHidden = true }
         navigationItem.rightBarButtonItem?.customView?.isHidden = true
-        placeholderLabel.isHidden = false
     }
     
     // MARK: - OBJ-C methods
     
-    @objc private func payButtonTapped() {}
+    @objc private func didPullRefresh() {
+        presenter.fetchOrder()
+    }
     
-    // TODO: - Sort logic
-    @objc private func sortButtonTapped() {
+    @objc private func didTapPayButton() {
+        let presenter = PaymentPresenter(servicesAssembly: presenter.servicesAssembly)
+        let paymentVC = PaymentViewController(presenter: presenter)
+        let paymentNC = UINavigationController(rootViewController: paymentVC)
+        paymentNC.modalPresentationStyle = .overFullScreen
+        present(paymentNC, animated: true)
+    }
+    
+    @objc private func didTapSortButton() {
         let actionSheet = UIAlertController(
             title: NSLocalizedString("Sort", comment: ""),
             message: nil,
             preferredStyle: .actionSheet
         )
         
-        let priceParam = UIAlertAction(title: NSLocalizedString("By price", comment: ""), style: .default) {[weak self] _ in
+        let byPrice = UIAlertAction(title: NSLocalizedString("By price", comment: ""), style: .default) {[weak self] _ in
             guard let self else { return }
+            presenter.sortCart(with: .byPrice)
         }
-        let ratingParam = UIAlertAction(title: NSLocalizedString("By rating", comment: ""), style: .default) {[weak self] _ in
+        let byRating = UIAlertAction(title: NSLocalizedString("By rating", comment: ""), style: .default) {[weak self] _ in
             guard let self else { return }
+            presenter.sortCart(with: .byRating)
         }
-        let nameParam = UIAlertAction(title: NSLocalizedString("By name", comment: ""), style: .default) {[weak self] _ in
+        let byName = UIAlertAction(title: NSLocalizedString("By name", comment: ""), style: .default) {[weak self] _ in
             guard let self else { return }
+            presenter.sortCart(with: .byName)
         }
         let cancel = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) { [weak self] _ in
             guard let self else { return }
-            self.dismiss(animated: true)
+            dismiss(animated: true)
         }
         
-        let params = [priceParam, ratingParam, nameParam, cancel]
+        let options = [byPrice, byRating, byName, cancel]
         
-        params.forEach { actionSheet.addAction($0)}
+        options.forEach { actionSheet.addAction($0)}
         
         present(actionSheet, animated: true)
     }
@@ -220,22 +246,27 @@ final class CartViewController: UIViewController, CartVCProtocol {
 
 extension CartViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard
-            !presenter.nfts.isEmpty
-        else {
-            cartIsEmpty()
-            return 0
-        }
-        return presenter.nfts.count
+        presenter.nfts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier, for: indexPath) as! CartTableViewCell
+        guard
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier, for: indexPath) as? CartTableViewCell
+        else { return UITableViewCell() }
+        
         let nft = presenter.nfts[indexPath.row]
-        cell.configureCell(nft: nft)
+        let action = { [weak self] in
+            guard let self else { return }
+            
+            let deletetionVC = DeletionViewController(image: nft.images[1], action: { self.presenter.deleteNft(id: nft.id) } )
+            deletetionVC.modalPresentationStyle = .overFullScreen
+            self.present(deletetionVC, animated: false)
+        }
+        
+        cell.configureCell(nft: nft, action: action)
         cell.backgroundColor = .clear
         return cell
-    }
+    } 
 }
 
 extension CartViewController: UITableViewDelegate {

@@ -22,6 +22,7 @@ final class CartTableViewCell: UITableViewCell {
         layoutCell()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -81,28 +82,29 @@ final class CartTableViewCell: UITableViewCell {
             self,
             action: #selector(deleteButtonTapped),
             for: .touchUpInside)
-        
-        // change image
-        
         button.setImage(UIImage(resource: .cartDeleteButton), for: .normal)
         button.tintColor = .label
         return button
     }()
     
+    private var onDeleteButtonTap: () -> () = {}
+    
     // MARK: - Public methods
     
-    func configureCell(nft: Nft) {
+    func configureCell(nft: Nft, action: @escaping () -> ()) {
         nftPreview.kf.setImage(with: nft.images[0], placeholder: UIImage(systemName: "photo"))
         nftName.text = nft.name
         priceLabel.text = NSLocalizedString("Price", comment: "")
         priceTag.text = "\(nft.price) ETH"
         configureRatingStack(rating: nft.rating)
+        self.onDeleteButtonTap = action
     }
     
     // MARK: - Private methods
     
     private func layoutCell() {
-        addSubviews(nftPreview, nftName, ratingStack, priceLabel, priceTag, deleteButton)
+        addSubviews(nftPreview, nftName, ratingStack, priceLabel, priceTag)
+        contentView.addSubview(deleteButton)
         
         NSLayoutConstraint.activate([
             nftPreview.heightAnchor.constraint(equalToConstant: 108),
@@ -144,5 +146,7 @@ final class CartTableViewCell: UITableViewCell {
         }
     }
     
-    @objc private func deleteButtonTapped() {}
+    @objc private func deleteButtonTapped() {
+        onDeleteButtonTap()
+    }
 }
