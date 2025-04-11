@@ -18,9 +18,10 @@ final class CatalogueTableViewCell: UITableViewCell, ReuseIdentifying {
     
     private lazy var collectionImage: UIImageView = {
         let image = UIImageView()
-        image.contentMode = .top
+        image.contentMode = .scaleAspectFill
         image.clipsToBounds = true
         image.layer.cornerRadius = 12
+        image.layer.contentsRect = CGRect(x: 0, y: 0, width: 1, height: 0.5)
         return image
     } ()
     
@@ -41,6 +42,7 @@ final class CatalogueTableViewCell: UITableViewCell, ReuseIdentifying {
         setupUI()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -51,6 +53,7 @@ final class CatalogueTableViewCell: UITableViewCell, ReuseIdentifying {
         super.prepareForReuse()
         collectionImage.kf.cancelDownloadTask()
         collectionImage.image = nil
+        collectionTitle.text = nil
     }
     
     private func setupUI() {
@@ -77,19 +80,11 @@ extension CatalogueTableViewCell: CatalogueTableViewCellProtocol {
     
     func configure(image: String, title: String, count: Int) {
         collectionTitle.text = "\(title) (\(count))"
+        let retry = DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(10))
         collectionImage.kf.indicatorType = .activity
         collectionImage.kf.setImage(
             with: URL(string: image),
-            options: [.transition(.fade(1))],
-            completionHandler: { [weak self] result in
-                guard let self else { return }
-                switch result {
-                case .success(let resultImage):
-                    collectionImage.image = resultImage.image.resized(newWidth: collectionImage.bounds.width)
-                case .failure:
-                    collectionImage.backgroundColor = UIColor(resource: .nftBackgroundUniversal)
-                }
-            }
+            options: [.transition(.fade(1)), .retryStrategy(retry)]
         )
     }
 }

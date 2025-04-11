@@ -2,7 +2,7 @@ import UIKit
 
 final class TabBarController: UITabBarController {
 
-    var servicesAssembly: ServicesAssembly!
+    var servicesAssembly: ServicesAssembly
     
     private let profileTabBarItem = UITabBarItem(
         title: NSLocalizedString("Tab.profile", comment: ""),
@@ -28,10 +28,22 @@ final class TabBarController: UITabBarController {
         tag: 3
     )
     
+    // MARK: - Init
+    
+    init(servicesAssembly: ServicesAssembly) {
+        self.servicesAssembly = servicesAssembly
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - Methods of lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = UIColor(resource: .nftWhite)
         viewControllers = [
             setupProfileViewController(),
             setupCatalogueViewController(),
@@ -54,10 +66,9 @@ final class TabBarController: UITabBarController {
     }
     
     private func setupCatalogueViewController() -> UIViewController {
-        let cataloguePresenter = CataloguePresenter()
+        let cataloguePresenter = CataloguePresenter(servicesAssembly: servicesAssembly)
         let catalogueViewController = CatalogueViewController(presenter: cataloguePresenter)
         cataloguePresenter.setupCatalogueView(catalogueViewController)
-        cataloguePresenter.setupCatalogueService(CatalogueService())
         catalogueViewController.tabBarItem = catalogTabBarItem
         return catalogueViewController
     }

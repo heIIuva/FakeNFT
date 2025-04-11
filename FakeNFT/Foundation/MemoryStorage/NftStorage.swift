@@ -1,25 +1,27 @@
 import Foundation
 
-protocol NftStorage: AnyObject {
+protocol NftStorageProtocol: AnyObject {
     func saveNft(_ nft: Nft)
     func getNft(with id: String) -> Nft?
 }
 
-// Пример простого класса, который сохраняет данные из сети
-final class NftStorageImpl: NftStorage {
+final class NftStorage: NftStorageProtocol {
     private var storage: [String: Nft] = [:]
 
-    private let syncQueue = DispatchQueue(label: "sync-nft-queue")
+    private let queue = DispatchQueue(
+        label: "nft-queue",
+        qos: .userInteractive,
+        attributes: .concurrent)
 
     func saveNft(_ nft: Nft) {
-        syncQueue.async { [weak self] in
+        queue.sync(flags: .barrier) { [weak self] in
             self?.storage[nft.id] = nft
         }
     }
 
     func getNft(with id: String) -> Nft? {
-        syncQueue.sync {
-            storage[id]
+        queue.sync { [weak self] in
+            self?.storage[id]
         }
     }
 }

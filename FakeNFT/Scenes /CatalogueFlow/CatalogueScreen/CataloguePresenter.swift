@@ -8,10 +8,10 @@
 import Foundation
 
 protocol CataloguePresenterProtocol: AnyObject {
-    var catalogue: [NftCollection] { get }
     func loadCatalogue()
+    func getCollectionsCount() -> Int
+    func getCollectionPresenter(for indexPath: IndexPath) -> CollectionPresenterProtocol
     func setupCatalogueView(_ view: CatalogueViewProtocol)
-    func setupCatalogueService(_ service: CatalogueServiceProtocol)
     func configure(cell: CatalogueTableViewCell, for indexPath: IndexPath) -> CatalogueTableViewCell
 }
 
@@ -20,11 +20,15 @@ final class CataloguePresenter: CataloguePresenterProtocol {
     // MARK: - Properties
     
     private weak var view: CatalogueViewProtocol?
-    private var catalogueService: CatalogueServiceProtocol?
-    private(set) var catalogue: [NftCollection] = [] {
+    private let servicesAssembly: ServicesAssembly
+    private var catalogue: [NftCollection] = [] {
         didSet {
             view?.reloadData()
         }
+    }
+    
+    init(servicesAssembly: ServicesAssembly) {
+        self.servicesAssembly = servicesAssembly
     }
     
     // MARK: - Methods
@@ -33,16 +37,11 @@ final class CataloguePresenter: CataloguePresenterProtocol {
         self.view = view
     }
     
-    func setupCatalogueService(_ service: CatalogueServiceProtocol) {
-        self.catalogueService = service
-    }
-    
     func loadCatalogue() {
-        guard let view, let catalogueService else { return }
-        view.shouldShowIndicator(true)
-        catalogueService.fetchCatalogue { [weak self] result in
-            view.shouldShowIndicator(false)
+        view?.shouldShowIndicator(true)
+        servicesAssembly.catalogueService.fetchCatalogue { [weak self] result in
             guard let self else { return }
+            view?.shouldShowIndicator(false)
             switch result {
             case .success(let collections):
                 catalogue = collections
@@ -51,9 +50,17 @@ final class CataloguePresenter: CataloguePresenterProtocol {
                     message: NSLocalizedString("Error.title", comment: ""),
                     actionText: NSLocalizedString("Error.repeat", comment: ""),
                     action: loadCatalogue)
-                view.showErrorWithCancel(errorModel)
+                view?.showErrorWithCancel(errorModel)
             }
         }
+    }
+    
+    func getCollectionsCount() -> Int {
+        catalogue.count
+    }
+    
+    func getCollectionPresenter(for indexPath: IndexPath) -> CollectionPresenterProtocol {
+        CollectionPresenter(collection: catalogue[indexPath.row], servicesAssembly: servicesAssembly)
     }
     
     func configure(cell: CatalogueTableViewCell, for indexPath: IndexPath) -> CatalogueTableViewCell {
