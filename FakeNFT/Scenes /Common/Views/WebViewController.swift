@@ -35,7 +35,8 @@ class WebViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .background
+        webView.backgroundColor
 
         setupView()
         setupBackButton()
@@ -79,6 +80,63 @@ class WebViewController: UIViewController {
         let request = URLRequest(url: url)
         webView.load(request)
     }
+
+    private var backgroundHex: String {
+        traitCollection.userInterfaceStyle == .dark ? "#1A1B22" : "#FFFFFF"
+    }
+
+    private var textHex: String {
+        traitCollection.userInterfaceStyle == .dark ? "#FFFFFF" : "#1A1B22"
+    }
+
+    private func injectThemeIntoWebView() {
+        let js = """
+        document.querySelectorAll('*').forEach((element) => {
+            element.style.backgroundColor = '\(backgroundHex)';
+            element.style.color = '\(textHex)';
+
+            if (element.tagName === 'SVG' || element.querySelector('svg')) {
+                element.style.fill = '\(textHex)';
+                element.style.stroke = '\(textHex)';
+            }
+
+            if (element.tagName === 'BUTTON' || element.tagName === 'INPUT' || element.style.borderColor) {
+                element.style.borderColor = '\(textHex)';
+            }
+
+            if (element.tagName === 'A') {
+                element.style.color = '\(textHex)';
+                element.style.textDecoration = 'none';
+            }
+
+            if (element.tagName === 'INPUT' && (element.type === 'checkbox' || element.type === 'radio')) {
+                element.style.accentColor = '\(textHex)';
+            }
+
+            if (element.tagName === 'SELECT') {
+                element.style.backgroundColor = '\(backgroundHex)';
+                element.style.color = '\(textHex)';
+                element.style.borderColor = '\(textHex)';
+            }
+
+            if (element.tagName === 'TEXTAREA') {
+                element.style.backgroundColor = '\(backgroundHex)';
+                element.style.color = '\(textHex)';
+                element.style.borderColor = '\(textHex)';
+            }
+        });
+        """
+
+        webView.evaluateJavaScript(js, completionHandler: nil)
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
+            injectThemeIntoWebView()
+        }
+    }
 }
 
 // MARK: - WKNavigationDelegate
@@ -90,6 +148,7 @@ extension WebViewController: WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         UIBlockingProgressHUD.dismiss()
+        injectThemeIntoWebView()
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {

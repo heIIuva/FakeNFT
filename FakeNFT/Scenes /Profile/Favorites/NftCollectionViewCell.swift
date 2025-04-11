@@ -91,7 +91,7 @@ final class NftCollectionViewCell: UICollectionViewCell {
     // MARK: - Layout
 
     private func setupLayout() {
-        contentView.backgroundColor = .systemBackground
+        contentView.backgroundColor = .background
 
         contentView.addSubview(nftImageView)
         contentView.addSubview(likeButton)

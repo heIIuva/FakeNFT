@@ -33,9 +33,22 @@ extension UIColor {
     // Secondary Colors
     static let secondary = UIColor(red: 255 / 255, green: 193 / 255, blue: 7 / 255, alpha: 1.0)
 
-    // Background Colors
-    static let background = UIColor.white
+    // Background Colors    
+    static let background = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .yaBlack
+        : .yaWhite
+    }
 
+    //tabBar
+    static let tabBarActive = UIColor.yaBlue
+
+    static let tabBarInactive = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .yaWhite
+        : .yaBlack
+    }
+    
     // Text Colors
     static let textPrimary = UIColor { traits in
         return traits.userInterfaceStyle == .dark

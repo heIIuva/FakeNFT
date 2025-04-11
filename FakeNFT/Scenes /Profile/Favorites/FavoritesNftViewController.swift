@@ -30,7 +30,7 @@ final class FavoritesNftViewController: UIViewController {
         
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.register(NftCollectionViewCell.self, forCellWithReuseIdentifier: NftCollectionViewCell.identifier)
-        cv.backgroundColor = .systemBackground
+        cv.backgroundColor = .background
         cv.dataSource = self
         cv.delegate = self
         cv.translatesAutoresizingMaskIntoConstraints = false
@@ -66,7 +66,7 @@ final class FavoritesNftViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .background
         navigationItem.title = "Избранные NFT"
         
         setupBackButton()

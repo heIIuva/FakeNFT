@@ -107,6 +107,7 @@ final class NftTableViewCell: UITableViewCell {
     // MARK: - Setup
     private func setupCell() {
         selectionStyle = .none
+        contentView.backgroundColor = .background
 
         contentView.addSubview(nftImageView)
         nftImageView.addSubview(heartContainerView)
