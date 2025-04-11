@@ -8,7 +8,7 @@
 import UIKit
 
 protocol CollectionViewProtocol: UIViewController, ErrorView {
-    
+    func showCollectionAuthorPage(_ url: URL)  
 }
 
 final class CollectionViewController: UIViewController {
@@ -67,7 +67,6 @@ final class CollectionViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
-//        activityIndicator.constraintEdges(to: view)
         NSLayoutConstraint.activate([
             backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 11),
             backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 9),
@@ -82,21 +81,15 @@ final class CollectionViewController: UIViewController {
     @objc private func handleBackButtonTap() {
         dismiss(animated: true)
     }
-    
-    @objc private func handleAuthorButtonTap() {
-        // TODO: WebView implementation
-    }
 }
 
 // MARK: - Extensions
 
 extension CollectionViewController: CollectionViewProtocol {
     
-//    func shouldShowIndicator(_ isShown: Bool) {
-//        collectionView.isHidden = isShown
-//        isShown ? showLoading() :
-//                  hideLoading()
-//    }
+    func showCollectionAuthorPage(_ url: URL) {
+        
+    }
 }
 
 extension CollectionViewController: UICollectionViewDataSource {

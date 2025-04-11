@@ -50,6 +50,7 @@ final class NftCollectionHeader: UICollectionReusableView {
         let button = UIButton(type: .system)
         button.setTitleColor(UIColor(resource: .nftBlueUniversal), for: .normal)
         button.titleLabel?.font = UIFont.caption1
+        button.addTarget(self, action: #selector(handleAuthorLinkButtonTap), for: .touchUpInside)
         return button
     } ()
     
@@ -107,6 +108,10 @@ final class NftCollectionHeader: UICollectionReusableView {
             collectionDescriptionLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             collectionDescriptionLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24)
         ])
+    }
+    
+    @objc private func handleAuthorLinkButtonTap() {
+        
     }
 }
 
