@@ -15,7 +15,7 @@ protocol PaymentPresenterProtocol: AnyObject {
     var selectedCurrency: Currency? { get set }
     var selectedCurrencyIndex: IndexPath? { get set }
     
-    func fetchCurrencies(completion: @escaping () -> Void)
+    func fetchCurrencies(completion: @escaping () -> ())
 }
 
 
@@ -39,10 +39,10 @@ final class PaymentPresenter: PaymentPresenterProtocol {
     
     // MARK: - protocol methods
     
-    func fetchCurrencies(completion: @escaping () -> Void) {
-        UIBlockingProgressHUD.show()
+    func fetchCurrencies(completion: @escaping () -> ()) {
         servicesAssembly.nftService.loadCurrencies { [weak self] (result: Result<[Currency], Error>) in
             guard let self else { return }
+            UIBlockingProgressHUD.show()
             switch result {
             case .success(let currencies):
                 self.currencies = currencies

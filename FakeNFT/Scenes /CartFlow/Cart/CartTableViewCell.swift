@@ -22,6 +22,7 @@ final class CartTableViewCell: UITableViewCell {
         layoutCell()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -86,17 +87,17 @@ final class CartTableViewCell: UITableViewCell {
         return button
     }()
     
-    private var action: () -> Void = {}
+    private var onDeleteButtonTap: () -> () = {}
     
     // MARK: - Public methods
     
-    func configureCell(nft: Nft, action: @escaping () -> Void) {
+    func configureCell(nft: Nft, action: @escaping () -> ()) {
         nftPreview.kf.setImage(with: nft.images[0], placeholder: UIImage(systemName: "photo"))
         nftName.text = nft.name
         priceLabel.text = NSLocalizedString("Price", comment: "")
         priceTag.text = "\(nft.price) ETH"
         configureRatingStack(rating: nft.rating)
-        self.action = action
+        self.onDeleteButtonTap = action
     }
     
     // MARK: - Private methods
@@ -146,6 +147,6 @@ final class CartTableViewCell: UITableViewCell {
     }
     
     @objc private func deleteButtonTapped() {
-        action()
+        onDeleteButtonTap()
     }
 }

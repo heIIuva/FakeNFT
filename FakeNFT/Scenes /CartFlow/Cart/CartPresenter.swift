@@ -57,27 +57,26 @@ final class CartPresenter: CartPresenterProtocol {
     }
     
     func fetchOrder() {
-        if !isUpdating {
+        guard !isUpdating else { return }
+        servicesAssembly.nftService.loadOrder { [weak self] (result: Result<Order, Error>) in
+            guard let self else { return }
             UIBlockingProgressHUD.show()
-            servicesAssembly.nftService.loadOrder { [weak self] (result: Result<Order, Error>) in
-                guard let self else { return }
-                switch result {
-                case .success(let order):
-                    self.order = order
-                    if !order.nfts.isEmpty {
-                        fetchNfts(ids: order.nfts) {
-                            self.viewController?.updateUI(price: self.totalPrice, amount: self.totalAmount)
-                            self.viewController?.cartNonEmpty()
-                        }
-                    } else {
-                        self.viewController?.cartIsEmpty()
+            switch result {
+            case .success(let order):
+                self.order = order
+                if !order.nfts.isEmpty {
+                    fetchNfts(ids: order.nfts) {
+                        self.viewController?.updateUI(price: self.totalPrice, amount: self.totalAmount)
+                        self.viewController?.cartNonEmpty()
                     }
-                case .failure:
-                    viewController?.cartIsEmpty()
+                } else {
+                    self.viewController?.cartIsEmpty()
                 }
-                viewController?.endRefreshing()
-                UIBlockingProgressHUD.dismiss()
+            case .failure:
+                viewController?.cartIsEmpty()
             }
+            viewController?.endRefreshing()
+            UIBlockingProgressHUD.dismiss()
         }
     }
     
@@ -123,7 +122,7 @@ final class CartPresenter: CartPresenterProtocol {
         nfts.forEach { totalPrice += $0.price }
     }
         
-    private func fetchNfts(ids: [String], completion: @escaping () -> Void) {
+    private func fetchNfts(ids: [String], completion: @escaping () -> ()) {
         for id in ids {
             servicesAssembly.nftService.loadNft(id: id) { [weak self] (result: Result<Nft, Error>) in
                 guard let self else { return }

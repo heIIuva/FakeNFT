@@ -12,12 +12,13 @@ final class DeletionViewController: UIViewController {
     
     // MARK: - Init
     
-    init(image: URL, action: @escaping () -> Void) {
+    init(image: URL, action: @escaping () -> ()) {
         self.image = image
-        self.action = action
+        self.onDeleteButtonTap = action
         super.init(nibName: nil, bundle: nil)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -25,7 +26,7 @@ final class DeletionViewController: UIViewController {
     // MARK: - Properties
     
     private let image: URL?
-    private let action: () -> Void
+    private let onDeleteButtonTap: () -> ()
     
     private lazy var nftImageView: UIImageView = {
         let imageView = UIImageView()
@@ -36,7 +37,7 @@ final class DeletionViewController: UIViewController {
         return imageView
     }()
     
-    private lazy var confimationLabel: UILabel = {
+    private lazy var confirmationLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 13, weight: .regular)
@@ -106,7 +107,7 @@ final class DeletionViewController: UIViewController {
         blurView.frame = view.bounds
         view.insertSubview(blurView, at: 0)
         
-        view.addSubviews(nftImageView, confimationLabel, buttonStack)
+        view.addSubviews(nftImageView, confirmationLabel, buttonStack)
         
         NSLayoutConstraint.activate([
             nftImageView.heightAnchor.constraint(equalToConstant: 108),
@@ -114,12 +115,12 @@ final class DeletionViewController: UIViewController {
             nftImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             nftImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 244),
             
-            confimationLabel.topAnchor.constraint(equalTo: nftImageView.bottomAnchor, constant: 12),
-            confimationLabel.widthAnchor.constraint(equalToConstant: 200),
-            confimationLabel.heightAnchor.constraint(equalToConstant: 36),
-            confimationLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            confirmationLabel.topAnchor.constraint(equalTo: nftImageView.bottomAnchor, constant: 12),
+            confirmationLabel.widthAnchor.constraint(equalToConstant: 200),
+            confirmationLabel.heightAnchor.constraint(equalToConstant: 36),
+            confirmationLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
-            buttonStack.topAnchor.constraint(equalTo: confimationLabel.bottomAnchor, constant: 20),
+            buttonStack.topAnchor.constraint(equalTo: confirmationLabel.bottomAnchor, constant: 20),
             buttonStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             buttonStack.widthAnchor.constraint(equalToConstant: 230),
             buttonStack.heightAnchor.constraint(equalToConstant: 44)
@@ -127,7 +128,7 @@ final class DeletionViewController: UIViewController {
     }
     
     @objc private func didTapDeleteButton() {
-        action()
+        onDeleteButtonTap()
         dismiss(animated: true)
     }
     

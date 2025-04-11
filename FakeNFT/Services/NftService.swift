@@ -1,8 +1,8 @@
 import Foundation
 
-typealias NftCompletion = (Result<Nft, Error>) -> Void
-typealias NftOrderCompletion = (Result<Order, Error>) -> Void
-typealias CurrencyCompletion = (Result<[Currency], Error>) -> Void
+typealias NftCompletion = (Result<Nft, Error>) -> ()
+typealias NftOrderCompletion = (Result<Order, Error>) -> ()
+typealias CurrencyCompletion = (Result<[Currency], Error>) -> ()
 
 
 protocol NftService {

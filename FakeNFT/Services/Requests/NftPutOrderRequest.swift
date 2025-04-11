@@ -16,16 +16,16 @@ struct NftPutOrderRequest: NetworkRequest {
     }
     var httpMethod: HttpMethod = .put
     var dto: Dto? {
-        NftPutOrderDto(param2: order.isEmpty ? "null" : order.joined(separator: ", "))
+        NftPutOrderDto(newNfts: order.isEmpty ? "null" : order.joined(separator: ", "))
     }
 }
 
 struct NftPutOrderDto: Dto {
-    let param1: String = "nfts"
-    let param2: String
+    let orderRequestKey: String = "nfts"
+    let newNfts: String
         
     func asDictionary() -> [String : String] {
-        [param1: param2]
+        [orderRequestKey: newNfts]
     }
 }
 
