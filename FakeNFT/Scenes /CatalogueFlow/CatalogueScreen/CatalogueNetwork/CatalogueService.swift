@@ -7,18 +7,21 @@
 
 import Foundation
 
+typealias NftCollectionCompletion = (Result<[NftCollection], Error>) -> Void
+
 protocol CatalogueServiceProtocol {
-    func fetchCatalogue(completion: @escaping (Result<[NftCollection], Error>) -> Void)
+    func fetchCatalogue(completion: @escaping NftCollectionCompletion)
 }
 
 final class CatalogueService: CatalogueServiceProtocol {
+    
     private let networkClient: NetworkClient
     
     init(networkClient: NetworkClient = DefaultNetworkClient()) {
         self.networkClient = networkClient
     }
     
-    func fetchCatalogue(completion: @escaping (Result<[NftCollection], Error>) -> Void) {
+    func fetchCatalogue(completion: @escaping NftCollectionCompletion) {
         let request = CatalogueRequest()
         networkClient.send(request: request, type: [NftCollection].self, onResponse: completion)
     }

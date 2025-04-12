@@ -9,7 +9,7 @@ import UIKit
 
 protocol CatalogueViewProtocol: UIViewController, LoadingView, ErrorView {
     func reloadData()
-    func shouldShowIndicator(_ isShow: Bool)
+    func shouldShowIndicator(_ isShown: Bool)
 }
 
 final class CatalogueViewController: UIViewController {

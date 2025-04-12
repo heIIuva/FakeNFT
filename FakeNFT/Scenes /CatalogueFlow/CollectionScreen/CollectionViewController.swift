@@ -7,8 +7,9 @@
 
 import UIKit
 
-protocol CollectionViewProtocol: UIViewController, ErrorView {
-    func showCollectionAuthorPage(_ url: URL)  
+protocol CollectionViewProtocol: UIViewController, ErrorView, LoadingView {
+    func showCollectionAuthorPage(_ url: URL)
+    func shouldShowIndicator(_ isShown: Bool)
 }
 
 final class CollectionViewController: UIViewController {
@@ -16,6 +17,11 @@ final class CollectionViewController: UIViewController {
     // MARK: - Properties
     
     private let presenter: CollectionPresenterProtocol
+    lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .medium)
+        activityIndicator.color = UIColor(resource: .nftBlack)
+        return activityIndicator
+    } ()
     private lazy var backButton: UIButton = {
         let backButton = UIButton(type: .system)
         backButton.setImage(UIImage(resource: .navBackButton).withRenderingMode(.alwaysOriginal), for: .normal)
@@ -89,6 +95,12 @@ extension CollectionViewController: CollectionViewProtocol {
     
     func showCollectionAuthorPage(_ url: URL) {
         
+    }
+    
+    func shouldShowIndicator(_ isShown: Bool) {
+        collectionView.isHidden = isShown
+        isShown ? showLoading() :
+                  hideLoading()
     }
 }
 
