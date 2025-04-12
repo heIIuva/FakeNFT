@@ -9,6 +9,7 @@ import UIKit
 
 protocol CollectionViewProtocol: UIViewController, ErrorView, LoadingView {
     func showCollectionAuthorPage(_ url: URL)
+    func reloadData()
     func shouldShowIndicator(_ isShown: Bool)
 }
 
@@ -64,15 +65,17 @@ final class CollectionViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor(resource: .nftWhite)
         setupUI()
+        presenter.loadOrdersAndLikes()
     }
     
     // MARK: - Methods
     
     private func setupUI() {
-        [collectionView, backButton].forEach {
+        [collectionView, backButton, activityIndicator].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
+        activityIndicator.constraintEdges(to: view)
         NSLayoutConstraint.activate([
             backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 11),
             backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 9),
@@ -95,6 +98,10 @@ extension CollectionViewController: CollectionViewProtocol {
     
     func showCollectionAuthorPage(_ url: URL) {
         
+    }
+    
+    func reloadData() {
+        collectionView.reloadData()
     }
     
     func shouldShowIndicator(_ isShown: Bool) {
