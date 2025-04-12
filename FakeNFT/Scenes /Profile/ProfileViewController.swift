@@ -55,7 +55,6 @@ final class ProfileViewController: UIViewController, ProfileView {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .background
         setupNavigationBar()
         setupView()
         presenter.viewDidLoad()
@@ -64,6 +63,8 @@ final class ProfileViewController: UIViewController, ProfileView {
     // MARK: - Setup
 
     private func setupView() {
+        view.backgroundColor = .background
+        
         [profileCardView, tableView].forEach(view.addSubview)
 
         tableView.dataSource = self
@@ -96,7 +97,6 @@ final class ProfileViewController: UIViewController, ProfileView {
     }
 
     // MARK: - ProfileView
-
     func display(profile: Profile) {
         self.profile = profile
         profileCardView.configure(with: profile)

@@ -52,7 +52,7 @@ final class MyNftViewController: UIViewController, NftView {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .background
         navigationItem.title = "Мои NFT"
 
         setupTableView()
@@ -76,6 +76,7 @@ final class MyNftViewController: UIViewController, NftView {
 
     private func setupTableView() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.backgroundColor = .background
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none
