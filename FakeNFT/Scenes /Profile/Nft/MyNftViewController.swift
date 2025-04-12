@@ -27,7 +27,7 @@ final class MyNftViewController: UIViewController, NftView {
 
     private let emptyLabel: UILabel = {
         let label = UILabel()
-        label.text = "У Вас ещё нет NFT"
+        label.text = NSLocalizedString("MyNft.placeholder", comment: "")
         label.textAlignment = .center
         label.textColor = .textPrimary
         label.font = .bodyBold
@@ -53,7 +53,7 @@ final class MyNftViewController: UIViewController, NftView {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .background
-        navigationItem.title = "Мои NFT"
+        navigationItem.title = NSLocalizedString("MyNft.title", comment: "")
 
         setupTableView()
         setupBackButton()
@@ -140,21 +140,31 @@ final class MyNftViewController: UIViewController, NftView {
     }
 
     @objc private func showSortMenu() {
-        let alert = UIAlertController(title: "Сортировка", message: nil, preferredStyle: .actionSheet)
+        let alert = UIAlertController(
+            title: NSLocalizedString("MyNft.sort.title", comment: ""),
+            message: nil,
+            preferredStyle: .actionSheet
+        )
 
-        alert.addAction(UIAlertAction(title: "По имени", style: .default) { _ in
-            self.presenter.sort(by: .name)
-        })
+        alert.addAction(UIAlertAction(
+            title: NSLocalizedString("MyNft.sort.name", comment: ""),
+            style: .default
+        ) { _ in self.presenter.sort(by: .name) })
 
-        alert.addAction(UIAlertAction(title: "По цене", style: .default) { _ in
-            self.presenter.sort(by: .price)
-        })
+        alert.addAction(UIAlertAction(
+            title: NSLocalizedString("MyNft.sort.price", comment: ""),
+            style: .default
+        ) { _ in self.presenter.sort(by: .price) })
 
-        alert.addAction(UIAlertAction(title: "По рейтингу", style: .default) { _ in
-            self.presenter.sort(by: .rating)
-        })
+        alert.addAction(UIAlertAction(
+            title: NSLocalizedString("MyNft.sort.rating", comment: ""),
+            style: .default
+        ) { _ in self.presenter.sort(by: .rating) })
 
-        alert.addAction(UIAlertAction(title: "Закрыть", style: .cancel))
+        alert.addAction(UIAlertAction(
+            title: NSLocalizedString("MyNft.sort.cancel", comment: ""),
+            style: .cancel
+        ))
 
         present(alert, animated: true)
     }

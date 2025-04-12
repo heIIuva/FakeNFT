@@ -16,3 +16,12 @@
 "EditProfile.photoUrlPlaceholder" = "https://examle.com/avatar.jpg";
 "NftViewCell.price" = "Цена";
 "NftViewCell.from" = "от";
+"FavoritesNft.title" = "Избранные NFT";
+"FavoritesNft.placeholder" = "У Вас ещё нет избранных NFT";
+"MyNft.title" = "Мои NFT";
+"MyNft.placeholder" = "У Вас ещё нет NFT";
+"MyNft.sort.title" = "Сортировка";
+"MyNft.sort.name" = "По имени";
+"MyNft.sort.price" = "По цене";
+"MyNft.sort.rating" = "По рейтингу";
+"MyNft.sort.cancel" = "Закрыть";

@@ -39,7 +39,7 @@ final class FavoritesNftViewController: UIViewController {
     
     private let emptyLabel: UILabel = {
         let label = UILabel()
-        label.text = "У Вас ещё нет избранных NFT"
+        label.text = NSLocalizedString("FavoritesNft.placeholder", comment: "")
         label.textAlignment = .center
         label.textColor = .textPrimary
         label.font = .bodyBold
@@ -67,7 +67,7 @@ final class FavoritesNftViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .background
-        navigationItem.title = "Избранные NFT"
+        navigationItem.title = NSLocalizedString("FavoritesNft.title", comment: "")
         
         setupBackButton()
         setupUI()
