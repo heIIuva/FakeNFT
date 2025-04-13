@@ -68,10 +68,9 @@ final class CartViewController: UIViewController, CartVCProtocol {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
-        button.backgroundColor = .label
+        button.backgroundColor = .black
         button.setTitle(NSLocalizedString("Proceed to payment", comment: ""), for: .normal)
         button.addTarget(self, action: #selector(didTapPayButton), for: .touchUpInside)
-        button.titleLabel?.textColor = .systemBackground
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
         return button
     }()
@@ -79,7 +78,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
     private lazy var totalNftsLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .label
+        label.textColor = .black
         label.font = .systemFont(ofSize: 15, weight: .regular)
         return label
     }()

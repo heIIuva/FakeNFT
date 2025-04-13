@@ -76,7 +76,7 @@ final class CurrencyCell: UICollectionViewCell {
         logo.kf.setImage(with: currency.image, placeholder: UIImage(systemName: "photo"))
         title.text = currency.title
         name.text = currency.name
-        background.layer.borderColor = UIColor.black.cgColor
+        background.layer.borderColor = UIColor.label.cgColor
     }
     
     func setSelected(_ selected: Bool) {

@@ -86,7 +86,7 @@ final class PaymentConfirmationViewController: UIViewController {
     // MARK: - OBJC-C methods
     
     @objc private func didTapBackToCatalogueButton() {
-        self.tabBarController?.selectedIndex = 1
+        tabBarController?.selectedIndex = 1
         navigationController?.popToRootViewController(animated: true)
     }
 }

@@ -41,7 +41,7 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
         collection.dataSource = self
         collection.delegate = self
         collection.register(CurrencyCell.self, forCellWithReuseIdentifier: reuseID)
-        collection.backgroundColor = .white
+        collection.backgroundColor = .systemBackground
         return collection
     }()
     
@@ -72,10 +72,9 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
-        button.backgroundColor = .label
+        button.backgroundColor = .black
         button.setTitle(NSLocalizedString("Purchase", comment: ""), for: .normal)
         button.addTarget(self, action: #selector(didTapPayButton), for: .touchUpInside)
-        button.setTitleColor(.systemBackground, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
         return button
     }()
@@ -85,7 +84,7 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = NSLocalizedString("By making a purchase, you agree to the terms and conditions of the", comment: "")
         label.font = .systemFont(ofSize: 13, weight: .regular)
-        label.textColor = .label
+        label.textColor = .black
         label.textAlignment = .left
         label.numberOfLines = 2
         return label
@@ -203,7 +202,7 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
     // MARK: - OBJ-C methods
     
     @objc private func popVC() {
-        dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
     }
     
     
