@@ -17,6 +17,11 @@ protocol Dto {
     func asDictionary() -> [String: String]
 }
 
+//required to support arrays - likes for example
+protocol MultiValueFormDataDto {
+    func asFormURLEncodedPairs() -> [(String, String)]
+}
+
 // default values
 extension NetworkRequest {
     var httpMethod: HttpMethod { .get }
