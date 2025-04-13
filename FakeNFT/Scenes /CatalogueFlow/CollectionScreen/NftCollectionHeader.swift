@@ -111,7 +111,7 @@ final class NftCollectionHeader: UICollectionReusableView {
     }
     
     @objc private func handleAuthorLinkButtonTap() {
-        
+        nftHeaderViewDelegate?.handleAuthorLinkButtonTap()
     }
 }
 

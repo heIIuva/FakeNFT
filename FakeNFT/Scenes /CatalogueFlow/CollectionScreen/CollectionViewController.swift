@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SafariServices
 
 protocol CollectionViewProtocol: UIViewController, ErrorView, LoadingView {
     func showCollectionAuthorPage(_ url: URL)
@@ -97,7 +98,8 @@ final class CollectionViewController: UIViewController {
 extension CollectionViewController: CollectionViewProtocol {
     
     func showCollectionAuthorPage(_ url: URL) {
-        
+        let safariViewController = SFSafariViewController(url: url)
+        present(safariViewController, animated: true)
     }
     
     func reloadData() {

@@ -130,7 +130,7 @@ final class CollectionPresenter: CollectionPresenterProtocol {
 extension CollectionPresenter: NftCollectionHeaderDelegate {
     
     func handleAuthorLinkButtonTap() {
-        // Epic catalog 3/3 iteration
+        view?.showCollectionAuthorPage(URL(string: "https://practicum.yandex.ru/ios-developer")!)
     }
 }
 
