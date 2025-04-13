@@ -65,13 +65,13 @@ final class CollectionViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor(resource: .nftWhite)
         setupUI()
-        presenter.loadOrdersAndLikes()
+        presenter.fetchData()
     }
     
     // MARK: - Methods
     
     private func setupUI() {
-        [collectionView, backButton, activityIndicator].forEach {
+        [collectionView, activityIndicator, backButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }

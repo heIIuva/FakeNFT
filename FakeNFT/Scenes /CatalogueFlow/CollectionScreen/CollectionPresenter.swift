@@ -9,7 +9,7 @@ import Foundation
 
 protocol CollectionPresenterProtocol: AnyObject, NftCollectionCellDelegate, NftCollectionHeaderDelegate {
     func setupCollectionView(_ view: CollectionViewProtocol)
-    func loadOrdersAndLikes()
+    func fetchData()
     func getNftCount() -> Int
     func configure(cell: NftCollectionCellProtocol, for indexPath: IndexPath)
     func configure(header: NftCollectionHeader, withImage: Bool)
@@ -24,8 +24,9 @@ final class CollectionPresenter: CollectionPresenterProtocol {
     private let servicesAssembly: ServicesAssembly
     private let nftService: NftServiceProtocol
     private let collectionService: CollectionServiceProtocol
-    private var orderedNfts: [String]?
-    private var likedNfts: [String]?
+    private var collectionNfts: [Nft] = []
+    private var orderedNfts: [String] = []
+    private var likedNfts: [String] = []
     
     // MARK: - Init
     
@@ -42,49 +43,18 @@ final class CollectionPresenter: CollectionPresenterProtocol {
         self.view = view
     }
     
-    func loadOrdersAndLikes() {
-        view?.shouldShowIndicator(true)
-        collectionService.fetchOrders { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .success(let orders):
-                orderedNfts = orders.nfts
-                shouldReloadView()
-            case .failure(let error):
-                assertionFailure(error.localizedDescription)
-            }
-        }
-        collectionService.fetchProfile { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .success(let profile):
-                likedNfts = profile.likes
-                shouldReloadView()
-            case .failure(let error):
-                assertionFailure(error.localizedDescription)
-            }
-        }
-    }
-    
     func getNftCount() -> Int {
-        collection.nfts.count
+        collectionNfts.count
     }
     
     func configure(cell: NftCollectionCellProtocol, for indexPath: IndexPath) {
+        let nft = collectionNfts[indexPath.row]
         cell.nftCellDelegate = self
         cell.isUserInteractionEnabled(false)
-        nftService.loadNft(id: collection.nfts[indexPath.item]) { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .success(let nft):
-                cell.configure(with: nft)
-                cell.nftLiked(isNftLiked(nft.id))
-                cell.nftAddedToCart(isNftInCart(nft.id))
-                cell.isUserInteractionEnabled(true)
-            case .failure(let error):
-                assertionFailure(error.localizedDescription)
-            }
-        }
+        cell.configure(with: nft)
+        cell.nftLiked(isNftLiked(nft.id))
+        cell.nftAddedToCart(isNftInCart(nft.id))
+        cell.isUserInteractionEnabled(true)
     }
     
     func configure(header: NftCollectionHeader, withImage: Bool) {
@@ -97,19 +67,61 @@ final class CollectionPresenter: CollectionPresenterProtocol {
         if withImage { header.setImage(with: collection.cover) }
     }
     
-    private func shouldReloadView() {
-        if orderedNfts != nil && likedNfts != nil {
-            view?.reloadData()
-            view?.shouldShowIndicator(false)
-        }
-    }
-    
     private func isNftLiked(_ nftId: String) -> Bool {
-        likedNfts?.contains(nftId) ?? false
+        likedNfts.contains(nftId)
     }
     
     private func isNftInCart(_ nftId: String) -> Bool {
-        orderedNfts?.contains(nftId) ?? false
+        orderedNfts.contains(nftId)
+    }
+    
+    func fetchData() {
+        var nfts: [Nft] = []
+        var orders: [String] = []
+        var likes: [String] = []
+        let group = DispatchGroup()
+        view?.shouldShowIndicator(true)
+        
+        for nft in collection.nfts{
+            group.enter()
+            nftService.loadNft(id: nft) { result in
+                defer{ group.leave() }
+                switch result {
+                case .success(let nft):
+                    nfts.append(nft)
+                case .failure(let error):
+                    assertionFailure(error.localizedDescription)
+                }
+            }
+        }
+        group.enter()
+        collectionService.fetchOrders { result in
+            defer{ group.leave() }
+            switch result {
+            case .success(let orderedNfts):
+                orders.append(contentsOf: orderedNfts.nfts)
+            case .failure(let error):
+                assertionFailure(error.localizedDescription)
+            }
+        }
+        group.enter()
+        collectionService.fetchProfile { result in
+            defer{ group.leave() }
+            switch result {
+            case .success(let profile):
+                likes.append(contentsOf: profile.likes)
+            case .failure(let error):
+                assertionFailure(error.localizedDescription)
+            }
+        }
+        group.notify(queue: .main) { [weak self] in
+            guard let self else { return }
+            collectionNfts = nfts.sorted { $0.id < $1.id }
+            orderedNfts = orders
+            likedNfts = likes
+            view?.reloadData()
+            view?.shouldShowIndicator(false)
+        }
     }
 }
 
@@ -125,9 +137,8 @@ extension CollectionPresenter: NftCollectionHeaderDelegate {
 extension CollectionPresenter: NftCollectionCellDelegate {
     
     func handleLikeButtonTap(for id: String, completion: @escaping (Bool) -> Void) {
-        guard let likes = likedNfts else { return }
         let isLiked = isNftLiked(id)
-        let updatedLikedNfts = isLiked ? likes.filter { $0 != id } : likes + [id]
+        let updatedLikedNfts = isLiked ? likedNfts.filter { $0 != id } : likedNfts + [id]
         collectionService.updateProfile(with: updatedLikedNfts) { [weak self] result in
             guard let self else { return }
             switch result {
@@ -140,7 +151,18 @@ extension CollectionPresenter: NftCollectionCellDelegate {
         }
     }
     
-    func handleCartButtonTap(for id: String) {
-        
+    func handleCartButtonTap(for id: String, completion: @escaping (Bool) -> Void) {
+        let isInCart = isNftInCart(id)
+        let updatedLikedNfts = isInCart ? orderedNfts.filter { $0 != id } : orderedNfts + [id]
+        collectionService.updateOrders(with: updatedLikedNfts) { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(let orders):
+                orderedNfts = orders.nfts
+                completion(!isInCart)
+            case .failure(let error):
+                assertionFailure(error.localizedDescription)
+            }
+        }
     }
 }

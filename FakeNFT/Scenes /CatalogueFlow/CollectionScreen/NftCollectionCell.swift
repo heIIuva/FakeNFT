@@ -18,7 +18,7 @@ protocol NftCollectionCellProtocol: UICollectionViewCell {
 
 protocol NftCollectionCellDelegate: AnyObject {
     func handleLikeButtonTap(for id: String, completion: @escaping (Bool) -> Void)
-    func handleCartButtonTap(for id: String)
+    func handleCartButtonTap(for id: String, completion: @escaping (Bool) -> Void)
 }
 
 final class NftCollectionCell: UICollectionViewCell, ReuseIdentifying {
@@ -148,7 +148,10 @@ final class NftCollectionCell: UICollectionViewCell, ReuseIdentifying {
         }
     }
     @objc private func didTapCartButton() {
-        nftCellDelegate?.handleCartButtonTap(for: cellId)
+        nftCellDelegate?.handleCartButtonTap(for: cellId) { [weak self] isLiked in
+            guard let self else { return }
+            nftAddedToCart(isLiked)
+        }
     }
 }
 
@@ -173,6 +176,6 @@ extension NftCollectionCell: NftCollectionCellProtocol {
     }
     
     func nftAddedToCart(_ isInCart: Bool) {
-        cartButton.setImage(UIImage(resource: isInCart ? .addToCart : .deleteFromCart), for: .normal)
+        cartButton.setImage(UIImage(resource: isInCart ? .deleteFromCart :.addToCart), for: .normal)
     }
 }
