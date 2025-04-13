@@ -21,12 +21,13 @@ final class CollectionViewController: UIViewController {
     private let presenter: CollectionPresenterProtocol
     lazy var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView(style: .medium)
-        activityIndicator.color = UIColor(resource: .nftBlack)
+        activityIndicator.color = .nftBlack
         return activityIndicator
     } ()
     private lazy var backButton: UIButton = {
-        let backButton = UIButton(type: .system)
-        backButton.setImage(UIImage(resource: .navBackButton).withRenderingMode(.alwaysOriginal), for: .normal)
+        let backButton = UIButton()
+        backButton.setImage(.navBackButton.withTintColor(.nftBlack, renderingMode: .alwaysOriginal), for: .normal)
+        backButton.imageView?.tintColor = .nftBlack
         backButton.addTarget(self, action: #selector(handleBackButtonTap), for: .touchUpInside)
         return backButton
     } ()
@@ -35,6 +36,7 @@ final class CollectionViewController: UIViewController {
         let collectionView = UICollectionView(
             frame: .zero,
             collectionViewLayout: UICollectionViewFlowLayout())
+        collectionView.backgroundColor = .nftWhite
         collectionView.register(NftCollectionCell.self)
         collectionView.register(
             NftCollectionHeader .self,
@@ -64,7 +66,7 @@ final class CollectionViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(resource: .nftWhite)
+        view.backgroundColor = .nftWhite
         setupUI()
         presenter.fetchData()
     }

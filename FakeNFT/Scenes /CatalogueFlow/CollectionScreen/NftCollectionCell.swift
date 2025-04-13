@@ -35,7 +35,7 @@ final class NftCollectionCell: UICollectionViewCell, ReuseIdentifying {
     } ()
     
     private lazy var likeButton: UIButton = {
-        let button = UIButton(type: .system)
+        let button = UIButton()
         button.addTarget(self, action: #selector(didTapLikeButton), for: .touchUpInside)
         return button
     } ()
@@ -77,6 +77,7 @@ final class NftCollectionCell: UICollectionViewCell, ReuseIdentifying {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        backgroundColor = .nftWhite
         setupUI()
     }
     
@@ -172,10 +173,13 @@ extension NftCollectionCell: NftCollectionCellProtocol {
     }
     
     func nftLiked(_ isLiked: Bool) {
-        likeButton.setImage(UIImage(resource: isLiked ? .liked : .notLiked), for: .normal)
+        likeButton.setImage(isLiked ? .liked : .notLiked, for: .normal)
     }
     
     func nftAddedToCart(_ isInCart: Bool) {
-        cartButton.setImage(UIImage(resource: isInCart ? .deleteFromCart :.addToCart), for: .normal)
+        cartButton.setImage(
+            isInCart ? .deleteFromCart.withTintColor(.nftBlack, renderingMode: .alwaysOriginal) :
+                       .addToCart.withTintColor(.nftBlack, renderingMode: .alwaysOriginal),
+            for: .normal)
     }
 }

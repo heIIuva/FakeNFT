@@ -18,18 +18,19 @@ final class CatalogueViewController: UIViewController {
     
     var activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .medium)
-        indicator.color = UIColor(resource: .nftBlack)
+        indicator.color = .nftBlack
         return indicator
     } ()
     private let presenter: CataloguePresenterProtocol
     private lazy var sortButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(resource: .sortButtonIcon), for: .normal)
+        let button = UIButton()
+        button.setImage(.sortButtonIcon.withTintColor(.nftBlack, renderingMode: .alwaysOriginal), for: .normal)
         button.addTarget(self, action: #selector(didTapSortButton), for: .touchUpInside)
         return button
     } ()
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
+        tableView.backgroundColor = .nftWhite
         tableView.register(CatalogueTableViewCell.self)
         tableView.dataSource = self
         tableView.delegate = self
@@ -54,7 +55,7 @@ final class CatalogueViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(resource: .nftWhite)
+        view.backgroundColor = .nftWhite
         setupUI()
         presenter.loadCatalogue()
     }
