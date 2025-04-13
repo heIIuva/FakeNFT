@@ -87,17 +87,22 @@ final class CatalogueViewController: UIViewController {
         let actionByName = UIAlertAction(
             title: NSLocalizedString("SortActionSheet.byName", comment: ""),
             style: .default,
-            handler: { _ in }
+            handler: { [weak self] _ in
+                guard let self else { return }
+                presenter.sortCatalogue(by: .byName)
+            }
         )
         let actionByCount = UIAlertAction(
             title: NSLocalizedString("SortActionSheet.byCount", comment: ""),
             style: .default,
-            handler: { _ in }
+            handler: { [weak self] _ in
+                guard let self else { return }
+                presenter.sortCatalogue(by: .byCount)
+            }
         )
         let actionClose = UIAlertAction(
             title: NSLocalizedString("SortActionSheet.close", comment: ""),
-            style: .cancel,
-            handler: { _ in }
+            style: .cancel
         )
         [actionByName, actionByCount, actionClose].forEach {
             alertController.addAction($0)

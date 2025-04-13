@@ -13,6 +13,12 @@ protocol CataloguePresenterProtocol: AnyObject {
     func getCollectionPresenter(for indexPath: IndexPath) -> CollectionPresenterProtocol
     func setupCatalogueView(_ view: CatalogueViewProtocol)
     func configure(cell: CatalogueTableViewCell, for indexPath: IndexPath) -> CatalogueTableViewCell
+    func sortCatalogue(by type: SortingType)
+}
+
+enum SortingType {
+    case byName
+    case byCount
 }
 
 final class CataloguePresenter: CataloguePresenterProtocol {
@@ -69,5 +75,14 @@ final class CataloguePresenter: CataloguePresenterProtocol {
             title: catalogue[indexPath.row].name,
             count: catalogue[indexPath.row].nfts.count)
         return cell
+    }
+    
+    func sortCatalogue(by type: SortingType) {
+        switch type {
+        case .byName:
+            catalogue.sort { $0.name < $1.name }
+        case .byCount:
+            catalogue.sort { $0.nfts.count > $1.nfts.count }
+        }
     }
 }
