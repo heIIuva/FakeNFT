@@ -67,13 +67,15 @@ final class CartPresenter: CartPresenterProtocol {
                 if !order.nfts.isEmpty {
                     fetchNfts(ids: order.nfts) {
                         self.viewController?.updateUI(price: self.totalPrice, amount: self.totalAmount)
-                        self.viewController?.cartNonEmpty()
+                        self.viewController?.changeCartState(.cartNonEmpty)
                     }
                 } else {
-                    self.viewController?.cartIsEmpty()
+                    nfts.removeAll()
+                    viewController?.updateUI(price: 0.0, amount: 0)
+                    viewController?.changeCartState(.cartEmpty)
                 }
             case .failure:
-                viewController?.cartIsEmpty()
+                viewController?.changeCartState(.cartEmpty)
             }
             viewController?.endRefreshing()
             UIBlockingProgressHUD.dismiss()
@@ -100,14 +102,14 @@ final class CartPresenter: CartPresenterProtocol {
                 if !order.nfts.isEmpty {
                     fetchNfts(ids: order.nfts) {
                         self.viewController?.updateUI(price: self.totalPrice, amount: self.totalAmount)
-                        self.viewController?.cartNonEmpty()
+                        self.viewController?.changeCartState(.cartNonEmpty)
                     }
                 } else {
                     viewController?.updateUI(price: self.totalPrice, amount: self.totalAmount)
-                    viewController?.cartIsEmpty()
+                    viewController?.changeCartState(.cartEmpty)
                 }
             case .failure(let error):
-                viewController?.cartIsEmpty()
+                self.viewController?.changeCartState(.cartEmpty)
                 print(error)
             }
             isUpdating = false

@@ -1,8 +1,18 @@
 import UIKit
 
 final class TabBarController: UITabBarController {
-
-    var servicesAssembly: ServicesAssembly!
+    
+    init(servicesAssembly: ServicesAssembly) {
+        self.servicesAssembly = servicesAssembly
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    var servicesAssembly: ServicesAssembly
 
     private let catalogTabBarItem = UITabBarItem(
         title: NSLocalizedString("Tab.catalog", comment: ""),
@@ -18,7 +28,7 @@ final class TabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         let catalogController = TestCatalogViewController(
             servicesAssembly: servicesAssembly
         )

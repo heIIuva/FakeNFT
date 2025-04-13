@@ -12,6 +12,8 @@ import ProgressHUD
 protocol PaymentVCProtocol: UIViewController {
     init(presenter: PaymentPresenterProtocol)
     var presenter: PaymentPresenterProtocol { get set }
+    
+    func onPaymentConfirmationResult(message: String, _ result: PaymentConfimationResult)
 }
 
 
@@ -128,6 +130,18 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
             self.currencyCollection.reloadData()
         }
     }
+    
+    // MARK: - protocol methods
+    
+    func onPaymentConfirmationResult(message: String, _ result: PaymentConfimationResult) {
+        switch result {
+        case .paymentSuccessful:
+            let viewController = PaymentConfirmationViewController()
+            navigationController?.pushViewController(viewController, animated: true)
+        case .paymentNotSuccessful:
+            onUnsuccessfulPayment(message: message)
+        }
+    }
         
     // MARK: - private methods
     
@@ -159,7 +173,31 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
             payButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             payButton.heightAnchor.constraint(equalToConstant: 60)
         ])
+    }
     
+    private func onUnsuccessfulPayment(message: String) {
+        let alert = UIAlertController(
+            title: NSLocalizedString(message, comment: ""),
+            message: nil,
+            preferredStyle: .alert
+        )
+        
+        let repeatPayment = UIAlertAction(title: NSLocalizedString("repeat", comment: ""), style: .default) {[weak self] _ in
+            guard let self else { return }
+            presenter.confirmPayment()
+        }
+        let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel) {[weak self] _ in
+            guard let self else { return }
+            dismiss(animated: true)
+        }
+        
+        let actions = [cancel, repeatPayment]
+        
+        actions.forEach {
+            alert.addAction($0)
+        }
+        
+        present(alert, animated: true)
     }
     
     // MARK: - OBJ-C methods
@@ -168,9 +206,9 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
         dismiss(animated: true)
     }
     
-    // TODO: - navigate to further steps
+    
     @objc private func didTapPayButton() {
-        
+        presenter.confirmPayment()
     }
     
     @objc private func didTapTermsButton() {

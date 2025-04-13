@@ -13,9 +13,8 @@ protocol CartVCProtocol: UIViewController {
     var presenter: CartPresenterProtocol { get set }
     
     func updateUI(price: Float, amount: Int)
-    func cartNonEmpty()
-    func cartIsEmpty()
     func endRefreshing()
+    func changeCartState(_ state: CartState)
 }
 
 
@@ -127,11 +126,26 @@ final class CartViewController: UIViewController, CartVCProtocol {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         presenter.fetchOrder()
     }
     
     // MARK: protocol methods
+    
+    func changeCartState(_ state: CartState) {
+        switch state {
+        case .cartEmpty:
+            cartTableView.isHidden = false
+            backgroundView.isHidden = true
+            navigationItem.rightBarButtonItem?.customView?.isHidden = true
+            placeholderLabel.isHidden = false
+        case .cartNonEmpty:
+            cartTableView.isHidden = false
+            backgroundView.isHidden = false
+            navigationItem.rightBarButtonItem?.customView?.isHidden = false
+            placeholderLabel.isHidden = true
+        }
+    }
     
     func updateUI(price: Float, amount: Int) {
         cartTableView.reloadData()
@@ -142,22 +156,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
     func endRefreshing() {
         refreshControl.endRefreshing()
     }
-    
-    func cartNonEmpty() {
-        cartTableView.isHidden = false
-        backgroundView.isHidden = false
-        navigationItem.rightBarButtonItem?.customView?.isHidden = false
-        placeholderLabel.isHidden = true
         
-    }
-    
-    func cartIsEmpty() {
-        cartTableView.isHidden = false
-        backgroundView.isHidden = true
-        navigationItem.rightBarButtonItem?.customView?.isHidden = true
-        placeholderLabel.isHidden = false
-    }
-    
     // MARK: private methods
     
     private func setupUI() {
@@ -205,9 +204,8 @@ final class CartViewController: UIViewController, CartVCProtocol {
     @objc private func didTapPayButton() {
         let presenter = PaymentPresenter(servicesAssembly: presenter.servicesAssembly)
         let paymentVC = PaymentViewController(presenter: presenter)
-        let paymentNC = UINavigationController(rootViewController: paymentVC)
-        paymentNC.modalPresentationStyle = .overFullScreen
-        present(paymentNC, animated: true)
+        paymentVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(paymentVC, animated: true)
     }
     
     @objc private func didTapSortButton() {

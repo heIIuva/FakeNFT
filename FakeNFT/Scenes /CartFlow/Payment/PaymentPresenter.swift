@@ -5,7 +5,7 @@
 //  Created by Malyshev Roman on 07.04.2025.
 //
 
-import Foundation
+import UIKit
 
 
 protocol PaymentPresenterProtocol: AnyObject {
@@ -16,6 +16,7 @@ protocol PaymentPresenterProtocol: AnyObject {
     var selectedCurrencyIndex: IndexPath? { get set }
     
     func fetchCurrencies(completion: @escaping () -> ())
+    func confirmPayment()
 }
 
 
@@ -52,5 +53,31 @@ final class PaymentPresenter: PaymentPresenterProtocol {
             }
             UIBlockingProgressHUD.dismiss()
         }
+    }
+    
+    func confirmPayment() {
+        guard let selectedCurrency else { return }
+        servicesAssembly.nftService.confirmPayment(currency: selectedCurrency) { [weak self] (result: Result<Payment, Error>) in
+            guard let self else { return }
+            UIBlockingProgressHUD.show()
+            switch result {
+            case .success(let payment):
+                if payment.success {
+                    cleanCart()
+                    viewController?.onPaymentConfirmationResult(message: "", .paymentSuccessful)
+                } else {
+                    viewController?.onPaymentConfirmationResult(message: "Payment failed", .paymentNotSuccessful)
+                }
+            case .failure:
+                viewController?.onPaymentConfirmationResult(message: "Oops! Connection seems to be lost", .paymentNotSuccessful)
+            }
+            UIBlockingProgressHUD.dismiss()
+        }
+    }
+    
+    // MARK: - private methods
+    
+    private func cleanCart() {
+        servicesAssembly.nftService.updateOrder(nfts: []) { _ in }
     }
 }
