@@ -130,7 +130,8 @@ final class CollectionPresenter: CollectionPresenterProtocol {
 extension CollectionPresenter: NftCollectionHeaderDelegate {
     
     func handleAuthorLinkButtonTap() {
-        view?.showCollectionAuthorPage(URL(string: "https://practicum.yandex.ru/ios-developer")!)
+        guard let url = URL(string: RequestConstants.collectionAuthorMockURL) else { return }
+        view?.showCollectionAuthorPage(url)
     }
 }
 

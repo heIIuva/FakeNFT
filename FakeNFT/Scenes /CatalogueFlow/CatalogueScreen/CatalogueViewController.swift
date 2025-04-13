@@ -89,7 +89,7 @@ final class CatalogueViewController: UIViewController {
             style: .default,
             handler: { [weak self] _ in
                 guard let self else { return }
-                presenter.sortCatalogue(by: .byName)
+                presenter.setSortingType(.byName)
             }
         )
         let actionByCount = UIAlertAction(
@@ -97,7 +97,7 @@ final class CatalogueViewController: UIViewController {
             style: .default,
             handler: { [weak self] _ in
                 guard let self else { return }
-                presenter.sortCatalogue(by: .byCount)
+                presenter.setSortingType(.byCount)
             }
         )
         let actionClose = UIAlertAction(
