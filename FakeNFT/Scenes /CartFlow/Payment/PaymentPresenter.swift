@@ -41,37 +41,39 @@ final class PaymentPresenter: PaymentPresenterProtocol {
     // MARK: - protocol methods
     
     func fetchCurrencies(completion: @escaping () -> ()) {
+        UIBlockingProgressHUD.show()
         servicesAssembly.nftService.loadCurrencies { [weak self] (result: Result<[Currency], Error>) in
             guard let self else { return }
-            UIBlockingProgressHUD.show()
             switch result {
             case .success(let currencies):
                 self.currencies = currencies
                 completion()
+                UIBlockingProgressHUD.dismiss()
             case .failure(let error):
                 print(error)
+                UIBlockingProgressHUD.dismiss()
             }
-            UIBlockingProgressHUD.dismiss()
         }
     }
     
     func confirmPayment() {
         guard let selectedCurrency else { return }
+        UIBlockingProgressHUD.show()
         servicesAssembly.nftService.confirmPayment(currency: selectedCurrency) { [weak self] (result: Result<Payment, Error>) in
             guard let self else { return }
-            UIBlockingProgressHUD.show()
             switch result {
             case .success(let payment):
                 if payment.success {
                     cleanCart()
                     viewController?.onPaymentConfirmationResult(message: "", .paymentSuccessful)
                 } else {
-                    viewController?.onPaymentConfirmationResult(message: "Payment failed", .paymentNotSuccessful)
+                    viewController?.onPaymentConfirmationResult(message: NSLocalizedString("Payment.fail", comment: ""), .paymentNotSuccessful)
                 }
+                UIBlockingProgressHUD.dismiss()
             case .failure:
-                viewController?.onPaymentConfirmationResult(message: "Oops! Connection seems to be lost", .paymentNotSuccessful)
+                viewController?.onPaymentConfirmationResult(message: NSLocalizedString("Connection.lost", comment: ""), .paymentNotSuccessful)
+                UIBlockingProgressHUD.dismiss()
             }
-            UIBlockingProgressHUD.dismiss()
         }
     }
     

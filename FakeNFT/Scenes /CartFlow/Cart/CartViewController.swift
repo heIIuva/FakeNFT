@@ -59,7 +59,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .label
         label.font = .systemFont(ofSize: 17, weight: .bold)
-        label.text = NSLocalizedString("Cart is empty", comment: "")
+        label.text = NSLocalizedString("Cart.empty", comment: "")
         return label
     }()
     
@@ -69,7 +69,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         button.backgroundColor = .black
-        button.setTitle(NSLocalizedString("Proceed to payment", comment: ""), for: .normal)
+        button.setTitle(NSLocalizedString("ProceedToPayment", comment: ""), for: .normal)
         button.addTarget(self, action: #selector(didTapPayButton), for: .touchUpInside)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
         return button
@@ -214,19 +214,19 @@ final class CartViewController: UIViewController, CartVCProtocol {
             preferredStyle: .actionSheet
         )
         
-        let byPrice = UIAlertAction(title: NSLocalizedString("By price", comment: ""), style: .default) {[weak self] _ in
+        let byPrice = UIAlertAction(title: NSLocalizedString("Sort.price", comment: ""), style: .default) {[weak self] _ in
             guard let self else { return }
             presenter.sortCart(with: .byPrice)
         }
-        let byRating = UIAlertAction(title: NSLocalizedString("By rating", comment: ""), style: .default) {[weak self] _ in
+        let byRating = UIAlertAction(title: NSLocalizedString("Sort.rating", comment: ""), style: .default) {[weak self] _ in
             guard let self else { return }
             presenter.sortCart(with: .byRating)
         }
-        let byName = UIAlertAction(title: NSLocalizedString("By name", comment: ""), style: .default) {[weak self] _ in
+        let byName = UIAlertAction(title: NSLocalizedString("Sort.name", comment: ""), style: .default) {[weak self] _ in
             guard let self else { return }
             presenter.sortCart(with: .byName)
         }
-        let cancel = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) { [weak self] _ in
+        let cancel = UIAlertAction(title: NSLocalizedString("Dismiss", comment: ""), style: .cancel) { [weak self] _ in
             guard let self else { return }
             dismiss(animated: true)
         }

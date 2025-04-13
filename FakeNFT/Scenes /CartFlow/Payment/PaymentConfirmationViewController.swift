@@ -18,7 +18,7 @@ final class PaymentConfirmationViewController: UIViewController {
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         button.backgroundColor = .label
-        button.setTitle(NSLocalizedString("Back to catalogue", comment: ""), for: .normal)
+        button.setTitle(NSLocalizedString("BackToCatalog", comment: ""), for: .normal)
         button.addTarget(self, action: #selector(didTapBackToCatalogueButton), for: .touchUpInside)
         button.setTitleColor(.systemBackground, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
@@ -35,7 +35,7 @@ final class PaymentConfirmationViewController: UIViewController {
     private lazy var placeholderLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = NSLocalizedString("Success! Payment's gone through, congratulations on your purchase!", comment: "")
+        label.text = NSLocalizedString("Payment.successful", comment: "")
         label.font = .systemFont(ofSize: 22, weight: .bold)
         label.textColor = .label
         label.textAlignment = .center

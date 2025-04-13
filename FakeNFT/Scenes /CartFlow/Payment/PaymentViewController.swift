@@ -82,7 +82,7 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
     private lazy var termsLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = NSLocalizedString("By making a purchase, you agree to the terms and conditions of the", comment: "")
+        label.text = NSLocalizedString("Terms.title", comment: "")
         label.font = .systemFont(ofSize: 13, weight: .regular)
         label.textColor = .black
         label.textAlignment = .left
@@ -99,7 +99,7 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
             for: .touchUpInside
         )
         button.setTitleColor(.link, for: .normal)
-        button.setTitle("User Agreement", for: .normal)
+        button.setTitle(NSLocalizedString("Terms.button", comment: ""), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 13, weight: .regular)
         return button
     }()
@@ -145,7 +145,7 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
     // MARK: - private methods
     
     private func setupUI() {
-        title = NSLocalizedString("Choose payment method", comment: "")
+        title = NSLocalizedString("Payment.title", comment: "")
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
         view.backgroundColor = .systemBackground
         
@@ -181,11 +181,11 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
             preferredStyle: .alert
         )
         
-        let repeatPayment = UIAlertAction(title: NSLocalizedString("repeat", comment: ""), style: .default) {[weak self] _ in
+        let repeatPayment = UIAlertAction(title: NSLocalizedString("Error.repeat", comment: ""), style: .default) {[weak self] _ in
             guard let self else { return }
             presenter.confirmPayment()
         }
-        let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel) {[weak self] _ in
+        let cancel = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) {[weak self] _ in
             guard let self else { return }
             dismiss(animated: true)
         }
