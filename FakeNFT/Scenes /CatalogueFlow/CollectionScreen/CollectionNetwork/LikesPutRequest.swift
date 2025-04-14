@@ -8,21 +8,22 @@
 import Foundation
 
 struct LikesPutRequest: NetworkRequest {
-    var likes: [String]
     var endpoint: URL? {
         URL(string: "\(RequestConstants.baseURL)/api/v1/profile/1")
     }
     var httpMethod = HttpMethod.put
-    var dto: Encodable?
+    var dto: Dto?
 
     init(likes: [String]) {
-        self.likes = likes
-        var components = URLComponents()
-        components.queryItems = likes.map {
-            URLQueryItem(name: "likes", value: $0)
-        }
-        if let queryString = components.percentEncodedQuery {
-            dto = queryString
-        }
+        self.dto = LikesPutRequestDto(likes: likes)
+    }
+}
+
+struct LikesPutRequestDto: Dto {
+    let likes: [String]
+    let likesKey = "likes"
+    
+    func asDictionary() -> [String : String] {
+        [likesKey: likes.isEmpty ? "null" : likes.joined(separator: ", ")]
     }
 }

@@ -22,7 +22,7 @@ final class CollectionPresenter: CollectionPresenterProtocol {
     private weak var view: CollectionViewProtocol?
     private let collection: NftCollection
     private let servicesAssembly: ServicesAssembly
-    private let nftService: NftServiceProtocol
+    private let nftService: NftService
     private let collectionService: CollectionServiceProtocol
     private var collectionNfts: [Nft] = []
     private var orderedNfts: [String] = []

@@ -12,7 +12,7 @@ final class ServicesAssembly {
     }
 
     var nftService: NftService {
-        NftService(
+        NftServiceImpl(
             networkClient: networkClient,
             storage: nftStorage
         )
