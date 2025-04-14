@@ -25,7 +25,7 @@ final class NftCollectionHeader: UICollectionReusableView {
     static let identifier: String = "header"
     weak var nftHeaderViewDelegate: NftCollectionHeaderDelegate?
     private lazy var collectionCoverImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(resource: .mockCollection))
+        let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 12
         imageView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
@@ -47,8 +47,8 @@ final class NftCollectionHeader: UICollectionReusableView {
     } ()
     
     private lazy var collectionAuthorLinkButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitleColor(UIColor(resource: .nftBlueUniversal), for: .normal)
+        let button = UIButton()
+        button.setTitleColor(.nftBlueUniversal, for: .normal)
         button.titleLabel?.font = UIFont.caption1
         button.addTarget(self, action: #selector(handleAuthorLinkButtonTap), for: .touchUpInside)
         return button
@@ -111,7 +111,7 @@ final class NftCollectionHeader: UICollectionReusableView {
     }
     
     @objc private func handleAuthorLinkButtonTap() {
-        
+        nftHeaderViewDelegate?.handleAuthorLinkButtonTap()
     }
 }
 

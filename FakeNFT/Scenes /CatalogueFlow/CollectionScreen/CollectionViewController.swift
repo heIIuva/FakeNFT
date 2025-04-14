@@ -6,9 +6,12 @@
 //
 
 import UIKit
+import SafariServices
 
-protocol CollectionViewProtocol: UIViewController, ErrorView {
-    func showCollectionAuthorPage(_ url: URL)  
+protocol CollectionViewProtocol: UIViewController, ErrorView, LoadingView {
+    func showCollectionAuthorPage(_ url: URL)
+    func reloadData()
+    func shouldShowIndicator(_ isShown: Bool)
 }
 
 final class CollectionViewController: UIViewController {
@@ -16,9 +19,15 @@ final class CollectionViewController: UIViewController {
     // MARK: - Properties
     
     private let presenter: CollectionPresenterProtocol
+    lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .medium)
+        activityIndicator.color = .nftBlack
+        return activityIndicator
+    } ()
     private lazy var backButton: UIButton = {
-        let backButton = UIButton(type: .system)
-        backButton.setImage(UIImage(resource: .navBackButton).withRenderingMode(.alwaysOriginal), for: .normal)
+        let backButton = UIButton()
+        backButton.setImage(.navBackButton.withTintColor(.nftBlack, renderingMode: .alwaysOriginal), for: .normal)
+        backButton.imageView?.tintColor = .nftBlack
         backButton.addTarget(self, action: #selector(handleBackButtonTap), for: .touchUpInside)
         return backButton
     } ()
@@ -27,6 +36,7 @@ final class CollectionViewController: UIViewController {
         let collectionView = UICollectionView(
             frame: .zero,
             collectionViewLayout: UICollectionViewFlowLayout())
+        collectionView.backgroundColor = .nftWhite
         collectionView.register(NftCollectionCell.self)
         collectionView.register(
             NftCollectionHeader .self,
@@ -56,17 +66,19 @@ final class CollectionViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(resource: .nftWhite)
+        view.backgroundColor = .nftWhite
         setupUI()
+        presenter.fetchData()
     }
     
     // MARK: - Methods
     
     private func setupUI() {
-        [collectionView, backButton].forEach {
+        [collectionView, activityIndicator, backButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
+        activityIndicator.constraintEdges(to: view)
         NSLayoutConstraint.activate([
             backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 11),
             backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 9),
@@ -88,7 +100,18 @@ final class CollectionViewController: UIViewController {
 extension CollectionViewController: CollectionViewProtocol {
     
     func showCollectionAuthorPage(_ url: URL) {
-        
+        let safariViewController = SFSafariViewController(url: url)
+        present(safariViewController, animated: true)
+    }
+    
+    func reloadData() {
+        collectionView.reloadData()
+    }
+    
+    func shouldShowIndicator(_ isShown: Bool) {
+        collectionView.isHidden = isShown
+        isShown ? showLoading() :
+                  hideLoading()
     }
 }
 

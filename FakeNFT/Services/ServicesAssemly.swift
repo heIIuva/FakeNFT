@@ -12,7 +12,7 @@ final class ServicesAssembly {
     }
 
     var nftService: NftService {
-        NftService(
+        NftServiceImpl(
             networkClient: networkClient,
             storage: nftStorage
         )
@@ -20,5 +20,9 @@ final class ServicesAssembly {
     
     var catalogueService: CatalogueServiceProtocol {
         CatalogueService(networkClient: networkClient)
+    }
+    
+    var collectionService: CollectionServiceProtocol {
+        CollectionService(networkClient: networkClient)
     }
 }

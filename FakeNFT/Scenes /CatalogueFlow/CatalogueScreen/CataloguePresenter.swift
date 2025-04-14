@@ -13,6 +13,7 @@ protocol CataloguePresenterProtocol: AnyObject {
     func getCollectionPresenter(for indexPath: IndexPath) -> CollectionPresenterProtocol
     func setupCatalogueView(_ view: CatalogueViewProtocol)
     func configure(cell: CatalogueTableViewCell, for indexPath: IndexPath) -> CatalogueTableViewCell
+    func setSortingType(_ sortingType: SortingType)
 }
 
 final class CataloguePresenter: CataloguePresenterProtocol {
@@ -21,14 +22,22 @@ final class CataloguePresenter: CataloguePresenterProtocol {
     
     private weak var view: CatalogueViewProtocol?
     private let servicesAssembly: ServicesAssembly
+    private var sortingType: SortingType {
+        didSet {
+            SortingType.saveSortingType(sortingType)
+        }
+    }
     private var catalogue: [NftCollection] = [] {
         didSet {
             view?.reloadData()
         }
     }
     
+    // MARK: - Init
+    
     init(servicesAssembly: ServicesAssembly) {
         self.servicesAssembly = servicesAssembly
+        self.sortingType = SortingType.getSortingType()
     }
     
     // MARK: - Methods
@@ -56,18 +65,34 @@ final class CataloguePresenter: CataloguePresenterProtocol {
     }
     
     func getCollectionsCount() -> Int {
-        catalogue.count
+        getSortedCatalogue().count
     }
     
     func getCollectionPresenter(for indexPath: IndexPath) -> CollectionPresenterProtocol {
-        CollectionPresenter(collection: catalogue[indexPath.row], servicesAssembly: servicesAssembly)
+        CollectionPresenter(collection: getSortedCatalogue()[indexPath.row], servicesAssembly: servicesAssembly)
     }
     
     func configure(cell: CatalogueTableViewCell, for indexPath: IndexPath) -> CatalogueTableViewCell {
         cell.configure(
-            image: catalogue[indexPath.row].cover,
-            title: catalogue[indexPath.row].name,
-            count: catalogue[indexPath.row].nfts.count)
+            image: getSortedCatalogue()[indexPath.row].cover,
+            title: getSortedCatalogue()[indexPath.row].name,
+            count: getSortedCatalogue()[indexPath.row].nfts.count)
         return cell
+    }
+    
+    func setSortingType(_ sortingType: SortingType) {
+        self.sortingType = sortingType
+        view?.reloadData()
+    }
+    
+    private func getSortedCatalogue() -> [NftCollection] {
+        switch sortingType {
+        case .byName:
+            return catalogue.sorted { $0.name < $1.name }
+        case .byCount:
+            return catalogue.sorted { $0.nfts.count > $1.nfts.count }
+        case .none:
+            return catalogue
+        }
     }
 }

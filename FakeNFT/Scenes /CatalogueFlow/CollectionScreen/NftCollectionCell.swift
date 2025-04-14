@@ -12,11 +12,13 @@ protocol NftCollectionCellProtocol: UICollectionViewCell {
     var nftCellDelegate: NftCollectionCellDelegate? { get set }
     func configure(with nft: Nft)
     func isUserInteractionEnabled(_ isEnabled: Bool)
+    func nftLiked(_ isLiked: Bool)
+    func nftAddedToCart(_ isInCart: Bool)
 }
 
 protocol NftCollectionCellDelegate: AnyObject {
-    func handleLikeButtonTap()
-    func handleCartButtonTap()
+    func handleLikeButtonTap(for id: String, completion: @escaping (Bool) -> Void)
+    func handleCartButtonTap(for id: String, completion: @escaping (Bool) -> Void)
 }
 
 final class NftCollectionCell: UICollectionViewCell, ReuseIdentifying {
@@ -24,6 +26,7 @@ final class NftCollectionCell: UICollectionViewCell, ReuseIdentifying {
     // MARK: - Properties
     
     weak var nftCellDelegate: NftCollectionCellDelegate?
+    private var cellId: String = ""
     private lazy var nftImageView: UIImageView = {
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 108, height: 108))
         imageView.contentMode = .scaleAspectFill
@@ -32,7 +35,7 @@ final class NftCollectionCell: UICollectionViewCell, ReuseIdentifying {
     } ()
     
     private lazy var likeButton: UIButton = {
-        let button = UIButton(type: .system)
+        let button = UIButton()
         button.addTarget(self, action: #selector(didTapLikeButton), for: .touchUpInside)
         return button
     } ()
@@ -74,6 +77,7 @@ final class NftCollectionCell: UICollectionViewCell, ReuseIdentifying {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        backgroundColor = .nftWhite
         setupUI()
     }
     
@@ -87,6 +91,7 @@ final class NftCollectionCell: UICollectionViewCell, ReuseIdentifying {
     override func prepareForReuse() {
         super.prepareForReuse()
         nftImageView.kf.cancelDownloadTask()
+        cellId = ""
         nftImageView.image = nil
         nftNameLabel.text = nil
         nftPriceLabel.text = nil
@@ -138,18 +143,16 @@ final class NftCollectionCell: UICollectionViewCell, ReuseIdentifying {
     }
     
     @objc private func didTapLikeButton() {
-        likeButton.setImage(
-            likeButton.image(for: .normal) == UIImage(resource: .liked) ?
-                UIImage(resource: .notLiked) :
-                UIImage(resource: .liked), for: .normal
-        )
+        nftCellDelegate?.handleLikeButtonTap(for: cellId) { [weak self] isLiked in
+            guard let self else { return }
+            nftLiked(isLiked)
+        }
     }
     @objc private func didTapCartButton() {
-        cartButton.setImage(
-            cartButton.image(for: .normal) == UIImage(resource: .addToCart) ?
-                UIImage(resource: .deleteFromCart) :
-                UIImage(resource: .addToCart), for: .normal
-        )
+        nftCellDelegate?.handleCartButtonTap(for: cellId) { [weak self] isLiked in
+            guard let self else { return }
+            nftAddedToCart(isLiked)
+        }
     }
 }
 
@@ -158,15 +161,25 @@ final class NftCollectionCell: UICollectionViewCell, ReuseIdentifying {
 extension NftCollectionCell: NftCollectionCellProtocol {
     
     func configure(with nft: Nft) {
+        cellId = nft.id
         nftNameLabel.text = nft.name
         nftPriceLabel.text = String(format: "%.2f ETH", nft.price)
         ratingImageView.image = UIImage(resource: .init(name: "rating\(nft.rating)", bundle: .main))
-        likeButton.setImage(UIImage(resource: .notLiked), for: .normal)
-        cartButton.setImage(UIImage(resource: .addToCart), for: .normal)
         setNftImage(with: nft.images.first ?? "")
     }
     
     func isUserInteractionEnabled(_ isEnabled: Bool) {
         contentView.isUserInteractionEnabled = isEnabled
+    }
+    
+    func nftLiked(_ isLiked: Bool) {
+        likeButton.setImage(isLiked ? .liked : .notLiked, for: .normal)
+    }
+    
+    func nftAddedToCart(_ isInCart: Bool) {
+        cartButton.setImage(
+            isInCart ? .deleteFromCart.withTintColor(.nftBlack, renderingMode: .alwaysOriginal) :
+                       .addToCart.withTintColor(.nftBlack, renderingMode: .alwaysOriginal),
+            for: .normal)
     }
 }

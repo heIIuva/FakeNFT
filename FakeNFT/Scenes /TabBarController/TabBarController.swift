@@ -43,7 +43,6 @@ final class TabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(resource: .nftWhite)
         viewControllers = [
             setupProfileViewController(),
             setupCatalogueViewController(),
@@ -53,7 +52,9 @@ final class TabBarController: UITabBarController {
         selectedIndex = 1
         let appearance = tabBar.standardAppearance
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor(resource: .nftBlack)]
-        appearance.stackedLayoutAppearance.normal.iconColor = UIColor(resource: .nftBlack)
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor(resource: .nftBlueUniversal)]
+        appearance.stackedLayoutAppearance.normal.iconColor = .nftBlack
+        appearance.stackedLayoutAppearance.selected.iconColor = .nftBlueUniversal
         tabBar.standardAppearance = appearance
     }
     

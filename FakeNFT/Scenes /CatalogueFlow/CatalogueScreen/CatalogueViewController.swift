@@ -9,7 +9,7 @@ import UIKit
 
 protocol CatalogueViewProtocol: UIViewController, LoadingView, ErrorView {
     func reloadData()
-    func shouldShowIndicator(_ isShow: Bool)
+    func shouldShowIndicator(_ isShown: Bool)
 }
 
 final class CatalogueViewController: UIViewController {
@@ -18,18 +18,19 @@ final class CatalogueViewController: UIViewController {
     
     var activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .medium)
-        indicator.color = UIColor(resource: .nftBlack)
+        indicator.color = .nftBlack
         return indicator
     } ()
     private let presenter: CataloguePresenterProtocol
     private lazy var sortButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(resource: .sortButtonIcon), for: .normal)
+        let button = UIButton()
+        button.setImage(.sortButtonIcon.withTintColor(.nftBlack, renderingMode: .alwaysOriginal), for: .normal)
         button.addTarget(self, action: #selector(didTapSortButton), for: .touchUpInside)
         return button
     } ()
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
+        tableView.backgroundColor = .nftWhite
         tableView.register(CatalogueTableViewCell.self)
         tableView.dataSource = self
         tableView.delegate = self
@@ -54,7 +55,7 @@ final class CatalogueViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(resource: .nftWhite)
+        view.backgroundColor = .nftWhite
         setupUI()
         presenter.loadCatalogue()
     }
@@ -87,17 +88,22 @@ final class CatalogueViewController: UIViewController {
         let actionByName = UIAlertAction(
             title: NSLocalizedString("SortActionSheet.byName", comment: ""),
             style: .default,
-            handler: { _ in }
+            handler: { [weak self] _ in
+                guard let self else { return }
+                presenter.setSortingType(.byName)
+            }
         )
         let actionByCount = UIAlertAction(
             title: NSLocalizedString("SortActionSheet.byCount", comment: ""),
             style: .default,
-            handler: { _ in }
+            handler: { [weak self] _ in
+                guard let self else { return }
+                presenter.setSortingType(.byCount)
+            }
         )
         let actionClose = UIAlertAction(
             title: NSLocalizedString("SortActionSheet.close", comment: ""),
-            style: .cancel,
-            handler: { _ in }
+            style: .cancel
         )
         [actionByName, actionByCount, actionClose].forEach {
             alertController.addAction($0)
