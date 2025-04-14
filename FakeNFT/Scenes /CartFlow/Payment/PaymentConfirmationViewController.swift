@@ -18,7 +18,7 @@ final class PaymentConfirmationViewController: UIViewController {
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         button.backgroundColor = .label
-        button.setTitle(NSLocalizedString("BackToCatalog", comment: ""), for: .normal)
+        button.setTitle(Localizable.backToCatalog, for: .normal)
         button.addTarget(self, action: #selector(didTapBackToCatalogueButton), for: .touchUpInside)
         button.setTitleColor(.systemBackground, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
@@ -26,7 +26,7 @@ final class PaymentConfirmationViewController: UIViewController {
     }()
     
     private lazy var placeholderImage: UIImageView = {
-        let image = UIImageView(image: UIImage(resource: .paymentSuccesful))
+        let image = UIImageView(image: UIImage(resource: .paymentSuccessful))
         image.translatesAutoresizingMaskIntoConstraints = false
         image.frame = .init(x: .zero, y: .zero, width: 278, height: 278)
         return image
@@ -35,7 +35,7 @@ final class PaymentConfirmationViewController: UIViewController {
     private lazy var placeholderLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = NSLocalizedString("Payment.successful", comment: "")
+        label.text = Localizable.paymentSuccessful
         label.font = .systemFont(ofSize: 22, weight: .bold)
         label.textColor = .label
         label.textAlignment = .center

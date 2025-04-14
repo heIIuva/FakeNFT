@@ -9,6 +9,12 @@ import Foundation
 
 
 enum CartState {
-    case cartNonEmpty
-    case cartEmpty
+    case empty
+    case nonEmpty
+}
+
+extension CartState {
+    var isEmpty: Bool {
+        self == .empty
+    }
 }

@@ -91,7 +91,7 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Connection lost"
           }
         },
@@ -221,6 +221,9 @@
           }
         }
       }
+    },
+    "NFt.remove.title" : {
+
     },
     "Payment.fail" : {
       "extractionState" : "manual",

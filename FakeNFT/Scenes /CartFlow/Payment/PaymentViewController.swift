@@ -13,7 +13,7 @@ protocol PaymentVCProtocol: UIViewController {
     init(presenter: PaymentPresenterProtocol)
     var presenter: PaymentPresenterProtocol { get set }
     
-    func onPaymentConfirmationResult(message: String, _ result: PaymentConfimationResult)
+    func onPaymentConfirmationResult(message: String, _ result: PaymentConfirmationResult)
 }
 
 
@@ -73,7 +73,7 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         button.backgroundColor = .black
-        button.setTitle(NSLocalizedString("Purchase", comment: ""), for: .normal)
+        button.setTitle(Localizable.purchase, for: .normal)
         button.addTarget(self, action: #selector(didTapPayButton), for: .touchUpInside)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
         return button
@@ -82,7 +82,7 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
     private lazy var termsLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = NSLocalizedString("Terms.title", comment: "")
+        label.text = Localizable.termsTitle
         label.font = .systemFont(ofSize: 13, weight: .regular)
         label.textColor = .black
         label.textAlignment = .left
@@ -99,7 +99,7 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
             for: .touchUpInside
         )
         button.setTitleColor(.link, for: .normal)
-        button.setTitle(NSLocalizedString("Terms.button", comment: ""), for: .normal)
+        button.setTitle(Localizable.termsButton, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 13, weight: .regular)
         return button
     }()
@@ -132,12 +132,12 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
     
     // MARK: - protocol methods
     
-    func onPaymentConfirmationResult(message: String, _ result: PaymentConfimationResult) {
+    func onPaymentConfirmationResult(message: String, _ result: PaymentConfirmationResult) {
         switch result {
-        case .paymentSuccessful:
+        case .successful:
             let viewController = PaymentConfirmationViewController()
             navigationController?.pushViewController(viewController, animated: true)
-        case .paymentNotSuccessful:
+        case .failure:
             onUnsuccessfulPayment(message: message)
         }
     }
@@ -145,7 +145,7 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
     // MARK: - private methods
     
     private func setupUI() {
-        title = NSLocalizedString("Payment.title", comment: "")
+        title = Localizable.paymentTitle
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
         view.backgroundColor = .systemBackground
         
@@ -181,11 +181,11 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
             preferredStyle: .alert
         )
         
-        let repeatPayment = UIAlertAction(title: NSLocalizedString("Error.repeat", comment: ""), style: .default) {[weak self] _ in
+        let repeatPayment = UIAlertAction(title: Localizable.errorRepeat, style: .default) {[weak self] _ in
             guard let self else { return }
             presenter.confirmPayment()
         }
-        let cancel = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) {[weak self] _ in
+        let cancel = UIAlertAction(title: Localizable.cancel, style: .cancel) {[weak self] _ in
             guard let self else { return }
             dismiss(animated: true)
         }

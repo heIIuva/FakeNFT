@@ -41,7 +41,7 @@ final class DeletionViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 13, weight: .regular)
-        label.text = NSLocalizedString("Nft.remove.title", comment: "")
+        label.text = Localizable.nftRemoveTitle
         label.textColor = .label
         label.numberOfLines = 2
         label.textAlignment = .center
@@ -51,7 +51,7 @@ final class DeletionViewController: UIViewController {
     private lazy var deleteButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(NSLocalizedString("Delete", comment: ""), for: .normal)
+        button.setTitle(Localizable.delete, for: .normal)
         button.setTitleColor(.systemRed, for: .normal)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 12
@@ -68,7 +68,7 @@ final class DeletionViewController: UIViewController {
     private lazy var backButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(NSLocalizedString("BackToCart", comment: ""), for: .normal)
+        button.setTitle(Localizable.backToCart, for: .normal)
         button.setTitleColor(.systemBackground, for: .normal)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 12

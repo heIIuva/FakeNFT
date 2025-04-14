@@ -8,7 +8,7 @@
 import Foundation
 
 
-enum PaymentConfimationResult {
-    case paymentSuccessful
-    case paymentNotSuccessful
+enum PaymentConfirmationResult {
+    case successful
+    case failure
 }

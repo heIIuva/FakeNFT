@@ -58,26 +58,26 @@ final class CartPresenter: CartPresenterProtocol {
     
     func fetchOrder() {
         guard !isUpdating else { return }
-        UIBlockingProgressHUD.show()
         servicesAssembly.nftService.loadOrder { [weak self] (result: Result<Order, Error>) in
             guard let self else { return }
+            UIBlockingProgressHUD.show()
             switch result {
             case .success(let order):
                 self.order = order
                 if !order.nfts.isEmpty {
                     fetchNfts(ids: order.nfts) {
                         self.viewController?.updateUI(price: self.totalPrice, amount: self.totalAmount)
-                        self.viewController?.changeCartState(.cartNonEmpty)
+                        self.viewController?.changeCartState(.nonEmpty)
                         UIBlockingProgressHUD.dismiss()
                     }
                 } else {
                     nfts.removeAll()
                     viewController?.updateUI(price: 0.0, amount: 0)
-                    viewController?.changeCartState(.cartEmpty)
+                    viewController?.changeCartState(.empty)
                     UIBlockingProgressHUD.dismiss()
                 }
             case .failure:
-                viewController?.changeCartState(.cartEmpty)
+                viewController?.changeCartState(.empty)
             }
             viewController?.endRefreshing()
         }
@@ -103,14 +103,14 @@ final class CartPresenter: CartPresenterProtocol {
                 if !order.nfts.isEmpty {
                     fetchNfts(ids: order.nfts) {
                         self.viewController?.updateUI(price: self.totalPrice, amount: self.totalAmount)
-                        self.viewController?.changeCartState(.cartNonEmpty)
+                        self.viewController?.changeCartState(.nonEmpty)
                     }
                 } else {
                     viewController?.updateUI(price: self.totalPrice, amount: self.totalAmount)
-                    viewController?.changeCartState(.cartEmpty)
+                    viewController?.changeCartState(.empty)
                 }
             case .failure(let error):
-                self.viewController?.changeCartState(.cartEmpty)
+                self.viewController?.changeCartState(.empty)
                 print(error)
             }
             isUpdating = false

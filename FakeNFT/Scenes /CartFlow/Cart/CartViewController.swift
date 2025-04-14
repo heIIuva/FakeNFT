@@ -59,7 +59,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .label
         label.font = .systemFont(ofSize: 17, weight: .bold)
-        label.text = NSLocalizedString("Cart.empty", comment: "")
+        label.text = Localizable.cartEmpty
         return label
     }()
     
@@ -69,7 +69,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         button.backgroundColor = .black
-        button.setTitle(NSLocalizedString("ProceedToPayment", comment: ""), for: .normal)
+        button.setTitle(Localizable.proceedToPayment, for: .normal)
         button.addTarget(self, action: #selector(didTapPayButton), for: .touchUpInside)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
         return button
@@ -132,18 +132,11 @@ final class CartViewController: UIViewController, CartVCProtocol {
     // MARK: protocol methods
     
     func changeCartState(_ state: CartState) {
-        switch state {
-        case .cartEmpty:
-            cartTableView.isHidden = false
-            backgroundView.isHidden = true
-            navigationItem.rightBarButtonItem?.customView?.isHidden = true
-            placeholderLabel.isHidden = false
-        case .cartNonEmpty:
-            cartTableView.isHidden = false
-            backgroundView.isHidden = false
-            navigationItem.rightBarButtonItem?.customView?.isHidden = false
-            placeholderLabel.isHidden = true
-        }
+        cartTableView.isHidden = false
+
+        backgroundView.isHidden = state.isEmpty
+        navigationItem.rightBarButtonItem?.customView?.isHidden = state.isEmpty
+        placeholderLabel.isHidden = !state.isEmpty
     }
     
     func updateUI(price: Float, amount: Int) {
@@ -209,24 +202,24 @@ final class CartViewController: UIViewController, CartVCProtocol {
     
     @objc private func didTapSortButton() {
         let actionSheet = UIAlertController(
-            title: NSLocalizedString("Sort", comment: ""),
+            title: Localizable.sort,
             message: nil,
             preferredStyle: .actionSheet
         )
         
-        let byPrice = UIAlertAction(title: NSLocalizedString("Sort.price", comment: ""), style: .default) {[weak self] _ in
+        let byPrice = UIAlertAction(title: Localizable.sortPrice, style: .default) {[weak self] _ in
             guard let self else { return }
             presenter.sortCart(with: .byPrice)
         }
-        let byRating = UIAlertAction(title: NSLocalizedString("Sort.rating", comment: ""), style: .default) {[weak self] _ in
+        let byRating = UIAlertAction(title: Localizable.sortRating, style: .default) {[weak self] _ in
             guard let self else { return }
             presenter.sortCart(with: .byRating)
         }
-        let byName = UIAlertAction(title: NSLocalizedString("Sort.name", comment: ""), style: .default) {[weak self] _ in
+        let byName = UIAlertAction(title: Localizable.sortName, style: .default) {[weak self] _ in
             guard let self else { return }
             presenter.sortCart(with: .byName)
         }
-        let cancel = UIAlertAction(title: NSLocalizedString("Dismiss", comment: ""), style: .cancel) { [weak self] _ in
+        let cancel = UIAlertAction(title: Localizable.dismiss, style: .cancel) { [weak self] _ in
             guard let self else { return }
             dismiss(animated: true)
         }
