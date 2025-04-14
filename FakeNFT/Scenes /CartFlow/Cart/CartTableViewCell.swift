@@ -94,7 +94,7 @@ final class CartTableViewCell: UITableViewCell {
     func configureCell(nft: Nft, action: @escaping () -> ()) {
         nftPreview.kf.setImage(with: nft.images[0], placeholder: UIImage(systemName: "photo"))
         nftName.text = nft.name
-        priceLabel.text = NSLocalizedString("Price", comment: "")
+        priceLabel.text = Localizable.price
         priceTag.text = "\(nft.price) ETH"
         configureRatingStack(rating: nft.rating)
         self.onDeleteButtonTap = action

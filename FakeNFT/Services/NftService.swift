@@ -3,6 +3,7 @@ import Foundation
 typealias NftCompletion = (Result<Nft, Error>) -> ()
 typealias NftOrderCompletion = (Result<Order, Error>) -> ()
 typealias CurrencyCompletion = (Result<[Currency], Error>) -> ()
+typealias PaymentConfirmationCompletion = (Result<Payment, Error>) -> ()
 
 
 protocol NftService {
@@ -10,6 +11,7 @@ protocol NftService {
     func loadOrder(completion: @escaping NftOrderCompletion)
     func loadCurrencies(completion: @escaping CurrencyCompletion)
     func updateOrder(nfts: [String], completion: @escaping NftOrderCompletion)
+    func confirmPayment(currency: Currency, completion: @escaping PaymentConfirmationCompletion)
 }
 
 final class NftServiceImpl: NftService {
@@ -67,6 +69,17 @@ final class NftServiceImpl: NftService {
             switch result {
             case .success(let order):
                 completion(.success(order))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func confirmPayment(currency: Currency, completion: @escaping PaymentConfirmationCompletion) {
+        networkClient.send(request: PaymentConfirmationRequest(currency: currency), type: Payment.self) { result in
+            switch result {
+            case .success(let payment):
+                completion(.success(payment))
             case .failure(let error):
                 completion(.failure(error))
             }
