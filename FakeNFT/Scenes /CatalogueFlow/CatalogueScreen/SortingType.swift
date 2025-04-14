@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum SortingType: Codable {
+enum SortingType: String {
     case none
     case byName
     case byCount
@@ -15,24 +15,14 @@ enum SortingType: Codable {
     static private let storageKey = "SortingType"
     
     static func saveSortingType(_ sortingType: SortingType) {
-        do {
-            let encodedData = try JSONEncoder().encode(sortingType)
-            UserDefaults.standard.set(encodedData, forKey: SortingType.storageKey)
-        } catch {
-            assertionFailure(error.localizedDescription)
-        }
+        UserDefaults.standard.set(sortingType.rawValue, forKey: SortingType.storageKey)
     }
     
     static func getSortingType() -> SortingType {
-        guard let savedData = UserDefaults.standard.data(forKey: SortingType.storageKey) else {
+        guard let rawType = UserDefaults.standard.string(forKey: SortingType.storageKey),
+              let sortingType = SortingType(rawValue: rawType) else {
             return .none
         }
-        do {
-            let sortingType = try JSONDecoder().decode(SortingType.self, from: savedData)
-            return sortingType
-        } catch {
-            assertionFailure(error.localizedDescription)
-            return .none
-        }
+        return sortingType
     }
 }
