@@ -2,7 +2,7 @@
 
 ## таск трекер - https://github.com/users/heIIuva/projects/3
 
-## скрин каст - https://disk.yandex.ru/i/ioWl-sXooLKdbQ
+## скрин каст - https://disk.yandex.ru/i/xR-Vl3KuGYQeNQ
 
 
 # Cart 1
