@@ -19,7 +19,7 @@ final class CatalogueViewController: UIViewController {
     private let presenter: CataloguePresenterProtocol
     var activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
-        indicator.color = .nftBlack
+        indicator.color = UIColor(resource: .nftBlack)
         return indicator
     } ()
     private lazy var refreshControl: UIRefreshControl = {
@@ -29,14 +29,19 @@ final class CatalogueViewController: UIViewController {
     } ()
     private lazy var sortButton: UIButton = {
         let button = UIButton()
-        button.setImage(.sortButtonIcon.withTintColor(.nftBlack, renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(
+            UIImage(resource: .sortButtonIcon)
+                .withTintColor(
+                    UIColor(resource: .nftBlack),
+                    renderingMode: .alwaysOriginal),
+            for: .normal)
         button.addTarget(self, action: #selector(didTapSortButton), for: .touchUpInside)
         return button
     } ()
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.refreshControl = refreshControl
-        tableView.backgroundColor = .nftWhite
+        tableView.backgroundColor = UIColor(resource: .nftWhite)
         tableView.register(CatalogueTableViewCell.self)
         tableView.dataSource = self
         tableView.delegate = self
@@ -61,7 +66,7 @@ final class CatalogueViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .nftWhite
+        view.backgroundColor = UIColor(resource: .nftWhite)
         setupUI()
         presenter.loadCatalogue(withIndicator: true)
     }
@@ -91,12 +96,12 @@ final class CatalogueViewController: UIViewController {
     
     @objc private func didTapSortButton() {
         let alertController = UIAlertController(
-            title: NSLocalizedString("SortActionSheet.title", comment: ""),
+            title: Localizable.myNftSortTitle,
             message: nil,
             preferredStyle: .actionSheet
         )
         let actionByName = UIAlertAction(
-            title: NSLocalizedString("SortActionSheet.byName", comment: ""),
+            title: Localizable.sortName,
             style: .default,
             handler: { [weak self] _ in
                 guard let self else { return }
@@ -104,7 +109,7 @@ final class CatalogueViewController: UIViewController {
             }
         )
         let actionByCount = UIAlertAction(
-            title: NSLocalizedString("SortActionSheet.byCount", comment: ""),
+            title: Localizable.sortNftCount,
             style: .default,
             handler: { [weak self] _ in
                 guard let self else { return }
@@ -112,7 +117,7 @@ final class CatalogueViewController: UIViewController {
             }
         )
         let actionClose = UIAlertAction(
-            title: NSLocalizedString("SortActionSheet.close", comment: ""),
+            title: Localizable.dismiss,
             style: .cancel
         )
         [actionByName, actionByCount, actionClose].forEach {

@@ -13,7 +13,7 @@ protocol ErrorView {
 extension ErrorView where Self: UIViewController {
 
     func showError(_ model: ErrorModel) {
-        let title = NSLocalizedString("Error.title", comment: "")
+        let title = Localizable.errorTitle
         let alert = UIAlertController(
             title: title,
             message: model.message,
@@ -35,7 +35,7 @@ extension ErrorView where Self: UIViewController {
         let action = UIAlertAction(title: model.actionText, style: UIAlertAction.Style.default) {_ in
             model.action()
         }
-        let title = NSLocalizedString("Error.cancel", comment: "")
+        let title = Localizable.cancel
         let cancelAction = UIAlertAction(title: title, style: UIAlertAction.Style.cancel, handler: nil)
         alert.addAction(cancelAction)
         alert.addAction(action)

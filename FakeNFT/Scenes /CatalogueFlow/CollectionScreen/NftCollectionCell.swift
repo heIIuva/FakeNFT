@@ -77,7 +77,7 @@ final class NftCollectionCell: UICollectionViewCell, ReuseIdentifying {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .nftWhite
+        backgroundColor = UIColor(resource: .nftWhite)
         setupUI()
     }
     
@@ -173,13 +173,19 @@ extension NftCollectionCell: NftCollectionCellProtocol {
     }
     
     func nftLiked(_ isLiked: Bool) {
-        likeButton.setImage(isLiked ? .liked : .notLiked, for: .normal)
+        likeButton.setImage(
+            isLiked ? UIImage(resource: .liked) :
+                      UIImage(resource: .notLiked),
+            for: .normal)
     }
     
     func nftAddedToCart(_ isInCart: Bool) {
         cartButton.setImage(
-            isInCart ? .deleteFromCart.withTintColor(.nftBlack, renderingMode: .alwaysOriginal) :
-                       .addToCart.withTintColor(.nftBlack, renderingMode: .alwaysOriginal),
+            isInCart ?
+                UIImage(resource: .deleteFromCart)
+                    .withTintColor(UIColor(resource: .nftBlack), renderingMode: .alwaysOriginal) :
+                UIImage(resource: .addToCart)
+                    .withTintColor(UIColor(resource: .nftBlack), renderingMode: .alwaysOriginal),
             for: .normal)
     }
 }

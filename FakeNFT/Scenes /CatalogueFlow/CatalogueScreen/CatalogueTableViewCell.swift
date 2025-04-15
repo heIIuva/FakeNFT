@@ -36,7 +36,7 @@ final class CatalogueTableViewCell: UITableViewCell, ReuseIdentifying {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .nftWhite
+        contentView.backgroundColor = UIColor(resource: .nftWhite)
         clipsToBounds = true
         selectionStyle = .none
         setupUI()

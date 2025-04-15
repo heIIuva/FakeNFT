@@ -42,13 +42,13 @@ final class NftCollectionHeader: UICollectionReusableView {
     private lazy var collectionAuthorLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.caption2
-        label.text = NSLocalizedString("Catalog.collectionAuthor", comment: "")
+        label.text = Localizable.collectionAuthor
         return label
     } ()
     
     private lazy var collectionAuthorLinkButton: UIButton = {
         let button = UIButton()
-        button.setTitleColor(.nftBlueUniversal, for: .normal)
+        button.setTitleColor(UIColor(resource: .nftBlueUniversal), for: .normal)
         button.titleLabel?.font = UIFont.caption1
         button.addTarget(self, action: #selector(handleAuthorLinkButtonTap), for: .touchUpInside)
         return button

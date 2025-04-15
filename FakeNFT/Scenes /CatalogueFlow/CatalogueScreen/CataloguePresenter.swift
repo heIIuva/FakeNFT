@@ -56,8 +56,8 @@ final class CataloguePresenter: CataloguePresenterProtocol {
                 catalogue = collections
             case .failure(_):
                 let errorModel = ErrorModel(
-                    message: NSLocalizedString("Error.title", comment: ""),
-                    actionText: NSLocalizedString("Error.repeat", comment: ""),
+                    message: Localizable.errorDataLost,
+                    actionText: Localizable.errorRepeat,
                     action: { [weak self] in self?.loadCatalogue(withIndicator: withIndicator) })
                 view?.showErrorWithCancel(errorModel)
             }

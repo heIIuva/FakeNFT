@@ -18,11 +18,18 @@ final class ServicesAssembly {
         )
     }
     
-    var catalogueService: CatalogueServiceProtocol {
-        CatalogueService(networkClient: networkClient)
+    var profileService: ProfileService {
+        ProfileServiceImpl(
+            networkClient: networkClient,
+            profileId: "1"
+        )
     }
     
     var collectionService: CollectionServiceProtocol {
         CollectionService(networkClient: networkClient)
+    }
+    
+    var catalogueService: CatalogueServiceProtocol {
+        CatalogueService(networkClient: networkClient)
     }
 }

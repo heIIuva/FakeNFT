@@ -1,5 +1,6 @@
 import Foundation
 
+
 protocol NftStorageProtocol: AnyObject {
     func saveNft(_ nft: Nft)
     func getNft(with id: String) -> Nft?
