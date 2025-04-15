@@ -51,6 +51,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
         table.register(CartTableViewCell.self, forCellReuseIdentifier: cellReuseIdentifier)
         table.allowsSelection = false
         table.separatorStyle = .none
+        table.backgroundColor = .systemBackground
         return table
     }()
     
@@ -159,6 +160,8 @@ final class CartViewController: UIViewController, CartVCProtocol {
         
         view.addSubviews(cartTableView, backgroundView, placeholderLabel)
         backgroundView.addSubviews(labelsStackView, payButton)
+        
+        view.backgroundColor = .systemBackground
         
         NSLayoutConstraint.activate([
             cartTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
