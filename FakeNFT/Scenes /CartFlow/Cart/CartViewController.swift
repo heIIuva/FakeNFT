@@ -51,7 +51,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
         table.register(CartTableViewCell.self, forCellReuseIdentifier: cellReuseIdentifier)
         table.allowsSelection = false
         table.separatorStyle = .none
-        table.backgroundColor = .systemBackground
+        table.backgroundColor = UIColor(resource: .nftWhite)
         return table
     }()
     
@@ -69,7 +69,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
-        button.backgroundColor = .black
+        button.backgroundColor = UIColor(resource: .nftBlackUniversal)
         button.setTitle(Localizable.proceedToPayment, for: .normal)
         button.addTarget(self, action: #selector(didTapPayButton), for: .touchUpInside)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
@@ -161,7 +161,7 @@ final class CartViewController: UIViewController, CartVCProtocol {
         view.addSubviews(cartTableView, backgroundView, placeholderLabel)
         backgroundView.addSubviews(labelsStackView, payButton)
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = UIColor(resource: .nftWhite)
         
         NSLayoutConstraint.activate([
             cartTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),

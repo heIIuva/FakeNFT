@@ -32,7 +32,7 @@ final class CartTableViewCell: UITableViewCell {
     private lazy var cellBackgroundView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = UIColor(resource: .nftWhite)
         return view
     }()
     

@@ -65,7 +65,7 @@ final class PaymentConfirmationViewController: UIViewController {
     private func setupUI() {
         view.addSubviews(placeholderStack, backToCatalogueButton)
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = UIColor(resource: .nftWhite)
         
         NSLayoutConstraint.activate([
             placeholderStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),

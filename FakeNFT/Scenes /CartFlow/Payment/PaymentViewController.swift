@@ -41,7 +41,7 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
         collection.dataSource = self
         collection.delegate = self
         collection.register(CurrencyCell.self, forCellWithReuseIdentifier: reuseID)
-        collection.backgroundColor = .systemBackground
+        collection.backgroundColor = UIColor(resource: .nftWhite)
         return collection
     }()
     
@@ -72,7 +72,7 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
-        button.backgroundColor = .black
+        button.backgroundColor = UIColor(resource: .nftBlackUniversal)
         button.setTitle(Localizable.purchase, for: .normal)
         button.addTarget(self, action: #selector(didTapPayButton), for: .touchUpInside)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
@@ -147,7 +147,7 @@ final class PaymentViewController: UIViewController, PaymentVCProtocol {
     private func setupUI() {
         title = Localizable.paymentTitle
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = UIColor(resource: .nftWhite)
         
         view.addSubviews(currencyCollection, backgroundView, payButton, termsStack)
         
