@@ -29,7 +29,7 @@ final class AvatarView: UIView {
         view.translatesAutoresizingMaskIntoConstraints = false
 
         let label = UILabel()
-        label.text = NSLocalizedString("EditProfile.changePhoto", comment: "")
+        label.text = Localizable.editProfileChangePhoto
         label.textColor = .white
         label.font = .caption3
         label.textAlignment = .center
@@ -106,19 +106,19 @@ final class AvatarView: UIView {
     private func presentTextFieldAlert() {
         guard let viewController = self.findViewController() else { return }
 
-        let alert = UIAlertController(title: NSLocalizedString("EditProfile.loadPhoto", comment: ""),
+        let alert = UIAlertController(title: Localizable.editProfileLoadPhoto,
                                       message: nil,
                                       preferredStyle: .alert)
 
         alert.addTextField { textField in
-            textField.placeholder = NSLocalizedString("EditProfile.photoUrlPlaceholder", comment: "")
+            textField.placeholder = Localizable.editProfilePhotoUrlPlaceholder
             textField.keyboardType = .URL
             textField.autocapitalizationType = .none
         }
 
-        let cancelAction = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel)
+        let cancelAction = UIAlertAction(title: Localizable.cancel, style: .cancel)
 
-        let okAction = UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default) { [weak self] _ in
+        let okAction = UIAlertAction(title: Localizable.ok, style: .default) { [weak self] _ in
             guard let self = self,
                   let urlString = alert.textFields?.first?.text?.trimmingCharacters(in: .whitespacesAndNewlines),
                   let url = URL(string: urlString),
@@ -138,7 +138,7 @@ final class AvatarView: UIView {
     }
 
     @objc private func didTapAvatarView() {
-        let title = NSLocalizedString("EditProfile.loadPhoto", comment: "")
+        let title = Localizable.editProfileLoadPhoto
 
         let items = [
             PopupMenuView.MenuItem(title: title, action: { [weak self] in

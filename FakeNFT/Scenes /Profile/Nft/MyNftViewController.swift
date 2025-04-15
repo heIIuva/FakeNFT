@@ -27,7 +27,7 @@ final class MyNftViewController: UIViewController, NftView {
 
     private let emptyLabel: UILabel = {
         let label = UILabel()
-        label.text = NSLocalizedString("MyNft.placeholder", comment: "")
+        label.text = Localizable.myNftPlaceholder
         label.textAlignment = .center
         label.textColor = .textPrimary
         label.font = .bodyBold
@@ -53,7 +53,7 @@ final class MyNftViewController: UIViewController, NftView {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .background
-        navigationItem.title = NSLocalizedString("MyNft.title", comment: "")
+        navigationItem.title = Localizable.myNFtTitle
 
         setupTableView()
         setupBackButton()
@@ -141,28 +141,28 @@ final class MyNftViewController: UIViewController, NftView {
 
     @objc private func showSortMenu() {
         let alert = UIAlertController(
-            title: NSLocalizedString("MyNft.sort.title", comment: ""),
+            title: Localizable.myNftSortTitle,
             message: nil,
             preferredStyle: .actionSheet
         )
 
         alert.addAction(UIAlertAction(
-            title: NSLocalizedString("MyNft.sort.name", comment: ""),
+            title: Localizable.myNftSortName,
             style: .default
         ) { _ in self.presenter.sort(by: .name) })
 
         alert.addAction(UIAlertAction(
-            title: NSLocalizedString("MyNft.sort.price", comment: ""),
+            title: Localizable.myNFtSortPrice,
             style: .default
         ) { _ in self.presenter.sort(by: .price) })
 
         alert.addAction(UIAlertAction(
-            title: NSLocalizedString("MyNft.sort.rating", comment: ""),
+            title: Localizable.myNftSortRating,
             style: .default
         ) { _ in self.presenter.sort(by: .rating) })
 
         alert.addAction(UIAlertAction(
-            title: NSLocalizedString("MyNft.sort.cancel", comment: ""),
+            title: Localizable.myNftSortCancel,
             style: .cancel
         ))
 

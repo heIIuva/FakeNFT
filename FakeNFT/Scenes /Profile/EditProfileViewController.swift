@@ -64,9 +64,9 @@ final class EditProfileViewController: UIViewController, UIAdaptivePresentationC
     private func setupView() {
         view.backgroundColor = .background
         
-        let nameTitle = makeTitleLabel(text: NSLocalizedString("EditProfile.nameTitle", comment: "Имя"))
-        let descriptionTitle = makeTitleLabel(text: NSLocalizedString("EditProfile.descriptionTitle", comment: "Описание"))
-        let websiteTitle = makeTitleLabel(text: NSLocalizedString("EditProfile.websiteTitle", comment: "Сайт"))
+        let nameTitle = makeTitleLabel(text: Localizable.editProfileNameTitle)
+        let descriptionTitle = makeTitleLabel(text: Localizable.editProfileDescriptionTitle)
+        let websiteTitle = makeTitleLabel(text: Localizable.editProfileWebsiteTitle)
         
         let formStack = UIStackView(arrangedSubviews: [
             nameTitle, nameField,

@@ -56,7 +56,7 @@ final class NftTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = .caption2
         label.textColor = .textPrimary
-        label.text = NSLocalizedString("NftViewCell.price", comment: "")
+        label.text = Localizable.nftViewCellPrice
         return label
     }()
 
@@ -146,7 +146,7 @@ final class NftTableViewCell: UITableViewCell {
 
     func configure(with nft: Nft, delegate: ProfileInteractionDelegate?) {
         nameLabel.text = nft.nftTitle
-        let authrorText = "\(NSLocalizedString("NftViewCell.from", comment: "")) \(nft.name)"
+        let authrorText = "\(Localizable.nftViewCellFrom) \(nft.name)"
         authorLabel.attributedText = .withLetterSpacing(authrorText)
 
         price.text = String(format: "%.2f ETH", nft.price)
