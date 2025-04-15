@@ -38,6 +38,7 @@ struct Localizable {
     static let tabCart = NSLocalizedString("Tab.cart", comment: "")
     static let tabCatalog = NSLocalizedString("Tab.catalog", comment: "")
     static let tabProfile = NSLocalizedString("Tab.profile", comment: "")
+    static let tabStat = NSLocalizedString("Tab.stat", comment: "")
     static let termsButton = NSLocalizedString("Terms.button", comment: "")
     static let termsTitle = NSLocalizedString("Terms.title", comment: "")
     static let favoritesNftPlaceholder = NSLocalizedString("FavoritesNft.placeholder", comment: "")

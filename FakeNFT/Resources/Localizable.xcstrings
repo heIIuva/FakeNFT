@@ -781,6 +781,22 @@
         }
       }
     },
+    "Tab.stat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistics"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Статистика"
+          }
+        }
+      }
+    },
     "Terms.button" : {
       "extractionState" : "manual",
       "localizations" : {
