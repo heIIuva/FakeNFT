@@ -33,11 +33,29 @@ extension UIColor {
     // Secondary Colors
     static let secondary = UIColor(red: 255 / 255, green: 193 / 255, blue: 7 / 255, alpha: 1.0)
 
-    // Background Colors
-    static let background = UIColor.white
+    // Background Colors    
+    static let background = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .yaBlack
+        : .yaWhite
+    }
 
+    //tabBar
+    static let tabBarActive = UIColor.yaBlue
+
+    static let tabBarInactive = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .yaWhite
+        : .yaBlack
+    }
+    
     // Text Colors
-    static let textPrimary = UIColor.black
+    static let textPrimary = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .yaWhite
+        : .yaBlack
+    }
+
     static let textSecondary = UIColor.gray
     static let textOnPrimary = UIColor.white
     static let textOnSecondary = UIColor.black
@@ -46,7 +64,20 @@ extension UIColor {
     private static let yaBlackDark = UIColor.white
     private static let yaLightGrayLight = UIColor(hexString: "#F7F7F8")
     private static let yaLightGrayDark = UIColor(hexString: "#2C2C2E")
+    
 
+    // Universal colors
+    static let yaGray = UIColor(hexString: "#625C5C")
+    static let yaRed = UIColor(hexString: "#F56B6C")
+    static let yaBackground = UIColor(hexString: "#1A1B22")
+    static let yaGreen = UIColor(hexString: "#1C9F00")
+    static let yaBlue = UIColor(hexString: "#0A84FF")
+    static let yaBlack = UIColor(hexString: "#1A1B22")
+    static let yaBlack60 = UIColor(hexString: "#1A1B22").withAlphaComponent(0.6)
+    static let yaWhite = UIColor(hexString: "#FFFFFF")
+    static let yaYellow = UIColor(hexString: "#FEEF0D")
+
+    
     static let segmentActive = UIColor { traits in
         return traits.userInterfaceStyle == .dark
         ? .yaBlackDark
@@ -58,8 +89,27 @@ extension UIColor {
         ? .yaLightGrayDark
         : .yaLightGrayLight
     }
+    
+    static let textField = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .yaLightGrayDark
+        : .yaLightGrayLight
+    }
 
     static let closeButton = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .yaBlackDark
+        : .yaBlackLight
+    }
+    
+    
+    static let progressHudColor = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .yaBlackDark
+        : .yaBlackLight
+    }
+    
+    static let iconPrimary = UIColor { traits in
         return traits.userInterfaceStyle == .dark
         ? .yaBlackDark
         : .yaBlackLight

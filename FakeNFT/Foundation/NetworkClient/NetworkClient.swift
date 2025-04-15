@@ -117,23 +117,13 @@ struct DefaultNetworkClient: NetworkClient {
 
         var urlRequest = URLRequest(url: endpoint)
         urlRequest.httpMethod = request.httpMethod.rawValue
-
         urlRequest.addValue(RequestConstants.token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
 
-        if let dtoDictionary = request.dto?.asDictionary() {
-            var urlComponents = URLComponents()
-            let queryItems = dtoDictionary.map { field in
-                URLQueryItem(
-                    name: field.key,
-                    value: field.value
-                    )
-            }
-            urlComponents.queryItems = queryItems
-            urlRequest.httpBody = urlComponents.query?.data(using: .utf8)
-            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let dto = request.dto,
+           let bodyData = encode(dto: dto) {
+            urlRequest.httpBody = bodyData
+            urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         }
-
-        urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
         return urlRequest
     }
@@ -145,5 +135,30 @@ struct DefaultNetworkClient: NetworkClient {
         } catch {
             onResponse(.failure(NetworkClientError.parsingError))
         }
+    }
+    
+    private func encode(dto: Dto) -> Data? {
+        var pairs: [(String, String)] = []
+
+        let baseDict = dto.asDictionary()
+        pairs.append(contentsOf: baseDict.map { ($0.key, $0.value) })
+
+        if let multiValueDto = dto as? MultiValueFormDataDto {
+            let extras = multiValueDto.asFormURLEncodedPairs()
+
+            for extra in extras {
+                if !baseDict.keys.contains(extra.0) || extra.0 == "likes" {
+                    pairs.append(extra)
+                }
+            }
+        }
+
+        let bodyString = pairs.map {
+            let encodedKey = $0.0.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+            let encodedValue = $0.1.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+            return "\(encodedKey)=\(encodedValue)"
+        }.joined(separator: "&")
+
+        return bodyString.data(using: .utf8)
     }
 }

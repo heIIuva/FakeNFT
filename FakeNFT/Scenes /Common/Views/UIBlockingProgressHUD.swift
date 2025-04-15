@@ -2,33 +2,27 @@
 //  UIBlockingProgressHUD.swift
 //  FakeNFT
 //
-//  Created by Malyshev Roman on 08.04.2025.
+//  Created by Alexander Bralnin on 28.03.2025.
 //
 
 import UIKit
 import ProgressHUD
 
-
 final class UIBlockingProgressHUD {
 
-    //MARK: - Properties
-    
     private static var window: UIWindow? {
-        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-        return windowScene?.windows.first
+        return UIApplication.shared.windows.first
     }
-    
-    private let hud = ProgressHUD()
-    
-    //MARK: - Methods
     
     static func show() {
         window?.isUserInteractionEnabled = false
-        ProgressHUD.animationType = .circleRotateChase
+        ProgressHUD.colorHUD = .clear
+        ProgressHUD.colorBackground = .clear
+        ProgressHUD.colorAnimation = .progressHudColor
         ProgressHUD.show()
     }
     
-    static func dismiss() {
+    static func dismiss(){
         window?.isUserInteractionEnabled = true
         ProgressHUD.dismiss()
     }

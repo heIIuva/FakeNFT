@@ -26,7 +26,7 @@ final class NftDetailPresenterImpl: NftDetailPresenter {
     }
 
     // MARK: - Init
-
+    
     init(input: NftDetailInput, service: NftService) {
         self.input = input
         self.service = service
