@@ -20,9 +20,15 @@ final class CollectionViewController: UIViewController {
     
     private let presenter: CollectionPresenterProtocol
     lazy var activityIndicator: UIActivityIndicatorView = {
-        let activityIndicator = UIActivityIndicatorView(style: .medium)
+        let activityIndicator = UIActivityIndicatorView(style: .large)
         activityIndicator.color = .nftBlack
         return activityIndicator
+    } ()
+    private lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.tintColor = .clear
+        refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+        return refreshControl
     } ()
     private lazy var backButton: UIButton = {
         let backButton = UIButton()
@@ -36,6 +42,7 @@ final class CollectionViewController: UIViewController {
         let collectionView = UICollectionView(
             frame: .zero,
             collectionViewLayout: UICollectionViewFlowLayout())
+        collectionView.refreshControl = refreshControl
         collectionView.backgroundColor = .nftWhite
         collectionView.register(NftCollectionCell.self)
         collectionView.register(
@@ -90,6 +97,11 @@ final class CollectionViewController: UIViewController {
         ])
     }
     
+    @objc private func didPullToRefresh() {
+        refreshControl.endRefreshing()
+        presenter.fetchData()
+    }
+    
     @objc private func handleBackButtonTap() {
         dismiss(animated: true)
     }
@@ -109,7 +121,7 @@ extension CollectionViewController: CollectionViewProtocol {
     }
     
     func shouldShowIndicator(_ isShown: Bool) {
-        collectionView.isHidden = isShown
+        collectionView.isUserInteractionEnabled = !isShown
         isShown ? showLoading() :
                   hideLoading()
     }

@@ -101,13 +101,13 @@ final class NftCollectionCell: UICollectionViewCell, ReuseIdentifying {
     
     // MARK: - Methods
         
-    private func setNftImage(with image: String) {
+    private func setNftImage(with imageUrl: URL?) {
         let processor = DownsamplingImageProcessor(size: nftImageView.bounds.size)
                      |> RoundCornerImageProcessor(cornerRadius: 12)
         let retry = DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(10))
         nftImageView.kf.indicatorType = .activity
         nftImageView.kf.setImage(
-            with: URL(string: image),
+            with: imageUrl,
             options: [.transition(.fade(1)), .processor(processor), .retryStrategy(retry)]
         )
     }
@@ -165,7 +165,7 @@ extension NftCollectionCell: NftCollectionCellProtocol {
         nftNameLabel.text = nft.name
         nftPriceLabel.text = String(format: "%.2f ETH", nft.price)
         ratingImageView.image = UIImage(resource: .init(name: "rating\(nft.rating)", bundle: .main))
-        setNftImage(with: nft.images.first ?? "")
+        setNftImage(with: nft.images.first)
     }
     
     func isUserInteractionEnabled(_ isEnabled: Bool) {

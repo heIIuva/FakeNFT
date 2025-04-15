@@ -16,12 +16,17 @@ final class CatalogueViewController: UIViewController {
     
     // MARK: - Properties
     
+    private let presenter: CataloguePresenterProtocol
     var activityIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(style: .medium)
+        let indicator = UIActivityIndicatorView(style: .large)
         indicator.color = .nftBlack
         return indicator
     } ()
-    private let presenter: CataloguePresenterProtocol
+    private lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+        return refreshControl
+    } ()
     private lazy var sortButton: UIButton = {
         let button = UIButton()
         button.setImage(.sortButtonIcon.withTintColor(.nftBlack, renderingMode: .alwaysOriginal), for: .normal)
@@ -30,6 +35,7 @@ final class CatalogueViewController: UIViewController {
     } ()
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
+        tableView.refreshControl = refreshControl
         tableView.backgroundColor = .nftWhite
         tableView.register(CatalogueTableViewCell.self)
         tableView.dataSource = self
@@ -57,7 +63,7 @@ final class CatalogueViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .nftWhite
         setupUI()
-        presenter.loadCatalogue()
+        presenter.loadCatalogue(withIndicator: true)
     }
     
     // MARK: - Methods
@@ -77,6 +83,10 @@ final class CatalogueViewController: UIViewController {
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
+    }
+    
+    @objc private func didPullToRefresh() {
+        presenter.loadCatalogue(withIndicator: false)
     }
     
     @objc private func didTapSortButton() {
@@ -118,10 +128,11 @@ extension CatalogueViewController: CatalogueViewProtocol {
     
     func reloadData() {
         tableView.reloadData()
+        refreshControl.endRefreshing()
     }
     
     func shouldShowIndicator(_ isShown: Bool) {
-        view.isUserInteractionEnabled = !isShown
+        tableView.isHidden = isShown
         isShown ? showLoading() :
                   hideLoading()
     }

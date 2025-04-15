@@ -8,7 +8,7 @@
 import Foundation
 
 protocol CataloguePresenterProtocol: AnyObject {
-    func loadCatalogue()
+    func loadCatalogue(withIndicator: Bool)
     func getCollectionsCount() -> Int
     func getCollectionPresenter(for indexPath: IndexPath) -> CollectionPresenterProtocol
     func setupCatalogueView(_ view: CatalogueViewProtocol)
@@ -46,8 +46,8 @@ final class CataloguePresenter: CataloguePresenterProtocol {
         self.view = view
     }
     
-    func loadCatalogue() {
-        view?.shouldShowIndicator(true)
+    func loadCatalogue(withIndicator: Bool) {
+        view?.shouldShowIndicator(withIndicator ? true : false)
         servicesAssembly.catalogueService.fetchCatalogue { [weak self] result in
             guard let self else { return }
             view?.shouldShowIndicator(false)
@@ -58,7 +58,7 @@ final class CataloguePresenter: CataloguePresenterProtocol {
                 let errorModel = ErrorModel(
                     message: NSLocalizedString("Error.title", comment: ""),
                     actionText: NSLocalizedString("Error.repeat", comment: ""),
-                    action: loadCatalogue)
+                    action: { [weak self] in self?.loadCatalogue(withIndicator: withIndicator) })
                 view?.showErrorWithCancel(errorModel)
             }
         }

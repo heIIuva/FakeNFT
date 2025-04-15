@@ -1,7 +1,7 @@
-**Максимов Денис**
-**Когорта: 20**
-**Эпик: Каталог**  
-**Ссылка на доску:** [NFTMarketplace](https://github.com/users/heIIuva/projects/3/views/1)
+### Максимов Денис
+### Когорта: 20
+### Эпик: Каталог 
+### Ссылка на доску: [NFTMarketplace](https://github.com/users/heIIuva/projects/3/views/1)
 
 # Эпик Каталога
 
