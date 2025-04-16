@@ -10,6 +10,9 @@
 
 [Профиль](https://github.com/heIIuva/FakeNFT/raw/develop/FakeNFT/docs/screencast/profile.mp4)
 
+### 🗂 Эпик: Каталог (by Denis Maximov)
+
+[Каталог](https://github.com/heIIuva/FakeNFT/raw/develop/FakeNFT/docs/screencast/catalogue.mp4)
 
 # Назначение и цели приложения
 
