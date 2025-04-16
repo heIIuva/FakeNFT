@@ -14,6 +14,10 @@
 
 [Каталог](https://github.com/heIIuva/FakeNFT/raw/develop/FakeNFT/docs/screencast/catalogue.mp4)
 
+### 🗂 Эпик: Корзина (by Roman Malyshev)
+
+[Корзина](https://github.com/heIIuva/FakeNFT/raw/develop/FakeNFT/docs/screencast/cart_epic.mp4)
+
 # Назначение и цели приложения
 
 Приложение помогает пользователям просматривать и покупать NFT (Non-Fungible Token). Функционал покупки иммитируется с помощью мокового сервера.

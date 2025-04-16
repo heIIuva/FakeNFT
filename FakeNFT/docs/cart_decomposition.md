@@ -2,9 +2,6 @@
 
 ## таск трекер - https://github.com/users/heIIuva/projects/3
 
-## скрин каст - https://disk.yandex.ru/i/xR-Vl3KuGYQeNQ
-
-
 # Cart 1
 1. верстка ячейки таблицы (полчаса) - полчаса
 2. верстка экрана корзины (час) - два часа
