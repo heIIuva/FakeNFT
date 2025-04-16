@@ -8,7 +8,7 @@
 
 ### 🧑‍💼 Эпик: Профиль (by Alexander Bralnin)
 
-[![Profile](https://img.icons8.com/ios/452/video--v1.png)](https://github.com/heIIuva/FakeNFT/raw/develop/FakeNFT/docs/screencast/profile.mp4)
+[Профиль](https://github.com/heIIuva/FakeNFT/raw/develop/FakeNFT/docs/screencast/profile.mp4)
 
 
 # Назначение и цели приложения
