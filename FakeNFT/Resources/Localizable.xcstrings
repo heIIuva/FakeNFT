@@ -158,13 +158,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Change\\nphoto"
+            "value" : "Change photo"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Сменить\\nфото"
+            "value" : "Сменить фото"
           }
         }
       }
