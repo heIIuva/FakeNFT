@@ -4,9 +4,12 @@
 
 [Дизайн Figma](https://www.figma.com/file/k1LcgXHGTHIeiCv4XuPbND/FakeNFT-(YP)?node-id=96-5542&t=YdNbOI8EcqdYmDeg-0)
 
-### 📽 Demo
+## 📽 Screencasts
 
-[![Watch the demo](https://img.icons8.com/ios/452/video--v1.png)](https://github.com/heIIuva/FakeNFT/raw/develop/FakeNFT/docs/screencast/profile.mp4)
+### 🧑‍💼 Эпик: Профиль (by Alexander Bralnin)
+
+[![Profile](https://img.icons8.com/ios/452/video--v1.png)](https://github.com/heIIuva/FakeNFT/raw/develop/FakeNFT/docs/screencast/profile.mp4)
+
 
 # Назначение и цели приложения
 
