@@ -26,7 +26,7 @@ final class NftDetailPresenterImpl: NftDetailPresenter {
     }
 
     // MARK: - Init
-
+    
     init(input: NftDetailInput, service: NftService) {
         self.input = input
         self.service = service
@@ -47,7 +47,8 @@ final class NftDetailPresenterImpl: NftDetailPresenter {
             loadNft()
         case .data(let nft):
             view?.hideLoading()
-            let cellModels = nft.images.map { NftDetailCellModel(url: $0) }
+            let urls = nft.images.compactMap { $0 }
+            let cellModels = urls.map { NftDetailCellModel(url: $0) }
             view?.displayCells(cellModels)
         case .failed(let error):
             let errorModel = makeErrorModel(error)
@@ -71,12 +72,12 @@ final class NftDetailPresenterImpl: NftDetailPresenter {
         let message: String
         switch error {
         case is NetworkClientError:
-            message = NSLocalizedString("Error.network", comment: "")
+            message = Localizable.errorNetwork
         default:
-            message = NSLocalizedString("Error.unknown", comment: "")
+            message = Localizable.errorUnknown
         }
 
-        let actionText = NSLocalizedString("Error.repeat", comment: "")
+        let actionText = Localizable.errorRepeat
         return ErrorModel(message: message, actionText: actionText) { [weak self] in
             self?.state = .loading
         }
